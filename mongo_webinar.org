@@ -1,0 +1,141 @@
+* MongoDB Webinar : MongoDB & Microservices 1
+  
+
+** Why do we want to use microservices?
+
+   tldr webscale
+
+   - Speed of development (want to get MVP out there quickly)
+   - Rapid changes - only change relevant microservice, react to market
+   - Maintainability - simple components, isolated impact
+   - Scalability - development and the product. For a big monolithic architecture it's hard to bring in new people, with microservices it's easier to scale your team.
+   - Empower employer
+
+** Why the data layer matters
+
+   A single microservice can perform a function but to be useful you need to combine them.
+
+   Each microservice can use the most appropriate technologies for that microservice, such as different databases.
+   
+   General best practice is to have one database per microservice.
+   
+   Microservices communicate through data, in almost most cases using JSON (or avro). Very simple to map between avro and JSON
+
+** MongoDB - Polyglot Persistence
+   
+   - JSON Documents
+   - Tabular (can store references to other documents)
+   - Key-Value
+   - Text
+   - Geospatial
+   - Graph (not entirely, but have $graphLookup that gives some graph functionality)
+     
+*** Analysis on mongodb
+
+   - Aggregation pipeline
+   - Mongodb chart - gives you cool graphs of your data
+   - Highly optimised spark connector - optimised to only get the data it needs out of mongo    
+   - BI Connector - to connect SQL tools to mongo
+
+** Why MongoDB is a good fit for microservices
+   
+   - Monitoring & Automation
+   - Flexible data model - helps with developer agility
+   - Redundancy - not a question of if a component is going to fail, it's when
+   - Scalabilty - can do rolling upgrade to bigger machines, or add shards
+   - Simplicity - if you have a lot of databases in your architecture, you'll want them to be simple. Mongo is simple, especially when used with atlas
+
+** What powers microservices?
+
+*** Containers
+    
+    Define a container by creating an image, and spin up as many containers as you'd want from this image. This gives you the benefit of being able to spin up that container anywhere, since you already have the image
+    
+    Containers are quite efficient, they can be quite small
+    
+    Provides isolation - one container runs in isolation from other
+    
+    Can add constraints to the containers such as memory and cpu constraints.
+
+**** Docker
+
+     Big community and free to use. Can get images from dockerhub.
+
+     Can build images from images
+     
+     To play with mongo: (mongo is the image name, if it's not local it will download).
+
+     #+BEGIN_SRC bash
+       docker run -d mongo
+
+       # view containers
+       docker container ls
+
+       #run mongo shell via docker:
+       docker exec -it container_name mongo
+
+     #+END_SRC
+
+*** Kubernetes
+
+    Orchestration framework. Created by Google
+    - Deloyment and 'replication'
+    - Online scale out/in (can easily scale the containers it runs)
+    - Rolling upgrades (can upgrade your image and use kubernetes to do rolling upgrades)
+    - High availability (especially if you do rolling updates
+    - Persistence (kubernetes lets you add external storage
+
+*** MongoDB Atlas - mongo's database as a service
+    
+    Do not put mongo in kubernetes, rather use atlas that is meant for this
+    
+*** Passing event data between microserices - kafka
+
+    Have one or more topics in kafka.
+
+    e.g. in financial services, one topic for stock prices, and another topic for company results such as profits
+    
+    Producers (source) write events to these queues, and consumers (sink) that takes it off and handles it. Can decide which topics to subscribe to.
+    
+    Once a consumer has consumed an event, the events are kept on the topic (which means you need to prune it later). This gives you message replayability.
+
+*** MongoDB Connector for Apache Kafka (alpha)
+
+    Took the best of the community tools and built it into mongo
+
+    - Build robust data pipelines for microservices and Event Driven Architectures
+    - Developed and supported by MongoDB engineers, verified by Confluent
+    - Supports MongoDB as a sink (consumer) and a source (producer) for Kafka
+    - Integrate with Change Streams and Atlas triggers to create fully reactive event driven pipeline
+
+    Can get the alpha version on github or confluence
+    
+    Confluence is the main company behind apache kafka
+
+
+** Where to focus your energy and how mongo has solved it already
+   See screenshot 'focus energy'
+
+** MongoDB Stitch Serverless Platform
+
+*** Stitch QueryAnywhere
+    Full power of MongoDB document model & query language in frontend code
+    Fine-grained security policies through declarative rules
+
+    Can query data from front-end
+    
+    Can setup who can see what data e.g. can only read data that the user has written. 
+
+*** Stich functions
+    A little like aws lambda
+    
+    Write javascript code to stitch through api
+    
+    Run simple javascript functions in stitch's serverless environment
+    Power apps with server-side logic or enable Data as a service with custom API's
+
+*** Stitch Triggers
+    Real-time notifications that launch functions in response to changes in the database
+    Make further database changes, push data to other places, or interact with users
+    
+    E.g. if a record is written with user email, create trigger to welcome them.

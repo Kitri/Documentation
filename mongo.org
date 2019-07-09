@@ -1,0 +1,540 @@
+
+#+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+OPTIONS: author:t broken-links:nil c:nil creator:nil
+#+OPTIONS: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
+#+OPTIONS: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+OPTIONS: timestamp:t title:t toc:t todo:t |:t
+#+TITLE: Mongo Documentation
+#+DATE: <2019-06-13 Thurs>
+#+AUTHOR: Mercia Malan
+#+EMAIL: malan747@gmail.com
+#+TOC: nil
+#+LANGUAGE: en
+#+SELECT_TAGS: export
+#+EXCLUDE_TAGS: noexport
+#+CREATOR: Emacs 27.0.50 (Org mode 9.1.9)
+#+OPTIONS: html-link-use-abs-url:nil html-postamble:auto
+#+OPTIONS: html-preamble:t html-scripts:t html-style:t
+#+OPTIONS: html5-fancy:nil tex:t
+#+HTML_DOCTYPE: xhtml-strict
+#+HTML_CONTAINER: div
+#+HTML_HEAD: <link rel="stylesheet" href="./bootstrap.css" />
+#+HTML_HEAD: <style type="text/css"> body { width: 70em; margin: 50px 100px; } </style>
+#+CREATOR: <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.0.50 (<a href="https://orgmode.org">Org</a> mode 9.1.9)
+
+* M201
+
+** Hardware:
+Database designed around the usage of memory
+- aggregation, index traversing, write operations, query engine, connections(1mb per established connection)
+
+By default mongo will try to use all cpu cores.
+
+Page compression, data calculation, aggregation, map reduce requires cpu cores
+
+Writing constantly to the same document - each document will block writes on that document, thus multiple writes to the same document won't be increased by concurrency
+
+*** Persisting data
+- higher IOPS your server provides, the faster your writes and reads will be
+
+Mongo will benefit from some, but not all raid architectures - such as 10. Discourage using raid 5 or 6 or 0. Raid 10 provides redundancy across drives and also optimised for read and write
+
+Mongo can use multiple disks
+
+*** Network hardware
+Faster and larger bandwidth, the faster. Firewalls, load balances etc also play a role in network latency.
+Make sure write & read concern and read preference aligns with network architecure
+
+** Indexes:
+   index keeps a reference to the document
+   Also uses b-tree for storing index
+   e.g.: lastname: 1
+
+   acosta --> {lastname: acosta ...}
+   bailey --> {lastname: bailey ...}
+
+   writes, updates and deletes slows down the more indexes there are, thus try to not have many irrelevant indexes. Each write might need to rebalance b-tree
+
+*** How is data stored on disk
+**** WiredTiger
+     Creates a file for each collection and each index
+     Can run mongod with --directoryperdb and then it will create a sub directory per db
+     Can run with --WiredTigerDirectoryForIndexes and inside each db sub directory it will create a "collections" and an "index" folders. This is useful if you want to create symbolic links to different disks.
+
+*** Single Field Index
+    Can specify index with dot notation for sub documents. It's bad practice to create an index on a subdocument field - rather create it on the nested field inside the sub document by using dot notation
+
+*** Sorting and indexes
+    When running a query with a sort on the field that is indexed, it will do an IXSCAN (index scan), because it uses the index keys to help with sorting. IXSCAN can either be forward or backward depending on the sorting direction vs the index. e.g. if the index is ascending ({name: 1}) and sort is ascending (.sort({name:1}), forward ixscan would be used. if it was .sort({name: -1}), it would use a backward ixscan.
+
+*** Compound Indexes
+    For compound indexes it is still stored flat. e.g. on lastname and firstname, it will have index keys such as ("last","first") (such as in a telephone book).
+    Compound indexes has index prefixes, which will be the first key, the first and second keys, the first, second and third keys etc.
+    E.g.: {last_name: 1, first_name: 1, age:1}
+    Prefixes: {last_name: 1}, {last_name: 1, first_name: 1}
+    Prefixes can also be scanned forward and backward, as long as the direction is either exactly what it is in the index, or the exact opposite
+
+*** Multi-key Indexes
+    When your index key is inside an array, it will create a key per value in the array. Can only create one multi-key indexes. (ie only one index that is in an array}
+    Multi-key indexes do not support covered queries
+    E.g.
+    #+BEGIN_SRC javascript
+    {
+      productName: ["x","y","z"],
+      stock: [
+          {name: "a", qty: 1},
+          {name: "b", qty: 2},
+          {name: "c", qty: 2},
+      ]
+    }
+    #+END_SRC
+    Can have an index on productName or on stock.qty, but not on both. Index on productName will create 3 index keys: x,y,z. 
+    
+*** Partial Indexes
+    Create an index on only a subsection of the data, for example:
+    #+BEGIN_SRC javascript
+      {
+          "name" : "some restaurant",
+          "cuisine" : "Indian",
+          "stars" : 4.4,
+          "address": {
+              "street": "123 str",
+              "city": "New York"
+          }
+      }
+
+      db.restaurants.createIndex(
+          { "address.city": 1, "cuisine": 1 },
+          { partialFilterExpression: { 'stars': { $gte: 3.5 } } }
+      )
+    #+END_SRC
+    
+*** Text Indexes
+    #+BEGIN_SRC javascript
+      {
+          productName: "MongoDB long sleeve t-shirt",
+          category: "Clothing"
+      }
+
+      db.restaurants.createIndex(
+          {productName: "text" }
+      )
+
+      //leverages mongo's full text search capabilities:
+      db.products.find({ $text: {$search: "t-shirt" }})
+    #+END_SRC
+    
+    Will create 5 indexes: mongodb, long, sleeve, t, shirt.
+    Take note that this type of index will take a lot longer to write. One way to make this a bit better is to use compound indexes, like including category as first index key.
+    Text queries logically or, so searching for like $search: "mongodb long" will do "mongodb" or "long". You can project a text score and then sort by it, which will sort according to how well it searched
+
+    #+BEGIN_SRC javascript
+      db.products.find(
+          { $text: { $search: "MongoDB long" } },
+          { $meta: "textScore" }
+      ).sort( {
+          score: {$meta: "textScore" }
+      })
+    #+END_SRC
+
+*** Collations
+    Settings for specific locale's. Can specify different collation's for indexes
+    #+BEGIN_SRC javascript
+      db.foreign_text.createIndex(
+          {name: 1},
+          {collation: {locale: 'it'}}
+      )
+      //to use, the query must match the collation
+      db.foreign_text.find({name: "x"}).collation({locale: 'it'})
+    #+END_SRC
+   
+    Can add strength: 1 to the collation to ignore case
+
+*** Building Indexes
+   Foreground indexes will block the entire databases until build is complete.
+   Background indexes don't block operations, but take a lot longer and will still impact queries. (to indicate background, add extra document to createIndex {"backround":true})
+
+**** Query Plans
+    Plan created when a query is run. Multiple will be created and best one is then chosen when running the plan
+    Starts by looking at the indexes to see which one(s) can be used, and then tries each of them and compares.
+    Plans are cached and cache cleared when: restart, threshold of factor of 10, index rebuilt or if index is created or dropped
+
+**** explain()
+     Create explainable object e.g. exp = db.people.explain(), and then do exp.find()
+     default is 'queryPlanner' (doesn't execute query), 'executionStats' and 'allPlansExecution' (both executes query)
+     Can store the explain output to a variable and access certain parts directly
+     
+     
+     #+BEGIN_SRC javascript
+       var exp = db.people.find({}).explain()
+
+       exp.executionStats.executionStages
+     #+END_SRC
+     
+     With shards, different shards might return different winningplans
+
+*** Force Index
+   Add .hint({..index..}) to force it to use index - use with caution
+   
+*** Resource allocation for indexes
+   RAM will be the biggest used resource for indexes
+
+*** How to determine index size
+    Mongo compass, or db.stats()
+    If there is no disk space left for indexes, they won't be created
+
+*** How to determine how much memory indexes uses 
+    db.col.stats({indexDetails: true})
+    It's quite a lot of data so rather assign it to a variable and then access certain parts, such as "indexDetails"
+     #+BEGIN_SRC javascript
+       stats = db.col.stats({indexDetails: true})
+       stats.indexDetails
+       //look at further details per index e.g.
+       stats.indexDetails.index_name.cache //contains total bytes currently in cache
+     #+END_SRC
+
+*** Edge cases of indexes
+*** Occasional reports and needing indexes to support them
+    Indexes that are not being used should not exist. Indexes needed occasionally should not be in memory.
+    Can create indexes only on a secondary to be used specifically for a report
+
+*** right-end-side index increments
+    As we're inserting data, the index B-tree might always grow on the right-hand side and thus unbalanced.
+    We can then only check the right side of the index memory to know how much memory to allocate for a specific query. E.g. if you know you're only querying recently added data, it will only use the latest indexes, and thus do not need the entire index in memory.
+ 
+** Optimising CRUD queries
+
+*** Index Selection
+    Equality queries are better for use with indexes because it's very specific, whereas range queries are not specific
+    So selection is better with equality. Consider this in index order - keep equalities first
+    E.g.
+    #+BEGIN_SRC javascript
+      db.col.find({"zipcode": 1000}) //equality
+      db.col.find({"zipcode": {$gt: 5000}}) //range query
+    #+END_SRC
+    
+
+*** Equality, Sort, Range
+    Query and index for most performance e.g.:
+    #+BEGIN_SRC javascript
+      db.restaurants.find({'address.zipcode': {$gt: '5000'}, cuisine: 'Sushi' })
+          .sort({stars: -1})
+
+      db.restaurants.createIndex({ "cuisine": 1, "stars": 1, "address.zipcode": 1})
+    #+END_SRC
+    
+    Indexes should always be done in this order, first list equality, then sort, then range.
+
+
+*** Performance Tradeoffs
+    Sometimes it makes sense to be a little bit less selective to prevent an in memory sort, because execution time will be less.
+    In the example above, stars and zipcode was switched, because having the stars last makes it do an in memory sort.
+    In the current order it will examine more keys, but only do an index scan followed by a fetch, which has a much lower execution time than before.
+
+*** Covered Queries
+    The entire query is serviced by index keys. 0 documents to be examined
+    One way to do this is by adding a projection which only contains the index keys, this way mongo can run the query and return values by only using index. (note _id: 0). 
+    
+    Covered queries only work if all the fields are in the query and in the projection. Using the opposite projection by ommitting fields, even if the rest that are left over are all in the index,
+    it will not be covered - how is mongo to know for sure that ALL documents only have the index fields left.
+
+    You can't cover a query if
+    - Any of the index fields are arrays
+    - Any of the index fields are embedded documents
+    - When run against a mongos if the index does not contain the shard key
+      
+*** Regex Performance
+    Regex is not very performant in general.
+    
+    #+BEGIN_SRC javascript
+      db.users.find({username: /kirby/})
+      //if there is an index on username it will be a bit faster, however for the regex it will still
+      //have to check every index key
+
+      //to make it better, by specifying ^ to say "begins with kirby":
+      db.users.find({username: /^kirby/})
+
+    #+END_SRC
+    
+*** Insert Performance
+**** Write concern
+     w: how many members of replica set we're waiting for to acknowledge write, a number or 'majority'
+     j: journal - should we wait for the on-disk journal to be written
+     wtimeout: how long (in ms) we want to wait for the write acknowledgement before timing out
+    
+   Indexes affect write time, as it needs to write to the B-tree as well.
+
+   To set writeConcern in Java:
+   #+BEGIN_SRC java
+     MongoClient mongoClient = new MongoClient();
+
+     db = mongoClient.getDatabase("test");
+     coll = db.getCollection("coll");
+
+     WriteConcern w = new WriteConcern();
+
+     //withW: number, 1 = primary only, 2 = primary and 1 secondary etc, or "majority"
+     //withJournal: true / false
+     w = w.withW(1).withJournal(false);
+
+     coll = coll.withWriteConcern(w);
+
+   #+END_SRC
+   
+**** Index Overhead
+     Test run on the dude's imac, so just a general idea, not 100% accurate for prod clusters
+
+   |          Number of indexes |    0    |   1    |   5    |
+   |----------------------------+---------+--------+--------|
+   |        Average inserts/sec | ~ 16000 | ~15000 | ~10500 |
+   |----------------------------+---------+--------+--------|
+   | Percent loss from baseline |   0%    |  ~6.3% | ~34.4% |
+   |----------------------------+---------+--------+--------|
+   
+   
+   Write Concern:
+   
+   | Write Concern              | { w: 1,   | {        | {               | {               |
+   |                            | j: false, |  w: 1,   |  w: "majority", |  w: "majority", |
+   |                            | }         |  j: true |  j: false       |  j: true        |
+   |                            |           | }        | }               | }               |
+   |----------------------------+-----------+----------+-----------------+-----------------|
+   | Average inserts/sec        | ~ 27000   |  ~19000  |      ~16000     |     ~14000      |
+   |----------------------------+-----------+----------+-----------------+-----------------|
+   | Percent loss from baseline |    0%     |  ~29.6%  |      ~40.7%     |      48.1%      |
+   |----------------------------+-----------+----------+-----------------+-----------------|
+   
+
+*** Data Type Implications
+    Query matching:
+    Need to specify the type if using something specific e.g. NumberDecimal - 2.34 and NumberDecimal(2.34) are not the same thing
+    
+    For sorting, when one field has different values, bson types are sorted as follows:
+    1. MinKey (internal type)
+    2. Null
+    3. Numbers (ints, longs, doubles, decimals
+    4. Symbol, String
+    5. Object
+    6. Array
+    7. BinData
+    8. ObjectId
+    9. Boolean
+    10. Date
+    11. Timestamp
+    12. Regular Expression
+    13. MaxKey (internal type)
+        
+    Same grouping will happen on an index. The B-tree will actually group it by the above data types
+    
+*** Aggregation performance
+**** Index Usage
+     Some pipeline stages uses indexes, and some don't. If a stage is not using an index, none of the stages after it will use indexes
+     
+     #+BEGIN_SRC javascript
+       db.coll.aggregate([
+           { ... }
+       ], {explain: true})
+     #+END_SRC
+***** Match 
+     Can use an index, especially if it is early in the pipeline.
+***** Sort
+     Keep it early in the pipeline as well for index usage to avoid in memory sorting.
+***** limit
+      Keep it close to the match and sort (e.g. match, limit, sort), because then it can use a top-k sorting algorithm
+
+**** Memory Constraints
+     Documents has 16 MB limit
+     For this reason, use $limit and $project
+     100MB RAM per stage limit (can use allowDiskUse: true - last resort!)
+      -- allowDiskUsage does not work with GraphLookup
+      
+** Performance of distributed systems 
+   In sharding - define what is a good shard key by knowing how data is accessed. 
+   
+   Because a sharded cluster contains MongoS + config servers + shard nodes latency does have an effect. Having the mongos on the same server as the client application an help.
+   
+*** Reads on Sharded Clusters
+   Two types of reads in sharded clusters, depending on whether we're using the shard key in our queries or not
+   1. Scatter Gather - ask every shard node
+   2. Router queries - ask a specific node
+      
+*** Sorting in a sharded cluster (same logic for skip or limit)
+    mongos will send the sort query to each relevant shard, local sorting will be done on each shard, and then a final merge sort happens on the primary shard
+
+** Increasing write performance with sharding
+   Each shard contains chunks with a lower and upper bounds based on the shard key. It is important to make sure that data is spread evenly across chunks.
+
+   Three things to keep in mind (typically, try to avoid to have the upper and lower bounds be the same value in chunks
+*** Cardinality
+    Number of distinct values for a given shard keys. We want a high cardinality. E.g. country will be very low. To increase cardinality one can use compound keys
+    
+*** Frequency
+    Even distribution of each value across shards. E.g. for surnames in SA "M" would be a LOT more than the rest.
+
+*** Rate of change
+    How our values change over time. Avoid monotonically increasing or decreasing values. E.g. ObjectID is monotonically increasing. - all of the shards will go to the "last" shard close to "maxKey".
+    Can add e.g. _id to your shard key if it's the last value in your compound key. This can be a good idea as it increases cardinality as the value will always be unique.
+
+*** Bulk Writes
+    Ordered bulk writes - will write in order, waiting for one operation to finish before starting the next one. Unordered will do all in parallel.
+    
+    In replica sets the writes will all happen on the primary, whereas with a sharded cluster it will happen on the relevant shard, which increases time due to latency.
+    
+    Unordered - parallel on sharded cluster will be faster. Keep in mind that mongos will need to deserialize each write before sending it to the relevant shard.
+
+** Reading from Secondaries
+   Default read preference is "primary".
+   Can set it to secondary, secondaryPreferred or nearest
+   Need to know that if you read from secondaries we're not guaranteed to read the most up to data
+
+*** When is it a good idea?
+    Offload work - e.g. analytics / reporting
+    Local reads in geographical spread replica sets, e.g. if users are split between east and west coast we can read from "nearest" (note they are ok to read stale data)
+
+*** When is it a bad idea?
+    In general it is a bad idea
+    Sharding increases capacity, not replication
+    Very bad idea to read from secondaries in shards, in fact never read directly from shards
+
+** Replica sets with differing indexes
+   This should be used with caution, not common practice - specific cases only
+   These nodes should not be able to become a secondary, because then the indexes will clash
+   
+   Example:
+   1 primary, 2 secondary
+   1 secondary with priority 0
+   #+BEGIN_SRC javascript
+       var conf = {
+           "_id": "M201",
+           "members": [
+               {_id: 0, "host": "127.0.0.1:27000" },
+               {_id: 1, "host": "127.0.0.1:27001" },
+               {_id: 2, "host": "127.0.0.1:27002", "priority": 0 }
+           ]
+       }
+
+     // running rs.isMaster() on the primary will result in 2 hosts an 1 passive
+     //next steps, connect to secondary
+     db.slaveOk()
+   #+END_SRC
+   
+   To create an index on a specific secondary, start it up as a standalone node (nb use the same dbpath), and then create index, shut it down and start up replica set again
+
+
+   
+** Aggregation Pipeline on a sharded cluster
+   Because data is distributed in a sharded cluster there is some additional work that needs to be done when performing aggregation.
+
+   When doing a match first, the chance is that all data from the match sits on one shard and thus the rest of the aggregation can happen on one shard.
+   When just doing something like a group, work will be done on each shard, and then merged on one shard (randomly chosen).
+
+   Random shard being chosen does not apply for $out, $facet, $lookup, $graphLookup - primary shard will run the merge
+   
+   Query optimiser will do some optimising such as moving a match before a sort, or combine two stages into one.
+   
+
+
+* M310
+
+** Auditing (Chapter 3)
+
+Audit logs are output in bson or json, with the following format:
+
+#+BEGIN_SRC javascript
+  {
+      atype: <String>, //action type: authenticate, createIndex, createUser, addChart
+      ts: { //timestamp
+          "$date": <timestamp> //date and utc time
+      },
+      local: {
+          ip: <String> , port: <int>
+      },
+      remote: { //incoming event
+          ip: <String> , port: <int>
+      },
+      users: [
+          { user: <String>, db: <String> }, ...
+      ],
+      roles: [
+          { role: <String>, db: <String> }, ...
+      ],
+      param: <document>, //associated with atype
+      result: <int> //error code
+  }
+
+
+  //example of param:
+  {
+      atype: "authenticate",
+      ...
+          param: {
+              user: <user name>,
+              db: <database>,
+              mechanism: <mechanism>
+          }
+  }
+#+END_SRC
+
+*** How to enable
+
+Can output to system log, console or file. For file we need more arguments
+audit format BSON serialises to disk faster
+
+#+BEGIN_SRC bash
+  mongod --dbpath /data/db --logpath /data/db/mongo.log --fork --auditDestination syslog
+  mongod --dbpath /data/db --logpath /data/db/mongo.log --fork --auditDestination file --auditFormat JSON --auditPath /data/db/aditLog.bson
+#+END_SRC
+
+*** Default logging
+
+- Schema (DDL)
+- Replica Set and Sharded Cluster
+- Authentication & Authorization
+
+Note: CRUD can be audited, but is not enabled by default because it decreases performance (extra write per operation)
+
+*** Audit filter
+    Sample config.yaml with added filter
+    #+BEGIN_SRC yaml
+      systemLog:
+        destination: file
+        path: /data/db/mongo.log
+      storage:
+        dbPath: /data/db
+      auditLog:
+        destination: file
+        format: JSON
+        path: /data/db/auditLog.json
+        filter: '{ atype: { $in: [ "createCollection", "dropCollection" ] } }'
+    #+END_SRC
+
+    Can either run via the config or the auditFilter parameter
+    #+BEGIN_SRC bash
+      mongod --config config.yaml --fork
+      mongod --auditFilter xx
+    #+END_SRC
+
+*** DDL and DML
+    DDL = Data Definition Language (schema change)
+    - createCollection
+    - createDatabase
+    - createIndex
+    - renameCollection
+    - dropCollection
+    - dropDatabase
+    - dropIndex
+
+   *Create audit filter for DDL*
+   
+   Filter for getting all createIndex operations for "my application"
+    #+BEGIN_SRC yaml
+      # example namespace: my-application.product
+      # regex: ^ = starts with, \. = . directly after
+        auditLog:
+          filter: '{ atype: "createIndex",  "param.ns": /^my-application\./ }'   
+    #+END_SRC
+
+    DML = Data Manipulation Language (data change)
+    
+
+------------- Chapter 3 - DML operation, still need to do chapt 1 and 2 ----------

@@ -1,0 +1,149 @@
+#+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+OPTIONS: author:t broken-links:nil c:nil creator:nil
+#+OPTIONS: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
+#+OPTIONS: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+OPTIONS: timestamp:t title:t toc:t todo:t |:t
+#+TITLE: MapR Spark Notes
+#+DATE: <2019-07-01 Thurs>
+#+AUTHOR: Mercia Malan
+#+EMAIL: malan747@gmail.com
+#+TOC: nil
+#+LANGUAGE: en
+#+SELECT_TAGS: export
+#+EXCLUDE_TAGS: noexport
+#+CREATOR: Emacs 27.0.50 (Org mode 9.1.9)
+#+OPTIONS: html-link-use-abs-url:nil html-postamble:auto
+#+OPTIONS: html-preamble:t html-scripts:t html-style:t
+#+OPTIONS: html5-fancy:nil tex:t
+#+HTML_DOCTYPE: xhtml-strict
+#+HTML_CONTAINER: div
+#+HTML_HEAD: <link rel="stylesheet" href="./bootstrap.css" />
+#+HTML_HEAD: <style type="text/css"> body { width: 70em; margin: 50px 100px; } </style>
+#+CREATOR: <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.0.50 (<a href="https://orgmode.org">Org</a> mode 9.1.9)
+
+* MapR Spark Developer Exam Prep 
+
+** Introduction to Apache Spark
+
+*** Basics
+- Deployment using Mesos, Yarn or standalone
+- Storage HDFS or S3
+- Languages: Scala, Python, Java, SparkR
+- Components: 
+  - Spark Streaming (live streams, micro batching)
+  - Spark MLlib (machine learning)
+  - Spark SQL (structured data, query with SQL/HQL)
+  - Spark GraphFrames (graphs)
+- Spark on hadoop takes advantage of storage and processing scale
+
+Example (word count):
+
+#+BEGIN_SRC scala
+  val dataDS = spark.read.text("path/to/wordcount.txt").as[String]
+  val wordDS = dataDS.flatMap(value => value.split("\\s+"))
+  val groupDS = wordDS.groupBy(_.toLowerCase)
+  val wordCountDS = groupDS.count()
+  wordCountDS.show()
+#+END_SRC
+
+*** Create Datasets
+
+Get data from multiple datasources:
+- Anything supported by Hadoop
+- Local
+- HDFS
+- Hive
+- HBase
+- JDBC databases
+- Cloud storage
+- Any other data source
+
+Data provides wrappers for: text, json, csv, parquet, sequence file, protocol buffer, object
+
+**** Dataset vs Dataframe
+
+*Dataset*
+- Collection of objects distributed across a cluster
+- Immutable once created
+- Data stored in tabular format
+- Fault-tolerant
+- Persist or cache in-memory or on disk
+- Known Schema
+- Uses RDDs under the hood
+
+*Dataframe*
+- Untyped dataset of type Row
+- Row is a collection of generic objects
+- Does not know the difference between e.g. string and int at compile time
+- Once computed can be converted to dataset of type T
+  - When schema is known, or
+  - using Case Class to infer the schema by reflection
+  - df.as[T]
+- Not known schema
+
+*Ways to define Schema*
+- Use Scala Case Class when columns and types are known at runtime
+  - restriction to 22 fields
+- Construct DSs or DFs programmatically when columns and types are not known until runtime
+  - Can have more than 22 fields
+
+*** Spark interactive shell
+- Uses scala / python REPL (read-evaluate-print loop)
+- SparkSession initialized on shell start up
+
+
+*** Different ways to load data
+#+BEGIN_SRC scala
+  spark.read.load("xx.parquet") //Default type is parquet
+  spark.read.load(path).format(type) //JSOn, Parquet, CSV
+  spark.read.text //loads a text file into Dataset[String]
+  spark.read.jdbc(URL, Table, Connection_Properties) //Returns dataframe
+  spark.read.csv(path) //load csv similar to load(..).format("csv")
+  spark.read.json(path)  //similar to load(..).format("json")
+  spark.read.parquet(path) //similar to load(..).format("parquet")
+#+END_SRC
+
+**** Define schema as case class
+Example:
+#+BEGIN_SRC scala
+  import spark.implicits._
+
+  //Can also use complex types for nesting
+  case class Incidents(incidentNum: String, category:String, description: String)
+
+  val sfpdDS = spark.read.csv("sfpd.csv").as[Incidents]
+
+  sfpdDS.createTempView("sfpd")
+#+END_SRC
+
+**** Create dataframe and construct schema programmatically
+#+BEGIN_SRC scala
+  import spark.implicits._
+  import org.apache.spark.sql.types._
+
+  val sfpdSchema = StructType(Array(
+    StructField("incidentnum", StringType, true),
+    StructField("category", StringType, true),
+    StructField("description", StringType, true)))
+
+  val sfpdDF = spark.read.format("csv".schema(sfpdSchema).load("sfpd.csv")
+    .toDF("incidentnum", "category", "description")
+  sfpdDF.createTempView("sfpd")
+#+END_SRC
+
+**** Infer schema by reflection
+#+BEGIN_SRC scala
+  import spark.implicits._
+
+  val sfpdDF = spark.read.format("csv").option("inferSchema", true)
+  .load("sfpd.csv").toDF("incidentnum", "category", "description")
+
+  //Can also use complex types for nesting
+  case class Incidents(incidentNum: String, category:String, description: String)
+
+  sfpdDS = sfpdDF.as[Incidents]
+  sfpdDS.createTempView("sfpd")
+#+END_SRC
+
+
+*** 2.3.7 Lab - Load data and create datasets using reflection
