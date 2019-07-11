@@ -8,6 +8,7 @@
     - Copy everything in wallet (in case it gets stolen) - 2 copies, one for home, one for backpack
     - Print travel insurance 
     - Print medical insurance
+    - Print hotel reservations (in case phone gets stolen) 
 
 ** Miscellaneous
    
