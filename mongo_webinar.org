@@ -139,3 +139,17 @@
     Make further database changes, push data to other places, or interact with users
     
     E.g. if a record is written with user email, create trigger to welcome them.
+    
+* MongoDB Webinar : MongoDB & Microservices 1
+
+** MongoDB Enterprise Kubernetes Operators
+
+   looking at  >= v1.1 kubernetes (because that is where the operator was introduced
+   
+   operator is a single pods and it talks to ops manager and kubernetes pod controlers
+   
+   Kubernetes config, kind = MongoDB
+
+*** Demo
+
+
