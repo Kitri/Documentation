@@ -142,8 +142,28 @@ Example:
   case class Incidents(incidentNum: String, category:String, description: String)
 
   sfpdDS = sfpdDF.as[Incidents]
-  sfpdDS.createTempView("sfpd")
+  sfpdDS.createTempView("sfpd") //register as table so that we can query it with SQL
 #+END_SRC
 
 
 *** 2.3.7 Lab - Load data and create datasets using reflection
+
+    Run spark:
+    spark-shell --master yarn
+#+BEGIN_SRC scala
+  //Load data into dataset and assign type as String
+  val dataDS = spark.read.text("wordcount.txt").as[String]
+
+  //Use flatmap to split lines into words
+  val wordDS = dataDS.flatMap(value => value.split("\\s+"))
+
+  //change case to lowercase and group by key
+  val groupDS = wordDS.groupByKey(_.toLowerCase)
+
+  //count each group
+  val wordCountDS = groupDS.count()
+
+  //display
+  wordCountDS.show()
+
+#+END_SRC

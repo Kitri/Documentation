@@ -538,3 +538,50 @@ Note: CRUD can be audited, but is not enabled by default because it decreases pe
     
 
 ------------- Chapter 3 - DML operation, still need to do chapt 1 and 2 ----------
+
+* M320 Data Modelling
+** Constraints that affect your design
+*** Hardware
+    Storing all data in RAM would be great, but it's expensive. SSD's is the next best thing but can also be expensive
+*** Data
+    The size and security of the data needs to be kept in mind
+*** Application
+    Network latency
+*** Databse Server/MongoDB
+    Documents can't exceed 16MB. For reads, split frequently accessed data from less frequently accessed data. To read you also need to read the entire document into memory
+    Document writing is acid compliant
+
+** Working Set
+   The total body of data that the application uses in the course of normal operations
+   Frequently accessed data with indexes to be kept in memory if possible (ie keep working set in RAM)
+
+** The data modelling methodology
+*** Phase 1: Describe the workload,getting everything you need to know about how to use your data
+    Logs and stats gives additional information and will be useful
+    Create some artifacts from the data you have, e.g. size data, quantify ops, qualify ops
+    Record your assumptions
+
+*** Phase 2: Set up relationships
+    Start with data from previous phase. Determine relationships
+    Identify, quantify, embed or link
+
+*** Phase 3: Apply design patterns or transformations
+    Recognise and apply patterns needed for optimisation
+
+  If you track your assumptions as you make changes, it will be easier in the future to relect back to where you were at at the time of the change
+
+
+** Modelling for simplicity vs performance
+   Keeping related data in single collection keeps it simple, data access is just one read to the one collection, all data is together and easy to find.
+
+*** Model for Performance
+    Go through all the steps of methodologies and quantify:
+    operations per seconds
+    latency
+    attribution queries: e.g. can application work with data that's a little stale?
+    Tends to see more collections when modelling for performance
+
+
+    Prioritise simplicity over performance
+
+** Identify Workload
