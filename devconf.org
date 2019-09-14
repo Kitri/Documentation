@@ -1,0 +1,98 @@
+**  BIO 
+   My life journey consists of many adventures involving problem solving and art.
+
+   I started by learning the art of object oriented coding and soon transitioned into the world of data. I dabbled in the traditional SQL Business Intelligence and then found a passion for distributed processing with nosql databases and frameworks such as Apache Spark.
+
+   After some time I took up the additional role of team lead along with my "senior developer responsibilities" of several different teams over a few years. I went on some short management courses, did my scrum master certifications, spoke to many people and read a few books and eventually started semi getting the hang of this new "people side of things". I really enjoy facilitation and being able to make a difference in people's careers by helping them work towards their full potential.
+
+   Recently I moved back to a technical focused space, this time attempting Functional Programming. I learnt that even though I no longer have a "lead" title I still tend to apply the core skills I learnt as a lead to my every day work life.
+
+   Outside of work I like to climb every mountain and thus spend many weekends in nature on the side of some cliff. I also do ballroom dancing, occasional painting and outdoor photography. On less active weekends I like to engage in long, intense boardgame sessions.
+
+   I like VIM and Emacs (.. on evil mode). And potatoes.
+
+** Talk 1 Notes
+*** Title
+    5 Things the BI, OO and FP worlds could learn from each other, from someone who has lived in all 3
+
+*** Talk Description 
+    
+    Object Oriented programming, Business Intelligence and Functional programming sound like 3 completely different, unrelated "worlds". Having worked in all three of these worlds I have found 
+    similarities and major differences, especially concerning the mindset needed to solve problems in these different realms. The approach to tackling a problem may be completely
+    different depending on which world you are working in, however, having knowledge from the other worlds and seeing things from a different perspective may help you in finding a creative solution
+    that you would not normally have thought of.
+
+    In this session I want to highlight some things that each of these "worlds" does well and that the other worlds can learn from. I believe I have a unique perspective on things due to having worked 
+    in BI and having moved into FP with a data mindset and not only the typical OO mindset. 
+
+*** Notes
+    - Art of OO/FP/BI
+    - Mindset
+    - Approach to solving problems
+**** FP: 
+     - Stateless
+     - Concurrency
+     - monads 
+       - allows for error bubbling
+       - can do set wise operations such as map
+     - no loops
+     - immutable
+     - Design can be elegant (if you understand the complex workings under the hood)
+     - Hard to learn
+
+**** OO
+     - Object based
+     - Work with 1 item at a time
+     - Transformation done on a single object at a time
+     - Mutable objects
+     - Not concurrent safe
+     - Design can become spaghetti easily
+     - Error handling all over
+     - Can miss errors
+     - State per object
+
+**** BI
+     - Work in sets
+     - Transformations on sets
+     - Allows for distributed processing
+     - Concurrency safe
+     - Errors per transaction
+     - Idempotent - it's ok to rerun the script
+     - Stores state but easy to change
+
+** Talk 2 Notes
+*** Title
+    5 core skills to help you become a better team lead - from an introvert dev who learnt the hard way 
+
+*** Talk Description
+There is a very common pattern in the developer industry to take the most senior technical person on the project and make them a team lead. Often times this person did not previously have to focus on
+the people they work with. For many people figuring out how to maximise your team and ensure they're happy and have warm fuzzy team feelings is not an easy task.
+
+In this session I will share my experience having been in that awkward position where I suddenly had to "lead a team" and then had to go through the long, difficult process of learning these "people skills"
+that I now needed along with my technical skills. I went on some short management courses at GIBS, did a scrum master course, spoke to many people and read some books. After some failed attempts at
+being a team lead I eventually started getting better at it. Just as I got used to and more comfortable with being the team lead, I decided to make a career change and moved back into a technical role.
+This was surprisingly challenging as I now had to be a team player again, did not have to pay extreme close attention to all of my team members and have one-on-ones when I sense something is wrong and the 
+finally accept and respect the new team lead and not try to take over from them.
+
+Finally I will explain some "core skills" that I have found make a huge difference to you as a leader and your team as individuals as well as the team as a whole. Some of these skills are easy to explain and
+may seem quite obvious, but they can be quite tricky to master, or even to be "ok" at. Sometimes just being ok at a skill already makes a big difference in team dynamics.
+ 
+
+*** Notes
+    Firstly, yes, your focus is now on the people and not only the tech.
+    - Regular one-on-ones
+    - Get to know the people in your team
+    - Understand levels of trust
+    - Values / ? / Action - always find out what the value was before judging the action
+    - Pay attention to the meta conversation
+    - Read books: 5 dysfunctions of a team, talking with tech leads
+    - Learn to facilitate
+    - Team building / activities. Going for coffee as a team can be magic!
+    - Maximise your team
+      - Find each person's strengths and figure out how to leverage it
+      - Also find people's growth areas and help them figure out how to grow in those areas
+      - Make sure that their strengths actually aligns with what they want to do - don't force them to do stuff they're good at which they hate!
+    - Be approachable
+    - Give the option of a 2ic or someone else they can approach in case they aren't comfortable doing it with you, or want to complain about you.
+
+
