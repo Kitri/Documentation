@@ -584,4 +584,592 @@ Note: CRUD can be audited, but is not enabled by default because it decreases pe
 
     Prioritise simplicity over performance
 
-** Identify Workload
+** Relationships
+   Entities (objects in mongo) and how they are related to each other
+
+*** Type and cardinality
+    - one-to-one
+    - one-to-many
+    - many-to-many
+
+    In big data, these cardinalities does not always make sense, and modelling it you can, for example, embed children into a parent since typically people don't have more than 2 children, but you can't embed your twitter followers.
+
+    We need to represent "one-to-many" in a better way
+
+**** Modified notations
+     Crow foot notation (one-to-zillions - based on one-to-many symbol but has 5 "fingers" instead of 3) and Numeral Notation ([min, likely, max])
+     This allows us to represent relationships in a more precise way.
+
+**** One-to-many relationship modelling
+     In mongo there are 2 main ways of modelling this relationship:
+     - Embed (usually in the entity most queried) - preferred, especially if the embedded document is small
+       - in the "one" side
+       - in the "many" side
+     - Reference (usually referencing in the "many" side) - note that mongo does not support foreign keys or cascade deletes, so if reference relationships change it needs to be manually changed in all places 
+       - in the "one" side
+       - in the "many" side
+
+**** Many-to-many relationship
+     In tabular databases we create a linking table
+     In MongoDB:
+     - Embed (usually, only the most queried side is considered)
+       - array of subdocuments in the "many" side
+       - array of subdocuments in the other "many" side
+     - Reference
+       - array of references in one "many" side
+       - array of references in the other "many" side
+     
+     Example: embed in the main side - results in duplication, indexing is done on the array
+     #+BEGIN_SRC javascript
+       //carts:
+       {
+           _id: <objectId>,
+           date: <date>,
+           items: [
+               {qty: xx,
+                item: { //copy of item from item collection
+                    _id: <int>,
+                    title: <string>
+                    ...
+                }
+               }
+               ]
+        
+       }
+
+
+       //items
+       {
+           _id: <int>,
+           title: <string>
+           ...
+       }
+     #+END_SRC
+     
+     Example: Using references
+     #+BEGIN_SRC javascript
+       //items [100K]
+       {
+           _id: <int>,
+           title: <string>,
+           sold_at [1,1000]: <string>
+
+       }
+
+       //stores [1000]
+       {
+           _id: <objectId>,
+           storeId: <string> //reference point
+           ...
+       }
+     #+END_SRC
+     
+    Example: Reference in the secondary side. Need a second query to get more information
+    #+BEGIN_SRC javascript
+      //items
+      {
+          _id: <int>,
+          ...
+      }
+
+      //stores
+      {
+          ...,
+          items_sold[1,10K,100K]: <int> //references _id above
+      }
+
+    #+END_SRC
+
+**** One-to-one relationship
+     Embed document:
+     - fields at same level
+     - grouping in sub-documents
+
+     Can split it up and reference the values
+
+     Examples:
+     #+BEGIN_SRC javascript
+       {
+           name: xx,
+           line1: xxx,
+           country: xxx
+       }
+
+       //recommended for one-to-one
+       {
+           name: xx,
+           address: {
+               line1: xx,
+               country: xx
+           }
+       }
+
+       //have a store and store_details, have a storeId in both.
+     #+END_SRC
+     
+**** one-to-zillios relationship
+     if the "many" is 10000 or more
+
+     How to model? Reference in the many/zillions side. Do not embed!
+     #+BEGIN_SRC javascript
+       //items [100K]
+       {
+           _id: <int>,
+           ...
+       }
+
+       //item_views [100B]
+       {
+           _id: <string>,
+           item_id: <int> //[0,1K, 100M]
+       }
+
+     #+END_SRC
+
+** Patterns
+   Pattern - e.g. design patterns
+
+   Patterns are to get the best out of your model. Applying patterns may lead to...
+   - Duplicating data across documents
+   - Accepting staleness in some pieces of data
+   - writing extra application side logic to ensure referential integrity (e.g. to remove links between data)
+
+   For a given piece of data..
+   - Should or could the information be duplicated or not?
+     - Resolve duplication with bulk updates
+   - What is the tolerated or acceptable staleness? 
+     - Resolve with updates based on change streams
+   - Which pieces of data require referential integrity?
+     - Resolve or prevent the inconsistencies with change streams or transactions
+
+**** Attribute Pattern
+     Polymorphis, can put different products in one collection even if they have different attributes. E.g. Coke, water and a charger in the same collection.
+     
+     Have some fields that are the same accross all documents, some that has the same name but different values, and then data that are in some documents but not in others.
+     
+     For optimized queries we'll need indexes, which may lead to many indexes. To make this better, use the attribute pattern.
+     
+     - Identify the fields you want to transpose (which exists in some documents but not all)
+     - Change it to a {key: xx, value: yy} structure 
+     - Can also add stuff, e.g. {"k":"capacity", "v":4200, "u": "mAh" } where u indicates the relationship between k and v
+     - Can now create an index on subdoc.k and subdoc.v
+     
+     Fields that share common characterestics
+     #+BEGIN_SRC javascript
+       //e.g.
+       {
+           "title": "Dunkirk",
+           ...
+           "release_USA": "2017/07/23",
+           "release_Mexico": "2017/08/01",
+           ...       
+       }
+
+       //using attribute pattern:
+       {
+           "title":"Dunkirk",
+           ...
+           "releases": [
+               {
+                   "k": "release_USA", "v":"2017/07/23"
+               }
+           ]
+       }
+
+       //Can now do things like:
+       db.movies.find({"releases.v":{$gte: "2017/07"}})
+     #+END_SRC
+     
+     Attribute pattern is helpful for these problems:
+     - Lots of similar fields
+     - Want to search across many fields at once
+     - Fields present in only a small subset of documents
+
+     Solution
+     - Break field/value into a sub-document with fieldA: field, fieldB: value
+
+     Use case examples:
+     - Characteristics of a product
+     - Set of fields all having the same value type such as a list of dates
+
+     Benefits and trade-offs
+     - Easier to index
+     - Allow for non-deterministic field names
+     - Ability to qualify the relationship of the original field and value
+     
+**** Extended reference pattern
+     before lookup: Application side
+     3.4+: $lookup, $graphLookup
+
+     Avoid a join by embedding the join table
+
+     e.g.
+     #+BEGIN_SRC javascript
+       //orders
+       {
+           order_id: xx,
+           customer_id: xx
+       }
+
+
+       //customer
+       {
+           customer_id: xx,
+           street: xx,
+           city: xx,
+           country: xx
+       }
+     #+END_SRC
+     
+     In this case we might be using orders a lot more often than customer (as aggregate root) and thus embedding some basic customer information inside orders may be a good idea.
+     Note, we only embed the most frequently queried fields from customer, leaving the rest behind in the customer collection
+     #+BEGIN_SRC javascript
+       //orders
+       {
+           order_id: xx,
+           customer_id: xx,
+           shipping_address: {
+               street: xx,
+               city: xx,
+               country:xx
+           }
+       }
+
+       //customer looks the same as above
+
+     #+END_SRC
+
+     Yes, we are duplicating data but we speed up the queries.
+     How to minimise duplication?
+     - For extended reference pattern, choose fields that do not change often
+     - Only bring the fields you need, you don't need all the information, can join to find that once in a blue moon
+
+     After a source is updated:
+     - What are the extended reference to changed
+     - When should the extended references be updated
+
+     Duplication may be better than a unique reference
+
+     E.g. In our example above, it actually works fine if the customer updates their address, because at the time of the order that was their shipping address, so we shouldn't change that.
+     Sometimes the updates also don't need to happen immediately accross all collections.
+     
+     Extended reference pattern summary:
+     Problem:
+     - Too many repetitive joins
+     Solutions:
+     - Identify fields on the lookup side
+     - Bring those fields into the main object
+     Use case examples:
+     - Catalog
+     - Mobile applications
+     - Real-time analytics
+
+     Benefits and Trade-offs
+     - Faster reads
+     - Reduce number of joins and lookups
+     - May introduce lots of dupilcation if extended reference contains fields that mutate a lot
+
+**** Subset Pattern     
+     
+     Mongo Working set is what is loaded into RAM, which is faster to access etc. What happens if the working set is bigger than RAM?
+     - Add RAM
+     - Scale horizontally
+     - Reduce the size of the working set
+
+     The key is to break up big documents
+     
+     E.g. movies that has all the details of the movie:
+     #+BEGIN_SRC javascript
+       //movies
+       {
+           title: x,
+           complete_script: "all the stuff",
+           cast: [ //[0,1000]
+               {name: xx, role: xx}
+           ]
+       }
+
+       //Split out e.g. script to movies_extra_info:
+       {
+           movie_title: xx,
+           complete_script: "all the stuff",
+       }
+     #+END_SRC
+     
+     Can also extract a subset of the cast to a separate collection, keeping only e.g. 20 of the cast in the array
+     #+BEGIN_SRC javascript
+       //movies
+       {
+           title: xx,
+           cast: [ //[0,20]
+               {name: xx, role: xx}
+           ]
+       }
+
+       //cast [0,1000]
+       {
+           name: xx,
+           role: xx
+       }
+     #+END_SRC
+     
+     Subset Pattern:
+     Problem:
+     - Working set is too big
+     -A lot of pages are evicted from memory
+     - A large part of documents is rarely needed
+
+     Solution:
+     - Split the collection in 2 collections:
+       - most used part of documents
+       - less used part of documents
+     - Duplicate part of a 1-N or N-N relationship that is often used in the most used sidd
+
+     Use Cases examples
+     - List of reviews for a product 
+     - List of commnents on an article
+     - List of actors in a movie
+
+     Benefits and Trade-Offs:
+     - Smaller working set, as often used documents are smaller
+     - Shorter disk access fo r bringin in additional documents from the most used collection
+     - More round trips to the server
+     - A little more space used on disk
+       
+**** Computed Pattern
+     Kind of Computations/Transformations applied to data:
+     - Mathematical Operations
+       - E.g. sum or aggregations
+       - If we're doing the same sum on a collection many times, it may be better to precalculate the sums and store it in a separate collection (i.e. instead of reading the same data a million times and applying the sum, just read it from the "sum" collection)
+       - Good example is viewings of movie screenings, since the views will be a lot and writes to screenings will be less. Each time we get a new screening, we add it to the count 
+     - Fan out .. (Do many tasks to represent one logical tasks ) [ Screenshot ]
+       - on Reads
+         - Every read needs to read from several different locations 
+       - on Writes
+         - Every write translates into writes to several documents
+         - By fanning out on writes, the read does not have to fan out anymore as the data is pre-organized at write teim
+         - Why use fan out on writes?
+           - If the system has plenty of time when the information arrives compared to the acceptable latency of returning data on read operation, then preparing the data at write time makes a lot of sense.
+           - Note that if you are doing more writes then reads so the system becomes bound by writes, this may not be a good pattern to apply.
+       - A good example for this pattern is the social networking site for sharing photos
+         - Copy photos that the user follows onto their profile, so that each time they load their profile it does not have to fetch all the photos from all the users they follow.
+    - Roll Up Operations
+      - Typically in reporting of financial data
+      - Running a group operation
+      - Example: We have wine types which contains the type and the country. We may want to look at it by a specific category, such as country. It may make sense to then create collections of this aggregated view
+      
+    When should we use computed pattern?
+    - Overuse resources (CPU)
+    - Reduce latency for read operations (If you have long read operations that depend on complex operations)
+
+    Summary:
+    Problem:
+    - Costly computation or manipulation of data
+    - Executed frequently on the same data, producing the same result
+
+    Solution
+    - Perform the operation and store the result in the appropriate document and collection
+    - If need to redo the operations, keep the source of them
+
+    Use Case Examples
+    - IOT
+    - Event Sourcing
+    - Time Series data
+    - Frequent Aggregation Framework queries
+
+    Benefits and Tradeoffs
+    - Read queries are faster
+    - Saving on resources like CPU and Disk
+    - May be difficult to identify the need
+    - Avoid applying or overusing it unless needed (may add unwanted complexity)
+
+
+*** Bucket Pattern
+    It is important to find the middle solution. In the case where you have a 10 mil temperature sensors that sends the data to the db every minute.
+    We can't store each of these in it's own document because you will just have way too many documents and it will become unmanageable.
+    If we keep 1 document per device it may reach the 16MB quickly, and become unmanageable.
+    
+    So what do we do?
+
+    Perhaps create one document per device per day. Can also have one array per hour on this document.
+    Or one document per device per hour? Then we have smaller documents and can use a sub document with the temperature data instead of an array
+
+    The concept of grouping information together is called bucketing. Bucketing is often done with a date, which makes it easy to delete archive data.
+
+    Gotchas with Buckets:
+    - Random insertions or deletions in buckets, if you need to frequently access data in buckets to insert or delete, this may not work
+    - Difficult to sort across buckets
+    - Ad hoc queries may be more complex, again across buckets
+    - Works best when the "complexity" is hidden through the application code
+
+    Summary:
+
+    Problem
+    - Avoiding too many documents or too big documents
+    - A 1-to-many relationship that can't be embedded
+
+    Solution
+    - Define the optimal amount of information to group together
+    - Create arrays to store the information in the main object
+    - It is basically an embedded 1-to-many relationship, where you get N documents, each having an average of Many/N sub documents
+
+    Use cases examples
+    - IoT
+    - Data warehouse
+    - Lots of information associated to one objects
+
+    Benefits and trade-offs
+    - Good balance between number of data acces and size of data returned
+    - Makes data more manageable
+    - Easy to prune data
+    - Can lead to poor query results if not designed properly
+    - Less friendly to BI tools as you will need to know the schema to be able to form your queries properly
+      
+*** Schema Versioning Pattern
+    Need to alter the schema a some point
+    Have "schema_version" field in each document.
+
+    Application lifecycle for this change:
+    - Modify Application
+      - Can read/process all versions of documents
+        - Have different handler per version
+        - Reshape the document before processing it
+    - Update all Application servers
+      - Install updated application
+      - Remove old processes
+    - Once migration completed
+      - remove the code to process old versions
+    
+    Document Lifecycle
+    - New Documents:
+      - application writes them in latest versions
+    - Existing documents
+      A use updates to documents
+      - to transform to latest version
+      - Keep forever documents that never need an update
+      B ... or transform all
+      - documents in batch
+        - no worry even if process takes days
+
+    Summary:
+    Problem
+    - Avoid downtime while doing schema upgrades
+    - Upgrading all documents can take hours, days or even weeks when dealing with big data
+    - don't want to update all documents
+
+    Solution:
+    - Each document gets a "schema_version" field
+    - Application can handle all versions
+    - Choose your strategy to migrate the documents
+
+    Use case examples
+    - Every app that use a database, deployed in production and heavily used
+    - System with a lot of legacy data
+
+    Benefits and Trade-Offs:
+    - No downtime needed
+    - Feel in control of the migration
+    - Less future technical Debt
+    - May need 2 indexes for same field while in migration period
+
+*** Tree patterns
+    For Hierarchical data, with direct relationship between parent and child
+    Answers these questions:
+    1. Who are the ancestors of Node X?
+    2. Who reports to Y?
+    3. Find all nodes that are under Z?
+    4. Change all categories under N to under P
+   
+    Model tree structures:
+    - Parent References
+      Document contains a parent field with reference to its parent
+      Good for question 2 and 4
+      #+BEGIN_SRC javascript
+        {
+            name: "office",
+            parent: "swag",
+        }
+        //example query to get all ancestors
+        db.categories.aggregate([{
+            $graphLookup: {
+                from: 'categories',
+                startWith: '$name',
+                conncetFromField: 'parent',
+                connectToField: 'name',
+                as: 'ancestors'
+            }
+        }])
+
+      #+END_SRC
+    - Child References
+      Array of children
+      Good for question 3
+      #+BEGIN_SRC javascript
+        {
+            name: "office",
+            children: ["books", "stickers"]
+        }
+      #+END_SRC
+    - Array of ancestors
+      Use an ordered array
+      Good for question 1,2,3
+      #+BEGIN_SRC javascript
+        {
+            name:  "Books",
+            ancestors: ["Swag", "Office"]
+        }
+      #+END_SRC
+    -Materialized Paths (modification of ancestors)
+     Use a string value with ancestors with some separator
+     Can only use if you need to know the ancestors of X
+     Only good for question 1
+     #+BEGIN_SRC javascript
+       {
+           name: "Books",
+           ancestors: ".Swag.Office"
+       }
+     #+END_SRC
+     
+     Can use a single index with regular expression to find a path
+     #+BEGIN_SRC javascript
+       //immediate ancestor of Y
+       db.categories.find({ancestors: /\.Y$/})
+
+       //if descends from X and Z
+       db.categories.find({ancestors: /^\.X.*Y/i})
+     #+END_SRC
+     
+     Summary:
+     Problem
+     - Representation of hierarchical structured data
+     - Different access patterns to navigate the tree
+     - Provide optimized model for common operations
+
+     Solution
+     - Different patterns
+       - Child Reference
+       - Parent Reference
+       - Array of ancestors
+       - Materialized Paths
+
+     Use Cases Exampe
+     - Org Charts
+     - Product Categories
+
+     Benefits and Trade-Offs
+     - Child REference
+       - Easy to navigate to children nodes or tree descending access patterns
+     - Parent Reference
+       - Immediate parent node discovery and tree updates
+
+*** Polymorphic Pattern
+    Can group things by either things they have in common or by their differences
+    E.g. if we have a customer and food from mexico and a customer and food from canada, we will probably group it by customer.
+    
+    Useful when you want to create a single view. Last name and surname is the same field but different names, merge into one name.
+    
+*** Approximation pattern
+    
+
+
+
