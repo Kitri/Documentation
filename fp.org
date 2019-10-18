@@ -1,0 +1,75 @@
+* Functional Programming with Scala
+** Basics
+*** Side Effects
+    Var are used for side effects. Side effects is imperative coding and not FP
+    println(), whiles, reassigning - all return Unit
+
+*** Expressions
+
+    EVERYTHING IN SCALA IS AN EXPRESSION
+
+    Math Expressions: + - * / & | ^ << >> >>> (last one is right shift with zero extension) - these cause side effects because they change variables
+    Boolean expressions: == != > >= < <=
+    Bitwise ! && || 
+    
+    
+**** Instructions vs expressions
+     Instruction is something you tell the computer to do (instructions are executed)
+     Expression has a value and/or a type (expressions are evaluated)
+
+
+     e.g. IF Expression: 
+     val aCondition = true
+     val aConditionedValue = if(aCondition) 5 else 3
+     
+     //a code block is an expression, the value of the expression is the value of the last value, so in this case it's a string
+     #+BEGIN_SRC scala
+       val aCodeBlock = {
+           val y = 2
+           val z = y + 1 
+           if(z > 2) "hello" else "goodbye"
+       }
+     #+END_SRC
+     
+*** Functions    
+    Calling a function is an expression
+    #+BEGIN_SRC scala
+      def aFunction(a: String): String = {
+      }
+
+    #+END_SRC
+    
+    Recursive function (use instead of loops):
+    #+BEGIN_SRC scala
+      def aRepeatedFunction(aStrin: String, n: Int): String = {
+        if(n == 1) aString
+        else aString + aRepeatedFunction(aString, n-1)
+      }
+    #+END_SRC
+    
+    Note: Compiler can infer types of functions, but not recursive functions
+    
+*** Recursion
+    Recursion happens in memory, so if it's too deep it will result in a stackoverflow error
+    
+    #+BEGIN_SRC scala
+      //normal factorial (runs out of memory around 500 depth
+      def factorial(n: Int): Int =
+        if(n <= 1) 1
+        else {
+          println("Computing factorial of " + n " - I first need factorial of " + (n-1))
+          val result = n * factorial(n-1)
+          println("Computed factorial of " + n)
+
+          result
+        }
+
+      def anotherFactorial(n: Int): Int = {
+        def factHelper(x: Int, accumulator: Int): Int =
+          if (x <= 1) accumulator
+          else factHelper(x - 1, x * accumulator)
+
+        factHelper(n, 1)
+      }
+    #+END_SRC
+    
