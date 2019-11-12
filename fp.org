@@ -71,5 +71,50 @@
 
         factHelper(n, 1)
       }
+
+
+      /*
+      This one works better than the original one
+
+       anotherFactorial(10) = factHelper(10,1)
+       = factHelper(10-1=9, 10 * 1)
+      = [else] factHelper(9-1=8, 9 * 10 * 1)
+      = [else] factHelper(8-1=7, 8 * 9 * 10 * 1
+      = ...
+      = [else] factHelper(3-1=2, 3 * 4 * ... * 10 * 1)
+      = [else] factHelper(2-1=1, 2 * 3 * 4 * ... * 10 * 1)
+      = [if] 1 * 2 * 3 * 4 ... * 10
+       ,*/
     #+END_SRC
     
+    Why does it work better? Because factHelper call is the last expression in the recursion loop, so does not have to store the previous result in memory to do additional computations on it (such as the n * factorial in the original one), it just replaces "factHelper(...)" with the new one. 
+
+    AnotherFactorial uses TailRecursion, where as factorial doesn't. The scala compiler is clever enough to know the difference.
+
+    Tail Recursion: Use the recursive call as the LAST expression.
+    Can add @tailrec above the function and the compiler will actually complain if your recursive call is not the last expression.
+    
+*** Call by name vs value
+
+#+BEGIN_SRC scala
+  def calledByValue(x: Long): Unit = {
+    println("by value: " + x)
+    println("by value: " + x)
+  }
+
+  def calledByName(x => Long): Unit = {
+    println("by name: " + x)
+    println("by name: " + x)
+  }
+
+
+
+  calledByValue(System.nanoTime())
+  calledByName(System.nanoTime())
+
+  /*
+   Output: by value prints the same amount twice and by name prints 2 different results
+   ,*/
+#+END_SRC
+
+Call by name passes the whole function, and is evaluated each time whereas the by value it evaluates the value and passes that value through to the function
