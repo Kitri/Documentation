@@ -118,3 +118,63 @@
 #+END_SRC
 
 Call by name passes the whole function, and is evaluated each time whereas the by value it evaluates the value and passes that value through to the function
+
+*** Default and Named Arguments
+
+Sometimes we have a function with a parameter that will always be called with the same value. This can make the function look ugly. Same as in java, just add "= value" to give it a default
+
+
+#+BEGIN_SRC scala 
+  def trFact(n: Int, acc: Int = 1): Int =
+    if (n <= 1) acc
+    else trFact(n-1, n*acc)
+
+  //can still call the function with a different value for detaulf parameter
+  val fact10 = triFact(10,2)
+
+  //can name the parameters or else if you want to ommit it, you have to give all the leading parameters
+
+  def fun(x: Int, y: Int, z: String)
+
+
+  fun(x = 1, y = 2, z = "test") //can also swap the order
+#+END_SRC
+
+*** Smart operations on Strings
+
+Prepending and appending:
+
+#+BEGIN_SRC scala
+  val aNumberString = "2"
+  println('a' +: aNumberString :+ 'z')
+#+END_SRC
+
+**** Scala specific interpolators
+***** S-interpolators
+      #+BEGIN_SRC scala
+        val name = "David"
+        val age = 12
+        println(s"Hello, my name is $name and I will be turning ${age + 1}") //can write any expression in the curly brackets
+      #+END_SRC
+
+***** F-interpolators
+      Used for formatted strings, similat to printf
+      #+BEGIN_SRC scala
+        val speed = 1.2f
+        val myth = f"$name can eat $speed%2.2f" //format to x.xx (so it will be 1.20
+      #+END_SRC
+
+      
+***** raw-interpolator
+ignores escaped raw characters
+
+#+BEGIN_SRC scala
+println(raw"This is a \n newline") //will print "This is a \n newline"
+
+val escaped = "This is a \n newline"
+println(raw"$escaped") //this will print a new line because the injected variable doesn't count as raw characters
+
+#+END_SRC
+
+
+

@@ -1,5 +1,0 @@
-#+SEQ_TODO: NEXT(n) TODO(t) WAITING(w) SOMEDAY(s) | DONE(d) CANCELLED(c)
-# Press shift + arrow to switch
-# Or ctrl + C + T and then the key in brackets above (e.g. w for waiting)
-* Listy
-** WAITING An item

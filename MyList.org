@@ -1,0 +1,29 @@
+#+SEQ_TODO: NEXT(n) TODO(t) WAITING(w) SOMEDAY(s) | DONE(d) CANCELLED(c)
+# Press shift + arrow to switch
+# Or C-c C-t and then the key in brackets above (e.g. w for waiting)
+# For Scheduling C-c C-s
+# Deadline C-c C-d
+# Switch to Agenda view C-c a a
+# Follow mode with Shift + F and move with F or B
+# Add to agenda list with M-x org-agenda-file-to-front
+
+* Things todo
+** Admin
+*** TODO [#B] Redo engineering log in org mode
+    SCHEDULED: <2019-11-15 Fri 08:00-09:00>
+*** TODO [#A] Find out if org mode can translate to phone
+
+** Work
+*** FP
+**** TODO [#B] Understand IO
+     SCHEDULED: <2019-11-13 Wed>
+**** TODO [#C] Understand ZIO
+     SCHEDULED: <2019-11-13 Wed>
+**** TODO [#A] Understand Futures
+     SCHEDULED: <2019-11-12 Tue>
+
+*** Mongo
+**** TODO [#B] Test Mongo Driver with concurrency
+     SCHEDULED: <2019-11-19 Tue>
+**** TODO [#A] MongoClient Singleton
+     SCHEDULED: <2019-11-14 Thu>
