@@ -16,16 +16,15 @@
     5 Things the BI, OO and FP worlds could learn from each other, from someone who has lived in all 3
 
 *** Talk Description 
-    
-    Object Oriented programming, Business Intelligence and Functional programming sound like 3 completely different, unrelated "worlds". Having worked in all three of these worlds I have found 
-    similarities and major differences, especially concerning the mindset needed to solve problems in these different realms. The approach to tackling a problem may be completely
-    different depending on which world you are working in, however, having knowledge from the other worlds and seeing things from a different perspective may help you in finding a creative solution
-    that you would not normally have thought of.
+    In my career I moved from Object Oriented Programming (OOP) to Business Intelligence (BI) and there after Functional Programming (FP). In doing so I gained valuable experience in working across these 3 completely different, yet somewhat similar "worlds".
 
-    In this session I want to highlight some things that each of these "worlds" does well and that the other worlds can learn from. I believe I have a unique perspective on things due to having worked 
-    in BI and having moved into FP with a data mindset and not only the typical OO mindset. 
+In this session I will dig deeper into each of these 3 worlds, share my experience about switching between them with the challenges I faced and discoveries I made throughout my career. Having worked in all three of these worlds I can confirm that they are indeed different, however, combining mindsets from each of these worlds can lead to better and more creative solutions. I specifically found that having a strong BI background has given me a unique perspective on things and also made my transition from OOP to FP easier.  
+
+I will highlight some things that each of these "worlds" do well that the other worlds can learn from and why it may be beneficial to know more about each of these different areas in order to build the ultimate software solution!
 
 *** Notes
+
+    In the software industry there are three major areas that people typically classify themselves under: Front-end, back-end and database. Splitting the back-end area into two: Object Oriented Programming (OOP) and Functional Programming (FP) we now have 4 major areas, or "worlds" of work. These 4 worlds require different mindsets and approaches to solving problems, which makes it difficult to switch from one to the other easily and leads to software engineers classifying themselves in one, maybe two, of these "worlds". 
     - Art of OO/FP/BI
     - Mindset
     - Approach to solving problems
@@ -65,18 +64,11 @@
     5 core skills to help you become a better team lead - from an introvert dev who learnt the hard way 
 
 *** Talk Description
-There is a very common pattern in the developer industry to take the most senior technical person on the project and make them a team lead. Often times this person did not previously have to focus on
-the people they work with. For many people figuring out how to maximise your team and ensure they're happy and have warm fuzzy team feelings is not an easy task.
+    People tend to be promoted to their level of imcompetence. In software this frequently manifests as taking the most technically skilled person, promoting them to team lead, and making them responsible for people-oriented tasks, which they have never had the opportunity to learn or exercise. For many people figuring out how to maximise your team and ensure they're happy and have warm fuzzy team feelings is not an easy task.
 
-In this session I will share my experience having been in that awkward position where I suddenly had to "lead a team" and then had to go through the long, difficult process of learning these "people skills"
-that I now needed along with my technical skills. I went on some short management courses at GIBS, did a scrum master course, spoke to many people and read some books. After some failed attempts at
-being a team lead I eventually started getting better at it. Just as I got used to and more comfortable with being the team lead, I decided to make a career change and moved back into a technical role.
-This was surprisingly challenging as I now had to be a team player again, did not have to pay extreme close attention to all of my team members and have one-on-ones when I sense something is wrong and the 
-finally accept and respect the new team lead and not try to take over from them.
+In this session I will share my experience having been in that awkward position where I suddenly had to "lead a team" and then had to go through the long, difficult process of learning these "people skills" that I now needed along with my technical skills. I went on some short management courses at GIBS, a scrum master course, spoke to many people, and read some books. After some failures, I eventually started getting better at it, but just as I got used to and more comfortable with being a team lead I decided to move back into a technical role. 
 
-Finally I will explain some "core skills" that I have found make a huge difference to you as a leader and your team as individuals as well as the team as a whole. Some of these skills are easy to explain and
-may seem quite obvious, but they can be quite tricky to master, or even to be "ok" at. Sometimes just being ok at a skill already makes a big difference in team dynamics.
- 
+I will explain some "core skills" that I have found make a huge difference to you as a leader and your team as individuals as well as the team as a whole, also how to step back from responsibilities you had previously. Some of these skills are easy to explain and may seem quite obvious to the non-introverts among us, but for the rest of us these lessons come only after years of experience and trial and error and it is my hope that I'm able to relay some of the lessons learnt through this talk.
 
 *** Notes
     Firstly, yes, your focus is now on the people and not only the tech.
