@@ -87,4 +87,14 @@ I will explain some "core skills" that I have found make a huge difference to yo
     - Be approachable
     - Give the option of a 2ic or someone else they can approach in case they aren't comfortable doing it with you, or want to complain about you.
 
+**** As a ex-team lead in a dev team, these are my experiences:
+- Was a lead, now I am a dev with a lead
+- lead in training and hard for me to step back to let them learn 
+- by default tuning in to team members and internally asking questions like "why is that person late for standup? What is the underlying reason?
+- Used to "calling the shots", I get to decide when other people take leave, where I also never really had to "ask permission" to take leave. Since I knew when my team was taking leave and where we were at with work I could make the call on whether it was a good time for me to take leave, and then after the decision discuss it with my team. Now I have to first discuss it with my team lead, which adds a different dimension to it
+- Used to running around between meetings, one-on-ones, checking in with my account manager about my team - if they need training etc, and when I get to code it's my own choice what I work on and when to do so. I could manage my own time, since I was too busy to commit to pairing 
+- Had to start introspecting to determine "what makes a good team member" .. and then try to be that person
+- I am now a full-time dev again and finding it challenging to focus on one thing for an extended period of time.
+- I held the space for my previous teams, now I need to be part of the team where the space had already been defined and I need to fit into the space
+
 
