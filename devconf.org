@@ -15,7 +15,12 @@
 *** TODO History of: Kotlin, Rust (other languages?)
 *** TODO List of languages used often-ish - add to history tree
 
-*** TODO Email rob and candice new BIO (and intro?)
+*** TODO Update Talk background
+*** TODO Email rob and candice new BIO and Talk background
+
+**** Links
+https://www.cs.kent.ac.uk/people/staff/dat/miranda/whyfp90.pdf
+https://alvinalexander.com/scala/fp-book/benefits-of-functional-programming
 
 **  BIO 
    My journey as a Software / BI Developer started in 2012 in the
@@ -35,6 +40,26 @@
 
    I like VIM, Emacs and potatoes.
 
+
+** Talk background
+In my career I moved from Object Oriented Programming (OOP) to
+Business Intelligence (BI) and there after Functional Programming
+(FP). In doing so I gained valuable experience in working across these
+3 completely different, yet somewhat similar "worlds".
+
+In this session I will dig deeper into each of these 3 worlds, share
+my experience about switching between them with the challenges I faced
+and discoveries I made throughout my career. Having worked in all
+three of these worlds I can confirm that they are indeed different,
+however, combining mindsets from each of these worlds can lead to
+better and more creative solutions. I specifically found that having a
+strong BI background has given me a unique perspective on things and
+also made my transition from OOP to FP easier.
+
+I will highlight some things that each of these "worlds" do well that
+the other worlds can learn from and why it may be beneficial to know
+more about each of these different areas in order to build the
+ultimate software solution!
 
 **  5 Things the BI, OO and FP worlds could learn from each other, from someone who has lived in all 3
 
