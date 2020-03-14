@@ -1,0 +1,18 @@
+* MongoDB World Talk
+
+** Notes 
+
+- Mongo has an official scala driver which is a wrapper of the java asynchronous driver
+- They introduced the observable concept which means that db operations returns an observable and is only kicked off when you subscribe to them
+- It has the option to convert observable to future
+- The issues we faced with this current format of the driver:
+  - The rest of the application does not understand the concept of observables and neither do the devs
+  - We use futures throughout the system so it is familiar and thus using the conversion to future makes sense
+  - The problems with futures that we had throughout our application was that a future gets created and a thread immediately starts up and executes the code. This means that you have very little to no control over in what order things execute
+  - John de goes introduced ZIO and we started transitioning to ZIO throughout the application
+  - We wrote an abstraction of the mongo driver to be used with the applciation, and it returns ZIO's instead of futures
+
+
+** Elevator Pitch
+
+** Description
