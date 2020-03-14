@@ -1,0 +1,41 @@
+* Mongo Upgrade Notes:
+
+** 3.0 -> 3.2
+
+Key features include WiredTiger as the default storage engine, replication election enhancements, config servers as replica sets, readConcern, and document validations.
+
+OpsManager 2.0 is also available. See the Ops Manager documentation and the Ops Manager release notes for more information.
+
+*** Compatibility Changes
+
+- Default storage engine now WiredTiger
+- Index version 0 will no longer work
+- MongoDB 3.2 changes the JavaScript engine from V8 to SpiderMonkey. The change allows the use of more modern JavaScript language features, and comes along with minor mongo shell improvements and compatibility changes.
+- Replica Set Changes:
+  - Non-voting members must have priority of 0.
+  - Members with priority greater than 0 cannot have 0 votes.
+- MongoDB 3.2 renamed the serverStatus.repl.slaves field to repl.replicationProgress
+- mongooplog is deprecated
+
+*** Upgrade
+You can upgrade from MongoDB 3.0 to 3.2 using a “rolling” upgrade to minimize downtime by upgrading the members individually while the other members are available:
+1. Upgrade secondary members of replica sets, one at a time:
+   - Shut down the mongod instance and replace the 3.0 binary with the 3.2 binary.
+   - Restart the member and wait for the member to recover to SECONDARY state before upgrading the next secondary member. To check the member’s state, issue rs.status() in the mongo shell.
+
+2. Step down the primary
+   - Connect a mongo shell to the primary and use rs.stepDown() to step down the primary and force an election of a new primary:
+
+3. Upgrade the primary
+   - When rs.status() shows that the primary has stepped down and another member has assumed PRIMARY state, upgrade the stepped-down primary:
+     - Shut down the stepped-down primary and replace the mongod binary with the 3.2 binary.
+     - Restart
+
+Replica set failover is not instant and will render the set unavailable to accept writes until the failover process completes. This may take 30 seconds or more: schedule the upgrade procedure during a scheduled maintenance window.
+
+MongoDB 3.2 generates core dumps on some mongod failures. For production environments, you may prefer to turn off core dumps for the operating system, if not already.
+
+
+** 3.2 -> 3.4
+
+*** Compatibility changes

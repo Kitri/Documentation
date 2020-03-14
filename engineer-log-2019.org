@@ -1,0 +1,194 @@
+#+TITLE: Engineer Impact Log 2019
+#+AUTHOR: Mercia Malan
+#+OPTIONS: TOC:nil
+
+* Impact Log
+
+** Quarter 2: 1 Mar 2019 - 31 May 2019
+
+- Current lead: Journey / Chester Cobus
+- Date of entry: [2019-05-31 Fri]
+
+*** What impact have you had in Jemstep (since your last entry)?
+
+I started my journey at Jemstep on 1 March 2019. As part of my journey
+I tried to be involved with as many things as I could. The first small
+impact I made was during the time I was setting up my computer where I
+identified some small things with dev setup that could be improved. I
+created a JIRA for it and also played the role of tester after
+Developer Productivity implemented the solution. Since I was
+journey'ing I decided to pay attention to how I experienced it and got
+involved with the cobalt_journey group to try help make it better. I
+had the idea of making the journey visible and with the help of Sandra
+and Sekai we drew the journey map that is still being used on the
+wall. 
+
+I got involved in quite a few core skills areas as I have some
+facilitation skills behind my name (and technically scrum master
+certification). Janco asked me to co-facilitate a global retrospective
+for the Navigators, which was still a very new thing at that
+point. Since I did that global retrospective, QA asked me to also
+facilitate their global retrospective as I was now "the expert". I
+shared some of my learnings about things that worked and didn't from
+these 2 retrospectives, which lead to other people furthering the
+process of making global meetings in general easier. While I was
+journeying with QA I identified a people disconnect in "central
+QA"/"Release management" and approached Kevin with the idea of
+facilitating a bootstrap for them along with Janco. After many
+conversations we started the process with 2 retrospectives instead
+(just for ground0 QA), with Kevin in South America and Mohini in Los
+Altos. I co-facilitated with Kevin (while he was with Bonzzu). The
+retrospectives highlighted that there are many concerns and
+frustrations and they identified a few themes to work on to progress
+to the eventual goal of autonomous squads. Before these 2
+retrospectives they did not have regular retro's, and these 2 helped
+them realise the need they have to talk about their problems and
+started having more regular retrospectives (I did not host the rest of
+them). 
+
+At the beginning of April while Kevin was in South America, we
+decided that we want to try include Rosario into ground0's chill-out
+Friday so Kevin and I facilitated a cross-continent charades game
+which turned out a lot better than we initially expected. Both teams
+enjoyed it and it helped a little with breaking the ice between the
+two locations. 
+
+After my journey I joined Ultramarine where my first
+impact was redesigning the board. They were playing with the idea of
+collecting infinity stones but they had no clarity on how to implement
+their "dreams". I facilitated a meeting to make their ideas concrete
+and then designed the board in a Marvel universe fashion to display
+the changes we discussed. The squad loved the board and it made people
+more eager to do things like involving testers early on - just so we
+can collect stones! 
+
+During my time at ultramarine I hosted a brownbag
+on advanced mongo queries after which I realised that the general
+knowledge of Mongo is quite low in the office. Since the brownbag
+people started involving me in their queries to help them with complex
+queries or improve performance or just review queries they have
+written. 
+
+Once I started reviewing queries I realised that there was a
+very flawed implementation of "auditing" manual database updates and I
+created a new way of doing this based on my past experience. I ran it
+through a few iterations with some people and finally released the
+"new official way" to write mongo scripts. I also created script
+templates and a confluence page for people to follow and thus far it
+seems that everyone seems to follow it pretty easily
+
+*** How have you grown?
+
+I moved out of a space of more leading than coding and grew back into more of a "technical person". I remembered a lot of facilitation techniques I've forgotten and have grown those skills.
+
+
+** Quarter 3: 1 April 2019 - 30 August 2019
+
+- Current lead: Chester Cobus
+- Date of entry: [2019-08-30 Fri]
+
+*** What impact have you had in Jemstep (since your last entry)?
+
+I got chosen to be one of the guinea pigs of the new champion role by
+becoming the MongoDB champion. By guinea pigging I mean that this is a
+new role and we do not have a lot of lessons learnt about this role
+yet. Throughout the past 3 months I took on the champion role and
+shared observations of the impact of the role on me, the squad and the
+greater jemstep with Chester and Kevin. The first thing I did as a
+champion was to facilitate a meeting with relevant parties (mostly
+SysEng) to discuss what is needed to upgrade our Mongo version, which
+is no longer supported, and devise a plan of how to get there. I
+continued helping out with queries and try to always explain why I
+request the changes that I do. I got some feedback on my champion role
+that people are less scared to write scary queries and approach me
+more often for reviews or help. The other impacts I had during these
+three months was to write a Kafka POC using the default Kafka driver
+as opposed to the akka one we are currently using in Stormsend so that
+we can start moving over (request from Partner Engineering). As part
+of the Kafka work I wrote some code which I converted to a ZIO app,
+and with the help of some colleagues we made the app as clean as we
+possibly could and it can now be used as a template for ZIO. This
+required me to learn ZIO from scratch, which is the same place where
+most Jemstep engineers are right now with regards to ZIO (hence the
+template). Lastly, I helped out at the Jemstep open day by drawing on
+boards on behalf of people who believes their hand writing is not
+legible, and designed a gamified map of the office with locations of
+where the important points of the day was which visitors could use to
+navigate the office. The feedback I got about the maps was quite
+positive.
+    
+
+*** How have you grown?
+- The biggest growth area during these 3 months was myself. I joined
+  the squad as a squad member where I was used to being a team lead. I
+  had to do a lot of self reflection to identify and analyse my
+  reactions to things and my feelings towards this new position. The
+  main things that I was used to that I was no longer responsible for
+  was to check in on team members and notice their behaviours. When
+  they do actions that gain a reaction from me (whether it's
+  frustration or happiness) I'm used to digging deeper and trying to
+  understand what the underlying cause for this action is. Not being
+  the team lead meant that this was no longer my
+  responsibility. Furthermore I now had to be lead and I had no idea
+  what <<<rephrse>>> how I like to be lead
+    
+
+** Quarter 4: 1 Oct 2019 - 13 December 2019
+
+- Current lead: Justin Wernick
+- Date of entry: [2019-12-12 Thur]
+
+*** What impact have you had in Jemstep (since your last entry)?
+
+A group of us identified issues in the navigator system and along with
+Kevin we discussed possible solutions to the problems raised. We
+redefined the guidelines around navigators per squad and changed the
+process to be more focused on collaboration and less on meetings. We
+spent some time iterating through different ways of making navigators
+effective and it is still an ongoing process. At Ultramarine I became
+involved in Multi-org and questioned everything which I believe helped
+the squad create a elegant solution. I've become quite involved in
+meetings around database design (mostly for the API's) and thus
+decided to do a data modelling course through Mongo University to
+increase my knowledge on the matter. 
+
+I identified a gap in the current MongoDB knowledge across the company
+and voiced that I think that I should do a deep dive into our mongo
+implementation so that I can further help make the database great
+again. I joined developer productivity so that I can focus on mongo
+and started with upgrading the Mongo instance across the code base.
+
+During my time at developer productivity I developed a standalone
+MongoDB library which can be plugged into any project. With the change
+of the structure into domain squads, this will be a shared library
+across microservices. The impact of this is that all domain squads can
+just use the library which saves them time and it also means there is
+a standard way of connecting to mongo and thus no squads needs to
+re-invent the wheel.
+
+Further duties in my squad includes being involved with many database
+scripts, reviewing and helping other people write better scripts. This
+oftentimes involved having zoom calls to Hyderabad to pair with the
+developers writing scripts.
+
+
+*** How have you grown?
+    I've grown my skills in Mongo, specifically around design and
+    script writing best practices. I have also grown quite a bit in
+    the functional programming / scala realm since joining developer
+    productivity as the MongoDB Library is a generic scala library. My
+    team is very knowledgeable in the functional programming realm and
+    they have spent a lot of time and effort teaching me the ways.
+    
+
+*** What is the future impact you would like to have?
+
+    Make the database great again. Spread the knowledge of Mongo and our implementation thereof. 
+    
+    I want to be part of the shared libraries being written in the "Platform and Developer Tools" squad to help the microservices focus on their domain work. 
+    
+    Lastly I want to assist in upgrading the MongoDB Server.
+
+
+
+    
