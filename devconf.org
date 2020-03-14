@@ -1,5 +1,23 @@
 **  BIO 
    My life journey consists of many adventures involving problem solving and art.
+** TODO list
+*** TODO Research FP
+**** TODO Read justin and Ed's notes
+*** TODO Research OO
+*** TODO Read and write up diffs Imperative vs Declarative. Are there other styles?
+  https://en.wikipedia.org/wiki/Declarative_programming  
+*** TODO Research BI
+**** TODO Read James' why BI-curious 
+  https://www.slideshare.net/JamesMcGillivray/why-you-should-be-bi-curious
+  https://jimbabwe.co.za/2017/05/23/bi-curious/
+
+*** TODO History of FP: Scala / Haskell
+*** TODO History of OO: C++, Java, C#
+*** TODO History of BI: SQL, MongoDB, MapReduce, Hadoop
+*** TODO History of: Kotlin, Rust (other languages?)
+*** TODO List of languages used often-ish - add to history tree
+
+*** TODO Email rob and candice new BIO (and intro?)
 
    I started by learning the art of object oriented coding and soon transitioned into the world of data. I dabbled in the traditional SQL Business Intelligence and then found a passion for distributed processing with nosql databases and frameworks such as Apache Spark.
 
