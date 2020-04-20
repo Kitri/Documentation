@@ -88,6 +88,10 @@ ultimate software solution!
      - Design can be elegant (if you understand the complex workings under the hood)
      - Hard to learn
 
+***** Slides
+
+
+
 **** OO
      - Object based
      - Work with 1 item at a time
@@ -99,6 +103,12 @@ ultimate software solution!
      - Can miss errors
      - State per object
 
+***** OO
+
+Object-oriented programming (OOP) is a programming language model that
+organizes software design around data, or objects, rather than
+functions and logic
+
 **** BI
      - Work in sets
      - Transformations on sets
@@ -108,6 +118,23 @@ ultimate software solution!
      - Idempotent - it's ok to rerun the script
      - Stores state but easy to change
 
+
+*** 1. It's all about the data
+
+In all the time I've spent across these 3 worlds I've seen one pattern
+emerge. It's all about the data. Regardless of whether you're working in BI or backend development. 
+
+The purpose of any application is to solve some business need. That
+solution requires the storage, reading and manipulation of data. 
+
+I'm sure you've all seen one of these patterns before:
+- embed all your information in one collection in nosql databases
+- have 40 columns of which 20 are null at all times in relational
+- have a "generic" table with column names such as "field1", "field2"
+- SQL table with an embedded xml field containing c
+
+These patterns does not only make BI impossible, but it really makes
+development hard. All those if statements and loops required  
 
 **  5 core skills to help you become a better team lead - from an introvert dev who learnt the hard way 
 *** Talk Description

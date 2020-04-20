@@ -1,0 +1,1451 @@
+% Created 2020-01-21 Tue 18:17
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\author{Mercia Malan}
+\date{\textit{<2019-06-13 Thu>}}
+\title{Mongo Documentation}
+\hypersetup{
+ pdfauthor={Mercia Malan},
+ pdftitle={Mongo Documentation},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 27.0.50 (Org mode 9.1.9)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+
+\section{M201}
+\label{sec:org3045f35}
+
+\subsection{Hardware:}
+\label{sec:org3799755}
+Database designed around the usage of memory
+\begin{itemize}
+\item aggregation, index traversing, write operations, query engine, connections(1mb per established connection)
+\end{itemize}
+
+By default mongo will try to use all cpu cores.
+
+Page compression, data calculation, aggregation, map reduce requires cpu cores
+
+Writing constantly to the same document - each document will block writes on that document, thus multiple writes to the same document won't be increased by concurrency
+
+\subsubsection{Persisting data}
+\label{sec:org774fb98}
+\begin{itemize}
+\item higher IOPS your server provides, the faster your writes and reads will be
+\end{itemize}
+
+Mongo will benefit from some, but not all raid architectures - such as 10. Discourage using raid 5 or 6 or 0. Raid 10 provides redundancy across drives and also optimised for read and write
+
+Mongo can use multiple disks
+
+\subsubsection{Network hardware}
+\label{sec:org84b520e}
+Faster and larger bandwidth, the faster. Firewalls, load balances etc also play a role in network latency.
+Make sure write \& read concern and read preference aligns with network architecure
+
+\subsection{Indexes:}
+\label{sec:org2a7a9f4}
+index keeps a reference to the document
+Also uses b-tree for storing index
+e.g.: lastname: 1
+
+acosta --> \{lastname: acosta \ldots{}\}
+bailey --> \{lastname: bailey \ldots{}\}
+
+writes, updates and deletes slows down the more indexes there are, thus try to not have many irrelevant indexes. Each write might need to rebalance b-tree
+
+\subsubsection{How is data stored on disk}
+\label{sec:org99952be}
+\begin{enumerate}
+\item WiredTiger
+\label{sec:orgf6eb9a6}
+Creates a file for each collection and each index
+Can run mongod with --directoryperdb and then it will create a sub directory per db
+Can run with --WiredTigerDirectoryForIndexes and inside each db sub directory it will create a "collections" and an "index" folders. This is useful if you want to create symbolic links to different disks.
+\end{enumerate}
+
+\subsubsection{Single Field Index}
+\label{sec:orgfcdbbef}
+Can specify index with dot notation for sub documents. It's bad practice to create an index on a subdocument field - rather create it on the nested field inside the sub document by using dot notation
+
+\subsubsection{Sorting and indexes}
+\label{sec:org6b046b7}
+When running a query with a sort on the field that is indexed, it will do an IXSCAN (index scan), because it uses the index keys to help with sorting. IXSCAN can either be forward or backward depending on the sorting direction vs the index. e.g. if the index is ascending (\{name: 1\}) and sort is ascending (.sort(\{name:1\}), forward ixscan would be used. if it was .sort(\{name: -1\}), it would use a backward ixscan.
+
+\subsubsection{Compound Indexes}
+\label{sec:org44729e3}
+For compound indexes it is still stored flat. e.g. on lastname and firstname, it will have index keys such as ("last","first") (such as in a telephone book).
+Compound indexes has index prefixes, which will be the first key, the first and second keys, the first, second and third keys etc.
+E.g.: \{last\(_{\text{name}}\): 1, first\(_{\text{name}}\): 1, age:1\}
+Prefixes: \{last\(_{\text{name}}\): 1\}, \{last\(_{\text{name}}\): 1, first\(_{\text{name}}\): 1\}
+Prefixes can also be scanned forward and backward, as long as the direction is either exactly what it is in the index, or the exact opposite
+
+\subsubsection{Multi-key Indexes}
+\label{sec:org5df66ae}
+When your index key is inside an array, it will create a key per value in the array. Can only create one multi-key indexes. (ie only one index that is in an array\}
+Multi-key indexes do not support covered queries
+E.g.
+\begin{verbatim}
+{
+  productName: ["x","y","z"],
+  stock: [
+      {name: "a", qty: 1},
+      {name: "b", qty: 2},
+      {name: "c", qty: 2},
+  ]
+}
+\end{verbatim}
+Can have an index on productName or on stock.qty, but not on both. Index on productName will create 3 index keys: x,y,z. 
+
+\subsubsection{Partial Indexes}
+\label{sec:org5d43042}
+Create an index on only a subsection of the data, for example:
+\begin{verbatim}
+{
+    "name" : "some restaurant",
+    "cuisine" : "Indian",
+    "stars" : 4.4,
+    "address": {
+        "street": "123 str",
+        "city": "New York"
+    }
+}
+
+db.restaurants.createIndex(
+    { "address.city": 1, "cuisine": 1 },
+    { partialFilterExpression: { 'stars': { $gte: 3.5 } } }
+)
+\end{verbatim}
+
+\subsubsection{Text Indexes}
+\label{sec:org5457ce7}
+\begin{verbatim}
+{
+    productName: "MongoDB long sleeve t-shirt",
+    category: "Clothing"
+}
+
+db.restaurants.createIndex(
+    {productName: "text" }
+)
+
+//leverages mongo's full text search capabilities:
+db.products.find({ $text: {$search: "t-shirt" }})
+\end{verbatim}
+
+Will create 5 indexes: mongodb, long, sleeve, t, shirt.
+Take note that this type of index will take a lot longer to write. One way to make this a bit better is to use compound indexes, like including category as first index key.
+Text queries logically or, so searching for like \$search: "mongodb long" will do "mongodb" or "long". You can project a text score and then sort by it, which will sort according to how well it searched
+
+\begin{verbatim}
+db.products.find(
+    { $text: { $search: "MongoDB long" } },
+    { $meta: "textScore" }
+).sort( {
+    score: {$meta: "textScore" }
+})
+\end{verbatim}
+
+\subsubsection{Collations}
+\label{sec:org47dd081}
+Settings for specific locale's. Can specify different collation's for indexes
+\begin{verbatim}
+db.foreign_text.createIndex(
+    {name: 1},
+    {collation: {locale: 'it'}}
+)
+//to use, the query must match the collation
+db.foreign_text.find({name: "x"}).collation({locale: 'it'})
+\end{verbatim}
+
+Can add strength: 1 to the collation to ignore case
+
+\subsubsection{Building Indexes}
+\label{sec:orgd769104}
+Foreground indexes will block the entire databases until build is complete.
+Background indexes don't block operations, but take a lot longer and will still impact queries. (to indicate background, add extra document to createIndex \{"backround":true\})
+
+\begin{enumerate}
+\item Query Plans
+\label{sec:orge6a2ba6}
+Plan created when a query is run. Multiple will be created and best one is then chosen when running the plan
+Starts by looking at the indexes to see which one(s) can be used, and then tries each of them and compares.
+Plans are cached and cache cleared when: restart, threshold of factor of 10, index rebuilt or if index is created or dropped
+
+\item explain()
+\label{sec:org7ee7093}
+Create explainable object e.g. exp = db.people.explain(), and then do exp.find()
+default is 'queryPlanner' (doesn't execute query), 'executionStats' and 'allPlansExecution' (both executes query)
+Can store the explain output to a variable and access certain parts directly
+
+
+\begin{verbatim}
+var exp = db.people.find({}).explain()
+
+exp.executionStats.executionStages
+\end{verbatim}
+
+With shards, different shards might return different winningplans
+\end{enumerate}
+
+\subsubsection{Force Index}
+\label{sec:org61f86a7}
+Add .hint(\{..index..\}) to force it to use index - use with caution
+
+\subsubsection{Resource allocation for indexes}
+\label{sec:org7c0d5b4}
+RAM will be the biggest used resource for indexes
+
+\subsubsection{How to determine index size}
+\label{sec:org93405a8}
+Mongo compass, or db.stats()
+If there is no disk space left for indexes, they won't be created
+
+\subsubsection{How to determine how much memory indexes uses}
+\label{sec:orgc0300f4}
+db.col.stats(\{indexDetails: true\})
+It's quite a lot of data so rather assign it to a variable and then access certain parts, such as "indexDetails"
+\begin{verbatim}
+stats = db.col.stats({indexDetails: true})
+stats.indexDetails
+//look at further details per index e.g.
+stats.indexDetails.index_name.cache //contains total bytes currently in cache
+\end{verbatim}
+
+\subsubsection{Edge cases of indexes}
+\label{sec:orgb732113}
+\subsubsection{Occasional reports and needing indexes to support them}
+\label{sec:org2aff24a}
+Indexes that are not being used should not exist. Indexes needed occasionally should not be in memory.
+Can create indexes only on a secondary to be used specifically for a report
+
+\subsubsection{right-end-side index increments}
+\label{sec:org3743f2c}
+As we're inserting data, the index B-tree might always grow on the right-hand side and thus unbalanced.
+We can then only check the right side of the index memory to know how much memory to allocate for a specific query. E.g. if you know you're only querying recently added data, it will only use the latest indexes, and thus do not need the entire index in memory.
+
+\subsection{Optimising CRUD queries}
+\label{sec:orgdab4444}
+
+\subsubsection{Index Selection}
+\label{sec:orgc02fae6}
+Equality queries are better for use with indexes because it's very specific, whereas range queries are not specific
+So selection is better with equality. Consider this in index order - keep equalities first
+E.g.
+\begin{verbatim}
+db.col.find({"zipcode": 1000}) //equality
+db.col.find({"zipcode": {$gt: 5000}}) //range query
+\end{verbatim}
+
+
+\subsubsection{Equality, Sort, Range}
+\label{sec:orgede5241}
+Query and index for most performance e.g.:
+\begin{verbatim}
+db.restaurants.find({'address.zipcode': {$gt: '5000'}, cuisine: 'Sushi' })
+    .sort({stars: -1})
+
+db.restaurants.createIndex({ "cuisine": 1, "stars": 1, "address.zipcode": 1})
+\end{verbatim}
+
+Indexes should always be done in this order, first list equality, then sort, then range.
+
+
+\subsubsection{Performance Tradeoffs}
+\label{sec:org9bd6cbc}
+Sometimes it makes sense to be a little bit less selective to prevent an in memory sort, because execution time will be less.
+In the example above, stars and zipcode was switched, because having the stars last makes it do an in memory sort.
+In the current order it will examine more keys, but only do an index scan followed by a fetch, which has a much lower execution time than before.
+
+\subsubsection{Covered Queries}
+\label{sec:org54d85df}
+The entire query is serviced by index keys. 0 documents to be examined
+One way to do this is by adding a projection which only contains the index keys, this way mongo can run the query and return values by only using index. (note \_id: 0). 
+
+Covered queries only work if all the fields are in the query and in the projection. Using the opposite projection by ommitting fields, even if the rest that are left over are all in the index,
+it will not be covered - how is mongo to know for sure that ALL documents only have the index fields left.
+
+You can't cover a query if
+\begin{itemize}
+\item Any of the index fields are arrays
+\item Any of the index fields are embedded documents
+\item When run against a mongos if the index does not contain the shard key
+\end{itemize}
+
+\subsubsection{Regex Performance}
+\label{sec:orgd55db12}
+Regex is not very performant in general.
+
+\begin{verbatim}
+db.users.find({username: /kirby/})
+//if there is an index on username it will be a bit faster, however for the regex it will still
+//have to check every index key
+
+//to make it better, by specifying ^ to say "begins with kirby":
+db.users.find({username: /^kirby/})
+
+\end{verbatim}
+
+\subsubsection{Insert Performance}
+\label{sec:orgc690189}
+\begin{enumerate}
+\item Write concern
+\label{sec:org0e13963}
+w: how many members of replica set we're waiting for to acknowledge write, a number or 'majority'
+j: journal - should we wait for the on-disk journal to be written
+wtimeout: how long (in ms) we want to wait for the write acknowledgement before timing out
+
+Indexes affect write time, as it needs to write to the B-tree as well.
+
+To set writeConcern in Java:
+\begin{verbatim}
+MongoClient mongoClient = new MongoClient();
+
+db = mongoClient.getDatabase("test");
+coll = db.getCollection("coll");
+
+WriteConcern w = new WriteConcern();
+
+//withW: number, 1 = primary only, 2 = primary and 1 secondary etc, or "majority"
+//withJournal: true / false
+w = w.withW(1).withJournal(false);
+
+coll = coll.withWriteConcern(w);
+
+\end{verbatim}
+
+\item Index Overhead
+\label{sec:org587059f}
+Test run on the dude's imac, so just a general idea, not 100\% accurate for prod clusters
+
+\begin{center}
+\begin{tabular}{llll}
+Number of indexes & 0 & 1 & 5\\
+\hline
+Average inserts/sec & \textasciitilde{} 16000 & \textasciitilde{}15000 & \textasciitilde{}10500\\
+\hline
+Percent loss from baseline & 0\% & \textasciitilde{}6.3\% & \textasciitilde{}34.4\%\\
+\hline
+\end{tabular}
+\end{center}
+
+
+Write Concern:
+
+\begin{center}
+\begin{tabular}{lllll}
+Write Concern & \{ w: 1, & \{ & \{ & \{\\
+ & j: false, & w: 1, & w: "majority", & w: "majority",\\
+ & \} & j: true & j: false & j: true\\
+ &  & \} & \} & \}\\
+\hline
+Average inserts/sec & \textasciitilde{} 27000 & \textasciitilde{}19000 & \textasciitilde{}16000 & \textasciitilde{}14000\\
+\hline
+Percent loss from baseline & 0\% & \textasciitilde{}29.6\% & \textasciitilde{}40.7\% & 48.1\%\\
+\hline
+\end{tabular}
+\end{center}
+\end{enumerate}
+
+
+\subsubsection{Data Type Implications}
+\label{sec:orgb63e555}
+Query matching:
+Need to specify the type if using something specific e.g. NumberDecimal - 2.34 and NumberDecimal(2.34) are not the same thing
+
+For sorting, when one field has different values, bson types are sorted as follows:
+\begin{enumerate}
+\item MinKey (internal type)
+\item Null
+\item Numbers (ints, longs, doubles, decimals
+\item Symbol, String
+\item Object
+\item Array
+\item BinData
+\item ObjectId
+\item Boolean
+\item Date
+\item Timestamp
+\item Regular Expression
+\item MaxKey (internal type)
+\end{enumerate}
+
+Same grouping will happen on an index. The B-tree will actually group it by the above data types
+
+\subsubsection{Aggregation performance}
+\label{sec:org9066cc5}
+\begin{enumerate}
+\item Index Usage
+\label{sec:org1d00f42}
+Some pipeline stages uses indexes, and some don't. If a stage is not using an index, none of the stages after it will use indexes
+
+\begin{verbatim}
+db.coll.aggregate([
+    { ... }
+], {explain: true})
+\end{verbatim}
+\begin{enumerate}
+\item Match
+\label{sec:org0236abf}
+Can use an index, especially if it is early in the pipeline.
+\item Sort
+\label{sec:org7e13c5f}
+Keep it early in the pipeline as well for index usage to avoid in memory sorting.
+\item limit
+\label{sec:org7a28ee6}
+Keep it close to the match and sort (e.g. match, limit, sort), because then it can use a top-k sorting algorithm
+\end{enumerate}
+
+\item Memory Constraints
+\label{sec:orge3d6c76}
+Documents has 16 MB limit
+For this reason, use \$limit and \$project
+100MB RAM per stage limit (can use allowDiskUse: true - last resort!)
+ -- allowDiskUsage does not work with GraphLookup
+\end{enumerate}
+
+\subsection{Performance of distributed systems}
+\label{sec:org5500721}
+In sharding - define what is a good shard key by knowing how data is accessed. 
+
+Because a sharded cluster contains MongoS + config servers + shard nodes latency does have an effect. Having the mongos on the same server as the client application an help.
+
+\subsubsection{Reads on Sharded Clusters}
+\label{sec:org00b80ad}
+Two types of reads in sharded clusters, depending on whether we're using the shard key in our queries or not
+\begin{enumerate}
+\item Scatter Gather - ask every shard node
+\item Router queries - ask a specific node
+\end{enumerate}
+
+\subsubsection{Sorting in a sharded cluster (same logic for skip or limit)}
+\label{sec:org5d3a349}
+mongos will send the sort query to each relevant shard, local sorting will be done on each shard, and then a final merge sort happens on the primary shard
+
+\subsection{Increasing write performance with sharding}
+\label{sec:orge6d0042}
+Each shard contains chunks with a lower and upper bounds based on the shard key. It is important to make sure that data is spread evenly across chunks.
+
+Three things to keep in mind (typically, try to avoid to have the upper and lower bounds be the same value in chunks
+\subsubsection{Cardinality}
+\label{sec:org10fbaa1}
+Number of distinct values for a given shard keys. We want a high cardinality. E.g. country will be very low. To increase cardinality one can use compound keys
+
+\subsubsection{Frequency}
+\label{sec:orgf9b8355}
+Even distribution of each value across shards. E.g. for surnames in SA "M" would be a LOT more than the rest.
+
+\subsubsection{Rate of change}
+\label{sec:org7e3b996}
+How our values change over time. Avoid monotonically increasing or decreasing values. E.g. ObjectID is monotonically increasing. - all of the shards will go to the "last" shard close to "maxKey".
+Can add e.g. \_id to your shard key if it's the last value in your compound key. This can be a good idea as it increases cardinality as the value will always be unique.
+
+\subsubsection{Bulk Writes}
+\label{sec:org961aba7}
+Ordered bulk writes - will write in order, waiting for one operation to finish before starting the next one. Unordered will do all in parallel.
+
+In replica sets the writes will all happen on the primary, whereas with a sharded cluster it will happen on the relevant shard, which increases time due to latency.
+
+Unordered - parallel on sharded cluster will be faster. Keep in mind that mongos will need to deserialize each write before sending it to the relevant shard.
+
+\subsection{Reading from Secondaries}
+\label{sec:org2907cbc}
+Default read preference is "primary".
+Can set it to secondary, secondaryPreferred or nearest
+Need to know that if you read from secondaries we're not guaranteed to read the most up to data
+
+\subsubsection{When is it a good idea?}
+\label{sec:org4fe6809}
+Offload work - e.g. analytics / reporting
+Local reads in geographical spread replica sets, e.g. if users are split between east and west coast we can read from "nearest" (note they are ok to read stale data)
+
+\subsubsection{When is it a bad idea?}
+\label{sec:org68d2390}
+In general it is a bad idea
+Sharding increases capacity, not replication
+Very bad idea to read from secondaries in shards, in fact never read directly from shards
+
+\subsection{Replica sets with differing indexes}
+\label{sec:orgd25a2d7}
+This should be used with caution, not common practice - specific cases only
+These nodes should not be able to become a secondary, because then the indexes will clash
+
+Example:
+1 primary, 2 secondary
+1 secondary with priority 0
+\begin{verbatim}
+  var conf = {
+      "_id": "M201",
+      "members": [
+          {_id: 0, "host": "127.0.0.1:27000" },
+          {_id: 1, "host": "127.0.0.1:27001" },
+          {_id: 2, "host": "127.0.0.1:27002", "priority": 0 }
+      ]
+  }
+
+// running rs.isMaster() on the primary will result in 2 hosts an 1 passive
+//next steps, connect to secondary
+db.slaveOk()
+\end{verbatim}
+
+To create an index on a specific secondary, start it up as a standalone node (nb use the same dbpath), and then create index, shut it down and start up replica set again
+
+
+
+\subsection{Aggregation Pipeline on a sharded cluster}
+\label{sec:orga7c6d95}
+Because data is distributed in a sharded cluster there is some additional work that needs to be done when performing aggregation.
+
+When doing a match first, the chance is that all data from the match sits on one shard and thus the rest of the aggregation can happen on one shard.
+When just doing something like a group, work will be done on each shard, and then merged on one shard (randomly chosen).
+
+Random shard being chosen does not apply for \$out, \$facet, \$lookup, \$graphLookup - primary shard will run the merge
+
+Query optimiser will do some optimising such as moving a match before a sort, or combine two stages into one.
+
+
+
+\section{M310}
+\label{sec:org145fb84}
+
+\subsection{Auditing (Chapter 3)}
+\label{sec:org0388abf}
+
+Audit logs are output in bson or json, with the following format:
+
+\begin{verbatim}
+{
+    atype: <String>, //action type: authenticate, createIndex, createUser, addChart
+    ts: { //timestamp
+        "$date": <timestamp> //date and utc time
+    },
+    local: {
+        ip: <String> , port: <int>
+    },
+    remote: { //incoming event
+        ip: <String> , port: <int>
+    },
+    users: [
+        { user: <String>, db: <String> }, ...
+    ],
+    roles: [
+        { role: <String>, db: <String> }, ...
+    ],
+    param: <document>, //associated with atype
+    result: <int> //error code
+}
+
+
+//example of param:
+{
+    atype: "authenticate",
+    ...
+        param: {
+            user: <user name>,
+            db: <database>,
+            mechanism: <mechanism>
+        }
+}
+\end{verbatim}
+
+\subsubsection{How to enable}
+\label{sec:org16b7043}
+
+Can output to system log, console or file. For file we need more arguments
+audit format BSON serialises to disk faster
+
+\begin{verbatim}
+mongod --dbpath /data/db --logpath /data/db/mongo.log --fork --auditDestination syslog
+mongod --dbpath /data/db --logpath /data/db/mongo.log --fork --auditDestination file --auditFormat JSON --auditPath /data/db/aditLog.bson
+\end{verbatim}
+
+\subsubsection{Default logging}
+\label{sec:org4e154bd}
+
+\begin{itemize}
+\item Schema (DDL)
+\item Replica Set and Sharded Cluster
+\item Authentication \& Authorization
+\end{itemize}
+
+Note: CRUD can be audited, but is not enabled by default because it decreases performance (extra write per operation)
+
+\subsubsection{Audit filter}
+\label{sec:orgc102ecc}
+Sample config.yaml with added filter
+\begin{verbatim}
+systemLog:
+  destination: file
+  path: /data/db/mongo.log
+storage:
+  dbPath: /data/db
+auditLog:
+  destination: file
+  format: JSON
+  path: /data/db/auditLog.json
+  filter: '{ atype: { $in: [ "createCollection", "dropCollection" ] } }'
+\end{verbatim}
+
+Can either run via the config or the auditFilter parameter
+\begin{verbatim}
+mongod --config config.yaml --fork
+mongod --auditFilter xx
+\end{verbatim}
+
+\subsubsection{DDL and DML}
+\label{sec:orgbc7f593}
+DDL = Data Definition Language (schema change)
+\begin{itemize}
+\item createCollection
+\item createDatabase
+\item createIndex
+\item renameCollection
+\item dropCollection
+\item dropDatabase
+\item dropIndex
+\end{itemize}
+
+\textbf{Create audit filter for DDL}
+
+Filter for getting all createIndex operations for "my application"
+\begin{verbatim}
+# example namespace: my-application.product
+# regex: ^ = starts with, \. = . directly after
+  auditLog:
+    filter: '{ atype: "createIndex",  "param.ns": /^my-application\./ }'   
+\end{verbatim}
+
+DML = Data Manipulation Language (data change)
+
+
+------------- Chapter 3 - DML operation, still need to do chapt 1 and 2 ----------
+
+\section{M320 Data Modelling}
+\label{sec:orgba8361d}
+\subsection{Constraints that affect your design}
+\label{sec:org8e6d27e}
+\subsubsection{Hardware}
+\label{sec:org8d9a813}
+Storing all data in RAM would be great, but it's expensive. SSD's is the next best thing but can also be expensive
+\subsubsection{Data}
+\label{sec:org5659989}
+The size and security of the data needs to be kept in mind
+\subsubsection{Application}
+\label{sec:org2e88520}
+Network latency
+\subsubsection{Databse Server/MongoDB}
+\label{sec:org0b91c99}
+Documents can't exceed 16MB. For reads, split frequently accessed data from less frequently accessed data. To read you also need to read the entire document into memory
+Document writing is acid compliant
+
+\subsection{Working Set}
+\label{sec:orgcf7ebbf}
+The total body of data that the application uses in the course of normal operations
+Frequently accessed data with indexes to be kept in memory if possible (ie keep working set in RAM)
+
+\subsection{The data modelling methodology}
+\label{sec:orgca903bc}
+\subsubsection{Phase 1: Describe the workload,getting everything you need to know about how to use your data}
+\label{sec:orgf305478}
+Logs and stats gives additional information and will be useful
+Create some artifacts from the data you have, e.g. size data, quantify ops, qualify ops
+Record your assumptions
+
+\subsubsection{Phase 2: Set up relationships}
+\label{sec:org417ce45}
+Start with data from previous phase. Determine relationships
+Identify, quantify, embed or link
+
+\subsubsection{Phase 3: Apply design patterns or transformations}
+\label{sec:org726f664}
+Recognise and apply patterns needed for optimisation
+
+If you track your assumptions as you make changes, it will be easier in the future to relect back to where you were at at the time of the change
+
+
+\subsection{Modelling for simplicity vs performance}
+\label{sec:orgaee798e}
+Keeping related data in single collection keeps it simple, data access is just one read to the one collection, all data is together and easy to find.
+
+\subsubsection{Model for Performance}
+\label{sec:orgef667a3}
+Go through all the steps of methodologies and quantify:
+operations per seconds
+latency
+attribution queries: e.g. can application work with data that's a little stale?
+Tends to see more collections when modelling for performance
+
+
+Prioritise simplicity over performance
+
+\subsection{Relationships}
+\label{sec:org4b25034}
+Entities (objects in mongo) and how they are related to each other
+
+\subsubsection{Type and cardinality}
+\label{sec:orge993382}
+\begin{itemize}
+\item one-to-one
+\item one-to-many
+\item many-to-many
+\end{itemize}
+
+In big data, these cardinalities does not always make sense, and modelling it you can, for example, embed children into a parent since typically people don't have more than 2 children, but you can't embed your twitter followers.
+
+We need to represent "one-to-many" in a better way
+
+\begin{enumerate}
+\item Modified notations
+\label{sec:orgb0d576a}
+Crow foot notation (one-to-zillions - based on one-to-many symbol but has 5 "fingers" instead of 3) and Numeral Notation ([min, likely, max])
+This allows us to represent relationships in a more precise way.
+
+\item One-to-many relationship modelling
+\label{sec:org8c63eba}
+In mongo there are 2 main ways of modelling this relationship:
+\begin{itemize}
+\item Embed (usually in the entity most queried) - preferred, especially if the embedded document is small
+\begin{itemize}
+\item in the "one" side
+\item in the "many" side
+\end{itemize}
+\item Reference (usually referencing in the "many" side) - note that mongo does not support foreign keys or cascade deletes, so if reference relationships change it needs to be manually changed in all places 
+\begin{itemize}
+\item in the "one" side
+\item in the "many" side
+\end{itemize}
+\end{itemize}
+
+\item Many-to-many relationship
+\label{sec:orga4dad08}
+In tabular databases we create a linking table
+In MongoDB:
+\begin{itemize}
+\item Embed (usually, only the most queried side is considered)
+\begin{itemize}
+\item array of subdocuments in the "many" side
+\item array of subdocuments in the other "many" side
+\end{itemize}
+\item Reference
+\begin{itemize}
+\item array of references in one "many" side
+\item array of references in the other "many" side
+\end{itemize}
+\end{itemize}
+
+Example: embed in the main side - results in duplication, indexing is done on the array
+\begin{verbatim}
+//carts:
+{
+    _id: <objectId>,
+    date: <date>,
+    items: [
+        {qty: xx,
+         item: { //copy of item from item collection
+             _id: <int>,
+             title: <string>
+             ...
+         }
+        }
+        ]
+
+}
+
+
+//items
+{
+    _id: <int>,
+    title: <string>
+    ...
+}
+\end{verbatim}
+
+Example: Using references
+\begin{verbatim}
+//items [100K]
+{
+    _id: <int>,
+    title: <string>,
+    sold_at [1,1000]: <string>
+
+}
+
+//stores [1000]
+{
+    _id: <objectId>,
+    storeId: <string> //reference point
+    ...
+}
+\end{verbatim}
+
+Example: Reference in the secondary side. Need a second query to get more information
+\begin{verbatim}
+//items
+{
+    _id: <int>,
+    ...
+}
+
+//stores
+{
+    ...,
+    items_sold[1,10K,100K]: <int> //references _id above
+}
+
+\end{verbatim}
+
+\item One-to-one relationship
+\label{sec:orgd804167}
+Embed document:
+\begin{itemize}
+\item fields at same level
+\item grouping in sub-documents
+\end{itemize}
+
+Can split it up and reference the values
+
+Examples:
+\begin{verbatim}
+{
+    name: xx,
+    line1: xxx,
+    country: xxx
+}
+
+//recommended for one-to-one
+{
+    name: xx,
+    address: {
+        line1: xx,
+        country: xx
+    }
+}
+
+//have a store and store_details, have a storeId in both.
+\end{verbatim}
+
+\item one-to-zillios relationship
+\label{sec:orgbedc85d}
+if the "many" is 10000 or more
+
+How to model? Reference in the many/zillions side. Do not embed!
+\begin{verbatim}
+//items [100K]
+{
+    _id: <int>,
+    ...
+}
+
+//item_views [100B]
+{
+    _id: <string>,
+    item_id: <int> //[0,1K, 100M]
+}
+
+\end{verbatim}
+\end{enumerate}
+
+\subsection{Patterns}
+\label{sec:org5e7a496}
+Pattern - e.g. design patterns
+
+Patterns are to get the best out of your model. Applying patterns may lead to\ldots{}
+\begin{itemize}
+\item Duplicating data across documents
+\item Accepting staleness in some pieces of data
+\item writing extra application side logic to ensure referential integrity (e.g. to remove links between data)
+\end{itemize}
+
+For a given piece of data..
+\begin{itemize}
+\item Should or could the information be duplicated or not?
+\begin{itemize}
+\item Resolve duplication with bulk updates
+\end{itemize}
+\item What is the tolerated or acceptable staleness? 
+\begin{itemize}
+\item Resolve with updates based on change streams
+\end{itemize}
+\item Which pieces of data require referential integrity?
+\begin{itemize}
+\item Resolve or prevent the inconsistencies with change streams or transactions
+\end{itemize}
+\end{itemize}
+
+\begin{enumerate}
+\item Attribute Pattern
+\label{sec:orgad99981}
+Polymorphis, can put different products in one collection even if they have different attributes. E.g. Coke, water and a charger in the same collection.
+
+Have some fields that are the same accross all documents, some that has the same name but different values, and then data that are in some documents but not in others.
+
+For optimized queries we'll need indexes, which may lead to many indexes. To make this better, use the attribute pattern.
+
+\begin{itemize}
+\item Identify the fields you want to transpose (which exists in some documents but not all)
+\item Change it to a \{key: xx, value: yy\} structure
+\item Can also add stuff, e.g. \{"k":"capacity", "v":4200, "u": "mAh" \} where u indicates the relationship between k and v
+\item Can now create an index on subdoc.k and subdoc.v
+\end{itemize}
+
+Fields that share common characterestics
+\begin{verbatim}
+//e.g.
+{
+    "title": "Dunkirk",
+    ...
+    "release_USA": "2017/07/23",
+    "release_Mexico": "2017/08/01",
+    ...       
+}
+
+//using attribute pattern:
+{
+    "title":"Dunkirk",
+    ...
+    "releases": [
+        {
+            "k": "release_USA", "v":"2017/07/23"
+        }
+    ]
+}
+
+//Can now do things like:
+db.movies.find({"releases.v":{$gte: "2017/07"}})
+\end{verbatim}
+
+Attribute pattern is helpful for these problems:
+\begin{itemize}
+\item Lots of similar fields
+\item Want to search across many fields at once
+\item Fields present in only a small subset of documents
+\end{itemize}
+
+Solution
+\begin{itemize}
+\item Break field/value into a sub-document with fieldA: field, fieldB: value
+\end{itemize}
+
+Use case examples:
+\begin{itemize}
+\item Characteristics of a product
+\item Set of fields all having the same value type such as a list of dates
+\end{itemize}
+
+Benefits and trade-offs
+\begin{itemize}
+\item Easier to index
+\item Allow for non-deterministic field names
+\item Ability to qualify the relationship of the original field and value
+\end{itemize}
+
+\item Extended reference pattern
+\label{sec:org3cc2947}
+before lookup: Application side
+3.4+: \$lookup, \$graphLookup
+
+Avoid a join by embedding the join table
+
+e.g.
+\begin{verbatim}
+//orders
+{
+    order_id: xx,
+    customer_id: xx
+}
+
+
+//customer
+{
+    customer_id: xx,
+    street: xx,
+    city: xx,
+    country: xx
+}
+\end{verbatim}
+
+In this case we might be using orders a lot more often than customer (as aggregate root) and thus embedding some basic customer information inside orders may be a good idea.
+Note, we only embed the most frequently queried fields from customer, leaving the rest behind in the customer collection
+\begin{verbatim}
+//orders
+{
+    order_id: xx,
+    customer_id: xx,
+    shipping_address: {
+        street: xx,
+        city: xx,
+        country:xx
+    }
+}
+
+//customer looks the same as above
+
+\end{verbatim}
+
+Yes, we are duplicating data but we speed up the queries.
+How to minimise duplication?
+\begin{itemize}
+\item For extended reference pattern, choose fields that do not change often
+\item Only bring the fields you need, you don't need all the information, can join to find that once in a blue moon
+\end{itemize}
+
+After a source is updated:
+\begin{itemize}
+\item What are the extended reference to changed
+\item When should the extended references be updated
+\end{itemize}
+
+Duplication may be better than a unique reference
+
+E.g. In our example above, it actually works fine if the customer updates their address, because at the time of the order that was their shipping address, so we shouldn't change that.
+Sometimes the updates also don't need to happen immediately accross all collections.
+
+Extended reference pattern summary:
+Problem:
+\begin{itemize}
+\item Too many repetitive joins
+\end{itemize}
+Solutions:
+\begin{itemize}
+\item Identify fields on the lookup side
+\item Bring those fields into the main object
+\end{itemize}
+Use case examples:
+\begin{itemize}
+\item Catalog
+\item Mobile applications
+\item Real-time analytics
+\end{itemize}
+
+Benefits and Trade-offs
+\begin{itemize}
+\item Faster reads
+\item Reduce number of joins and lookups
+\item May introduce lots of dupilcation if extended reference contains fields that mutate a lot
+\end{itemize}
+
+\item Subset Pattern
+\label{sec:org3fb8bfa}
+
+Mongo Working set is what is loaded into RAM, which is faster to access etc. What happens if the working set is bigger than RAM?
+\begin{itemize}
+\item Add RAM
+\item Scale horizontally
+\item Reduce the size of the working set
+\end{itemize}
+
+The key is to break up big documents
+
+E.g. movies that has all the details of the movie:
+\begin{verbatim}
+//movies
+{
+    title: x,
+    complete_script: "all the stuff",
+    cast: [ //[0,1000]
+        {name: xx, role: xx}
+    ]
+}
+
+//Split out e.g. script to movies_extra_info:
+{
+    movie_title: xx,
+    complete_script: "all the stuff",
+}
+\end{verbatim}
+
+Can also extract a subset of the cast to a separate collection, keeping only e.g. 20 of the cast in the array
+\begin{verbatim}
+//movies
+{
+    title: xx,
+    cast: [ //[0,20]
+        {name: xx, role: xx}
+    ]
+}
+
+//cast [0,1000]
+{
+    name: xx,
+    role: xx
+}
+\end{verbatim}
+
+Subset Pattern:
+Problem:
+\begin{itemize}
+\item Working set is too big
+\end{itemize}
+-A lot of pages are evicted from memory
+\begin{itemize}
+\item A large part of documents is rarely needed
+\end{itemize}
+
+Solution:
+\begin{itemize}
+\item Split the collection in 2 collections:
+\begin{itemize}
+\item most used part of documents
+\item less used part of documents
+\end{itemize}
+\item Duplicate part of a 1-N or N-N relationship that is often used in the most used sidd
+\end{itemize}
+
+Use Cases examples
+\begin{itemize}
+\item List of reviews for a product
+\item List of commnents on an article
+\item List of actors in a movie
+\end{itemize}
+
+Benefits and Trade-Offs:
+\begin{itemize}
+\item Smaller working set, as often used documents are smaller
+\item Shorter disk access fo r bringin in additional documents from the most used collection
+\item More round trips to the server
+\item A little more space used on disk
+\end{itemize}
+
+\item Computed Pattern
+\label{sec:orgd3bca86}
+Kind of Computations/Transformations applied to data:
+\begin{itemize}
+\item Mathematical Operations
+\begin{itemize}
+\item E.g. sum or aggregations
+\item If we're doing the same sum on a collection many times, it may be better to precalculate the sums and store it in a separate collection (i.e. instead of reading the same data a million times and applying the sum, just read it from the "sum" collection)
+\item Good example is viewings of movie screenings, since the views will be a lot and writes to screenings will be less. Each time we get a new screening, we add it to the count
+\end{itemize}
+\item Fan out .. (Do many tasks to represent one logical tasks ) [ Screenshot ]
+\begin{itemize}
+\item on Reads
+\begin{itemize}
+\item Every read needs to read from several different locations
+\end{itemize}
+\item on Writes
+\begin{itemize}
+\item Every write translates into writes to several documents
+\item By fanning out on writes, the read does not have to fan out anymore as the data is pre-organized at write teim
+\item Why use fan out on writes?
+\begin{itemize}
+\item If the system has plenty of time when the information arrives compared to the acceptable latency of returning data on read operation, then preparing the data at write time makes a lot of sense.
+\item Note that if you are doing more writes then reads so the system becomes bound by writes, this may not be a good pattern to apply.
+\end{itemize}
+\end{itemize}
+\item A good example for this pattern is the social networking site for sharing photos
+\begin{itemize}
+\item Copy photos that the user follows onto their profile, so that each time they load their profile it does not have to fetch all the photos from all the users they follow.
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\begin{itemize}
+\item Roll Up Operations
+\begin{itemize}
+\item Typically in reporting of financial data
+\item Running a group operation
+\item Example: We have wine types which contains the type and the country. We may want to look at it by a specific category, such as country. It may make sense to then create collections of this aggregated view
+\end{itemize}
+\end{itemize}
+
+When should we use computed pattern?
+\begin{itemize}
+\item Overuse resources (CPU)
+\item Reduce latency for read operations (If you have long read operations that depend on complex operations)
+\end{itemize}
+
+Summary:
+Problem:
+\begin{itemize}
+\item Costly computation or manipulation of data
+\item Executed frequently on the same data, producing the same result
+\end{itemize}
+
+Solution
+\begin{itemize}
+\item Perform the operation and store the result in the appropriate document and collection
+\item If need to redo the operations, keep the source of them
+\end{itemize}
+
+Use Case Examples
+\begin{itemize}
+\item IOT
+\item Event Sourcing
+\item Time Series data
+\item Frequent Aggregation Framework queries
+\end{itemize}
+
+Benefits and Tradeoffs
+\begin{itemize}
+\item Read queries are faster
+\item Saving on resources like CPU and Disk
+\item May be difficult to identify the need
+\item Avoid applying or overusing it unless needed (may add unwanted complexity)
+\end{itemize}
+\end{enumerate}
+
+
+\subsubsection{Bucket Pattern}
+\label{sec:orgdc96a06}
+It is important to find the middle solution. In the case where you have a 10 mil temperature sensors that sends the data to the db every minute.
+We can't store each of these in it's own document because you will just have way too many documents and it will become unmanageable.
+If we keep 1 document per device it may reach the 16MB quickly, and become unmanageable.
+
+So what do we do?
+
+Perhaps create one document per device per day. Can also have one array per hour on this document.
+Or one document per device per hour? Then we have smaller documents and can use a sub document with the temperature data instead of an array
+
+The concept of grouping information together is called bucketing. Bucketing is often done with a date, which makes it easy to delete archive data.
+
+Gotchas with Buckets:
+\begin{itemize}
+\item Random insertions or deletions in buckets, if you need to frequently access data in buckets to insert or delete, this may not work
+\item Difficult to sort across buckets
+\item Ad hoc queries may be more complex, again across buckets
+\item Works best when the "complexity" is hidden through the application code
+\end{itemize}
+
+Summary:
+
+Problem
+\begin{itemize}
+\item Avoiding too many documents or too big documents
+\item A 1-to-many relationship that can't be embedded
+\end{itemize}
+
+Solution
+\begin{itemize}
+\item Define the optimal amount of information to group together
+\item Create arrays to store the information in the main object
+\item It is basically an embedded 1-to-many relationship, where you get N documents, each having an average of Many/N sub documents
+\end{itemize}
+
+Use cases examples
+\begin{itemize}
+\item IoT
+\item Data warehouse
+\item Lots of information associated to one objects
+\end{itemize}
+
+Benefits and trade-offs
+\begin{itemize}
+\item Good balance between number of data acces and size of data returned
+\item Makes data more manageable
+\item Easy to prune data
+\item Can lead to poor query results if not designed properly
+\item Less friendly to BI tools as you will need to know the schema to be able to form your queries properly
+\end{itemize}
+
+\subsubsection{Schema Versioning Pattern}
+\label{sec:orgbb62744}
+Need to alter the schema a some point
+Have "schema\(_{\text{version}}\)" field in each document.
+
+Application lifecycle for this change:
+\begin{itemize}
+\item Modify Application
+\begin{itemize}
+\item Can read/process all versions of documents
+\begin{itemize}
+\item Have different handler per version
+\item Reshape the document before processing it
+\end{itemize}
+\end{itemize}
+\item Update all Application servers
+\begin{itemize}
+\item Install updated application
+\item Remove old processes
+\end{itemize}
+\item Once migration completed
+\begin{itemize}
+\item remove the code to process old versions
+\end{itemize}
+\end{itemize}
+
+Document Lifecycle
+\begin{itemize}
+\item New Documents:
+\begin{itemize}
+\item application writes them in latest versions
+\end{itemize}
+\item Existing documents
+A use updates to documents
+\begin{itemize}
+\item to transform to latest version
+\item Keep forever documents that never need an update
+\end{itemize}
+B \ldots{} or transform all
+\begin{itemize}
+\item documents in batch
+\begin{itemize}
+\item no worry even if process takes days
+\end{itemize}
+\end{itemize}
+\end{itemize}
+
+Summary:
+Problem
+\begin{itemize}
+\item Avoid downtime while doing schema upgrades
+\item Upgrading all documents can take hours, days or even weeks when dealing with big data
+\item don't want to update all documents
+\end{itemize}
+
+Solution:
+\begin{itemize}
+\item Each document gets a "schema\(_{\text{version}}\)" field
+\item Application can handle all versions
+\item Choose your strategy to migrate the documents
+\end{itemize}
+
+Use case examples
+\begin{itemize}
+\item Every app that use a database, deployed in production and heavily used
+\item System with a lot of legacy data
+\end{itemize}
+
+Benefits and Trade-Offs:
+\begin{itemize}
+\item No downtime needed
+\item Feel in control of the migration
+\item Less future technical Debt
+\item May need 2 indexes for same field while in migration period
+\end{itemize}
+
+\subsubsection{Tree patterns}
+\label{sec:orgbfd4218}
+For Hierarchical data, with direct relationship between parent and child
+Answers these questions:
+\begin{enumerate}
+\item Who are the ancestors of Node X?
+\item Who reports to Y?
+\item Find all nodes that are under Z?
+\item Change all categories under N to under P
+\end{enumerate}
+
+Model tree structures:
+\begin{itemize}
+\item Parent References
+Document contains a parent field with reference to its parent
+Good for question 2 and 4
+\begin{verbatim}
+{
+    name: "office",
+    parent: "swag",
+}
+//example query to get all ancestors
+db.categories.aggregate([{
+    $graphLookup: {
+        from: 'categories',
+        startWith: '$name',
+        conncetFromField: 'parent',
+        connectToField: 'name',
+        as: 'ancestors'
+    }
+}])
+
+\end{verbatim}
+\item Child References
+Array of children
+Good for question 3
+\begin{verbatim}
+{
+    name: "office",
+    children: ["books", "stickers"]
+}
+\end{verbatim}
+\item Array of ancestors
+Use an ordered array
+Good for question 1,2,3
+\begin{verbatim}
+{
+    name:  "Books",
+    ancestors: ["Swag", "Office"]
+}
+\end{verbatim}
+\end{itemize}
+-Materialized Paths (modification of ancestors)
+ Use a string value with ancestors with some separator
+ Can only use if you need to know the ancestors of X
+ Only good for question 1
+\begin{verbatim}
+{
+    name: "Books",
+    ancestors: ".Swag.Office"
+}
+\end{verbatim}
+
+Can use a single index with regular expression to find a path
+\begin{verbatim}
+//immediate ancestor of Y
+db.categories.find({ancestors: /\.Y$/})
+
+//if descends from X and Z
+db.categories.find({ancestors: /^\.X.*Y/i})
+\end{verbatim}
+
+Summary:
+Problem
+\begin{itemize}
+\item Representation of hierarchical structured data
+\item Different access patterns to navigate the tree
+\item Provide optimized model for common operations
+\end{itemize}
+
+Solution
+\begin{itemize}
+\item Different patterns
+\begin{itemize}
+\item Child Reference
+\item Parent Reference
+\item Array of ancestors
+\item Materialized Paths
+\end{itemize}
+\end{itemize}
+
+Use Cases Exampe
+\begin{itemize}
+\item Org Charts
+\item Product Categories
+\end{itemize}
+
+Benefits and Trade-Offs
+\begin{itemize}
+\item Child REference
+\begin{itemize}
+\item Easy to navigate to children nodes or tree descending access patterns
+\end{itemize}
+\item Parent Reference
+\begin{itemize}
+\item Immediate parent node discovery and tree updates
+\end{itemize}
+\end{itemize}
+
+\subsubsection{Polymorphic Pattern}
+\label{sec:org96ee1ba}
+Can group things by either things they have in common or by their differences
+E.g. if we have a customer and food from mexico and a customer and food from canada, we will probably group it by customer.
+
+Useful when you want to create a single view. Last name and surname is the same field but different names, merge into one name.
+
+\subsubsection{Approximation pattern}
+\label{sec:org8b2c6d7}
+\end{document}
