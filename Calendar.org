@@ -1,16 +1,43 @@
-#+SEQ_TODO: MEETING(m) ACTIVITY(a) SOCIAL(s) OTHER(o) | DONE(d) CANCELLED(c) RESCHEDULE(r)
-
-* Jemstep Calendar events
-** MEETING One on One Justin
-   SCHEDULED: <2019-11-12 Tue 13:15-14:00>
-** MEETING TODO Jemstep future meeting
-   SCHEDULED: <2019-11-12 Tue 15:00-17:00>
-** MEETING TODO Tribe Sync
-   SCHEDULED: <2019-11-13 Wed 10:30-11:00>
-** MEETING TODO Intentional Learning
+#+SEQ_TODO: TASK(t) ACTIVITY(a) SOCIAL(s) OTHER(o) | DONE(d) CANCELLED(c) RESCHEDULE(r)
    
-* Non Jemstep Calendar events
-** OTHER Podiatrist
-   SCHEDULED: <2019-11-12 Tue 17:00-17:15>
-   
-§±
+* Schedule 20 April
+** TASK Fill in registration form dietician
+   SCHEDULED: <2020-04-20 Mon 07:20-07:30>
+** TASK Fill Coffee rusks
+   SCHEDULED: <2020-04-20 Mon 07:30-07:40>
+** TASK Ed Video 1; Water
+   SCHEDULED: <2020-04-20 Mon 07:40-08:40>   
+** TASK Walk around the block; 100 skips; Water
+   SCHEDULED: <2020-04-20 Mon 08:40-08:55>
+** TASK Ed video 2; Water
+   SCHEDULED: <2020-04-20 Mon 09:00-10:00>
+** TASK Team check in
+   SCHEDULED: <2020-04-20 Mon 10:00-10:30>   
+** TASK Water; Stretching
+   SCHEDULED: <2020-04-20 Mon 10:30-10:45>
+** TASK Ed video 3
+   SCHEDULED: <2020-04-20 Mon 10:45-11:45>
+** TASK Walk around the block; 50 skips
+   SCHEDULED: <2020-04-20 Mon 11:45-12:00>   
+** TASK Make and eat food and pokemon
+   SCHEDULED: <2020-04-20 Mon 12:00-13:00>
+** TASK Guidelines for cofp and send; water
+   SCHEDULED: <2020-04-20 Mon 13:30-14:30>
+** TASK dietician
+   SCHEDULED: <2020-04-20 Mon 14:30-15:00>   
+** TASK Rest; nap; meditate; water
+   SCHEDULED: <2020-04-20 Mon 15:00-16:00>
+** TASK Coffee
+   SCHEDULED: <2020-04-20 Mon 16:00-16:15>
+** TASK Ed video 4; water
+   SCHEDULED: <2020-04-20 Mon 16:15-17:15>   
+** TASK 10 pull ups; smoothie
+   SCHEDULED: <2020-04-20 Mon 17:15-17:30>   
+** TASK Ed video 5
+   SCHEDULED: <2020-04-20 Mon 17:30-18:30>   
+** TASK yoga flow and breathing; water
+   SCHEDULED: <2020-04-20 Mon 18:30-19:00> 
+** TASK Ed video 6
+   SCHEDULED: <2020-04-20 Mon 19:00-20:00>
+** TASK Start bread rolls for tomorrow baking; then bed
+   SCHEDULED: <2020-04-20 Mon 20:00-21:00> 
