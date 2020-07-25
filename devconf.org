@@ -1,28 +1,36 @@
-** TODO list
-*** TODO Research FP
-**** TODO Read justin and Ed's notes
-*** TODO Research OO
-*** TODO Read and write up diffs Imperative vs Declarative. Are there other styles?
+* TODO list
+** DONE Research FP
+*** DONE Read justin and Ed's notes
+** DONE Research OO
+** TODO Read and write up diffs Imperative vs Declarative. Are there other styles?
   https://en.wikipedia.org/wiki/Declarative_programming  
-*** TODO Research BI
-**** TODO Read James' why BI-curious 
+** DONE Research BI
+** DONE Read James' why BI-curious 
   https://www.slideshare.net/JamesMcGillivray/why-you-should-be-bi-curious
   https://jimbabwe.co.za/2017/05/23/bi-curious/
 
-*** TODO History of FP: Scala / Haskell
-*** TODO History of OO: C++, Java, C#
-*** TODO History of BI: SQL, MongoDB, MapReduce, Hadoop
-*** TODO History of: Kotlin, Rust (other languages?)
-*** TODO List of languages used often-ish - add to history tree
+** TODO History of FP: Scala / Haskell
+** TODO History of OO: C++, Java, C#
+** TODO History of BI: SQL, MongoDB, MapReduce, Hadoop
+** TODO History of: Kotlin, Rust (other languages?)
+** TODO List of languages used often-ish - add to history tree
 
-*** TODO Update Talk background
-*** TODO Email rob and candice new BIO and Talk background
+** TODO Update Talk background
+** TODO Email rob and candice new BIO and Talk background
 
-**** Links
+** Links
 https://www.cs.kent.ac.uk/people/staff/dat/miranda/whyfp90.pdf
 https://alvinalexander.com/scala/fp-book/benefits-of-functional-programming
+https://www.youtube.com/watch?v=Og847HVwRSI - Most popular languages over time
 
-**  BIO 
+
+FP killed OOP star: https://youtu.be/3fonOUpuHzw
+
+#+BEGIN_SRC scala
+
+#+END_SRC
+
+*  BIO 
    My journey as a Software / BI Developer started in 2012 in the
    world of Object Orientation. I soon started playing around in the
    Business Intelligence space, and found a passion in data. I've
@@ -41,7 +49,7 @@ https://alvinalexander.com/scala/fp-book/benefits-of-functional-programming
    I like VIM, Emacs and potatoes.
 
 
-** Talk background
+* Talk background
 In my career I moved from Object Oriented Programming (OOP) to
 Business Intelligence (BI) and there after Functional Programming
 (FP). In doing so I gained valuable experience in working across these
@@ -61,9 +69,9 @@ the other worlds can learn from and why it may be beneficial to know
 more about each of these different areas in order to build the
 ultimate software solution!
 
-**  5 Things the BI, OO and FP worlds could learn from each other, from someone who has lived in all 3
+*  5 Things the BI, OO and FP worlds could learn from each other, from someone who has lived in all 3
 
-*** Talk Description 
+** Talk Description 
     
     Object Oriented programming, Business Intelligence and Functional programming sound like 3 completely different, unrelated "worlds". Having worked in all three of these worlds I have found 
     similarities and major differences, especially concerning the mindset needed to solve problems in these different realms. The approach to tackling a problem may be completely
@@ -73,11 +81,12 @@ ultimate software solution!
     In this session I want to highlight some things that each of these "worlds" does well and that the other worlds can learn from. I believe I have a unique perspective on things due to having worked 
     in BI and having moved into FP with a data mindset and not only the typical OO mindset. 
 
-*** Notes
+** Notes
     - Art of OO/FP/BI
     - Mindset
     - Approach to solving problems
-**** FP: 
+
+*** FP: 
      - Stateless
      - Concurrency
      - monads 
@@ -88,7 +97,7 @@ ultimate software solution!
      - Design can be elegant (if you understand the complex workings under the hood)
      - Hard to learn
 
-**** OO
+*** OO
      - Object based
      - Work with 1 item at a time
      - Transformation done on a single object at a time
@@ -99,7 +108,7 @@ ultimate software solution!
      - Can miss errors
      - State per object
 
-**** BI
+*** BI
      - Work in sets
      - Transformations on sets
      - Allows for distributed processing
@@ -108,6 +117,52 @@ ultimate software solution!
      - Idempotent - it's ok to rerun the script
      - Stores state but easy to change
 
+
+*** Imperative programming (how to do)
+https://www.geeksforgeeks.org/introduction-of-programming-paradigms/
+
+Change program state step-by-step through assignment
+statements. Consists of several statements after which the result is
+stored.
+
+C, Fortran, Basic
+
+From here split into 3 paradigns:
+
+**** Procedural Programming
+Emphasizes procedure in terms of underlying machine model. Has the ability to reuse code. Same as imperative
+
+C, C++, Java, ColdFusion, Pascal     
+
+**** Object Oriented Programming
+Collection of classes and objects which are meant for communication
+
+All computation performed on objects. More emphasis on data rather than procedure
+
+Simula, Java, C++, Objective-C, Visual Basic .NET, Python, Ruby, Smalltalk
+
+**** Parallel processing approach
+Divide and conquer processing of program instructions between multiple processors.
+
+NESL and C/C++ has a library that does this
+
+*** Declarative programming (What to do)
+Style of building programs that expresses logic of computation without
+talking about its control flow. Focus on what needs to be done instead
+of how it should be done
+
+**** Logic programming paradigms
+Abstract model of computation
+
+**** Functional programming paradigm
+Execution of series of mathematical functions. Data loosely coupled to
+functions. The function can be replaced with their values without
+changing the meaning of the program.
+
+Javascript, Haskell, Scala, Erlang, Lisp, ML, Clojure
+
+**** Database/Data driven programming approach
+Based on data and its movement. Program statements are defined by data rather than hardcoding as steps.
 
 **  5 core skills to help you become a better team lead - from an introvert dev who learnt the hard way 
 *** Talk Description

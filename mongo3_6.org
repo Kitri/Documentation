@@ -1,0 +1,126 @@
+* MongoDB Course - What is new in 3.6
+
+** Change Streams
+https://docs.mongodb.com/v3.6/changeStreams/
+
+Built on top of oplog. subscribe to changes and get notified
+
+1000 streams per mongod instance
+
+Only applies to data available on majority of nodes
+
+*** 5 types of events:
+   - insert
+   - delete
+   - replace
+   - update
+   - invalidate
+
+*** 5 stages of aggregation to match against stream results
+
+  - match
+  - project
+  - addFields
+  - replaceRoot
+  - redact
+
+** Query improvements
+
+*** $position operator
+
+array[-1] gets last element
+array.insert(-1,5) - inserts in second last position (-1 from the end, excluding last element). Setting the -value larger than size of array inserts at beginning of array
+
+db.col.update({}, {$push: {array: {$each: [5], $position: -1} }}) -- if  array was [1,2,3,4] it is now [1,2,3,5,4]. 
+
+*** $expr
+
+Can use aggregation expressions in find
+
+e.g. find students where midterm results are better than final:
+
+
+#+BEGIN_SRC javascript
+db.grades.find({
+  class:  "xxx",
+  $expr: {$gt: ["$midterm", "$final"]}
+})
+
+#+END_SRC
+
+or, more fancy:
+
+#+BEGIN_SRC javascript
+db.grades.find({
+  class: "xxx",
+  $expr: {
+    $gt: [
+      {$avg: ["$homework"]}, //using avg projection stage to get average of homework array
+      0.9
+   ]
+  }
+})
+
+#+END_SRC
+
+can also use this in an update
+
+#+BEGIN_SRC javascript
+db.grades.updateMany({
+  $expr: {
+    $gt: [
+      {$avg: ["$homework"]}, //using avg projection stage to get average of homework array
+      0.9
+   ]
+  }
+},
+{$inc: {final: 0.01}}
+)
+
+#+END_SRC
+*** Update Arrays
+
+Can now do fancy updates with arrayFilter option
+
+#+BEGIN_SRC javascript
+//Update cars to set all array elements "Ejcho" to "Echo"
+db.cars.update(
+   { manufacturer: 'ford' },
+   {
+      {$set: {
+         "models.$[model]": "Echo"}
+      }
+   },
+  {
+     arrayFilters: [{model: "Ejcho"}],
+     writeConcern: majority
+  }
+)
+
+#+END_SRC
+
+If the elements in the array are documents, you can further specify the element after the positional variable
+#+BEGIN_SRC javascript
+//Update cars to set all array elements with name  "Ejcho" to "Echo", given this structure:
+{
+   models: [
+     { name: "Ejcho", engine: "Petrol" }
+  ]
+}
+
+db.cars.update(
+   { manufacturer: 'ford' },
+   {
+      {$set: {
+         "models.$[model].name": "Echo"}
+      }
+   },
+  {
+     arrayFilters: [{"model.name": "Ejcho"}]
+  }
+)
+
+#+END_SRC
+
+
+
