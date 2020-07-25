@@ -101,26 +101,61 @@ db.cars.update(
 
 If the elements in the array are documents, you can further specify the element after the positional variable
 #+BEGIN_SRC javascript
-//Update cars to set all array elements with name  "Ejcho" to "Echo", given this structure:
+//Update array elements, all names from Ejcho to Echo and engines from Eljectric to Electric
 {
    models: [
-     { name: "Ejcho", engine: "Petrol" }
-  ]
+     { name: "Ejcho", engine: "Eljectric" }
+     { name: "Golf", engine "Eljectric" }
+   ]
 }
 
 db.cars.update(
    { manufacturer: 'ford' },
    {
-      {$set: {
-         "models.$[model].name": "Echo"}
+      {$set: 
+         { "models.$[model].name": "Echo" },
+         { "models.$[engine].engine": "Electric" }
       }
    },
   {
-     arrayFilters: [{"model.name": "Ejcho"}]
+     arrayFilters: [
+         {"model.name": "Ejcho"}, 
+         {"engine.engine": "Eljectric"}
+     ]
   }
 )
 
 #+END_SRC
 
+Furthermore the filter doesn't have to match the "set", e.g. the filter could have been "engine.name", so update engine where name = xx
+
+Lastly, can also chain filters for nested arrays, the query will first filter the first array then the second etc. 
+
+E.g. "models.$[modelFilter].features.$[featureFilter]" - where model = modelFitler and model.features = featureFilter
+
+Can use it for conditional updating
+#+BEGIN_SRC javascript
+//Set elements in array's engine based on name
+...
+{ 
+   $set: { models.${ford}.engine : "Electric" }, { models.${golf}.name : "Gas" }
+},
+{
+   arrayFilters: [
+      { "ford.name": "Ford" },
+      { "golf.name": "Golf" {
+   ]
+}
+
+#+END_SRC
+
+**** arrayFilter format:
+
+  - List of filters
+  - Each filter starts with document with name starting with lowercase letter and contain only alphanumeric letters e.g. { "model" ...
+  - Each filter name must be unique
+  - Can use a subset of operations like $gt an $lt. Cannot use $where and $test or geospatial things
+  - Using $[model] without specifying a filter for model, it will apply the operation to every element in the array
 
 
+https://docs.mongodb.com/manual/reference/operator/update/positional-filtered/
