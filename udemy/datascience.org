@@ -1,2 +1,48 @@
 * The Data Science Course 2020
 
+** Define terms
+
+*** Analysis
+
+Perform analysis on data that happened in the past. Do analysis to explain how and why something happened
+
+*** Analytics
+
+Explores potential future events
+ 
+ - Qualitative = using intuition + analysis for analytics
+ - Quantative = using formulas and algorithms for analytics
+
+*** Business Intelligence
+
+The process of analysing and reporting historical business data
+
+Aims to explain past events using business data
+
+Preliminary step of predictive analytics
+1. analyse past data and extract useful insights
+2. extract useful models
+
+*** AI
+
+Simulating human knowledge and decision making with computers
+
+**** Machine learning
+
+The ability of machines to predict outcomes without being explicitly programmed.
+
+ML is about creating and implementing algorithms that let machines receive data and use this data to:
+ - make predictions
+ - analyse patterns
+ - give predictions
+
+
+** Data science disciplines
+
+Analytics is used in modern days to describe roles that technically do analytics + analysis e.g. business analytics / data analytics
+
+-- see confusing diagram in Part 1 S2_L6: https://www.dropbox.com/home/The%20Data%20Science%20Course%202020%20-%20All%20Resources/Part_1_Intro_to_Data_and_Data_Science/S2_L6
+
+-- cute infografic part 1 S2_L7: https://www.dropbox.com/home/The%20Data%20Science%20Course%202020%20-%20All%20Resources/Part_1_Intro_to_Data_and_Data_Science/S2_L7?preview=365-DataScience.png
+
+
