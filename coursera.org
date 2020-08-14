@@ -1,0 +1,44 @@
+* Coursera: Functional Programming Principles in Scala
+
+** Call-by-value vs Call-by-name
+
+The difference is in how the expression gets evaluated.
+
+Call-by-value first evaluates the values in the expression, left to right, before applying the right side of a function to the left
+
+Call-by-value first evaluates the "name" and only at the last possible step evaluates the values.
+
+e.g.
+#+BEGIN_SRC scala
+  def sum(x: Int, y: Int) = x + y
+
+  //CBV
+  sum(1+2,3+4) = sum(3, 3+4) = sum(3, 7) = 3 + 7 = 10
+
+  //CBN
+  sum(1+2,3+4) = (1+2) + (3+4) = 3 + (3+4) = 3 + 7 = 10
+#+END_SRC
+
+To force call by name, add a => e.g. def sum(x: Int, y: => Int) would mean x is called by value and y is always called by name
+
+
+** Conditional Expressions
+
+if-else same as java but used for expressions, not statements
+
+Boolean expressions with && and || do not always need to evaluate their right operand, they use "short-circuit evaluation".
+
+
+** def vs val 
+
+#+BEGIN_SRC scala
+  val x = 2
+
+  //square(x) will be evaluated when y is called
+  def y = square(x)
+
+  //square(x) will be evaluated upon declaration as CBV because y is a val
+  //further in the program "y = 4" , not "square(2)"
+  val y = square(x) 
+#+END_SRC
+ 
