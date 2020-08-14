@@ -2,7 +2,7 @@
 
 ** Notes 
 
-- Mongo has an official scala driver which is a wrapper of the java asynchronous driver
+- Mongo has an official scala driver which is a wrapper for the java asynchronous driver
 - They introduced the observable concept which means that db operations returns an observable and is only kicked off when you subscribe to them
 - It has the option to convert observable to future
 - The issues we faced with this current format of the driver:
@@ -10,9 +10,38 @@
   - We use futures throughout the system so it is familiar and thus using the conversion to future makes sense
   - The problems with futures that we had throughout our application was that a future gets created and a thread immediately starts up and executes the code. This means that you have very little to no control over in what order things execute
   - John de goes introduced ZIO and we started transitioning to ZIO throughout the application
-  - We wrote an abstraction of the mongo driver to be used with the applciation, and it returns ZIO's instead of futures
+  - We wrote an abstraction of the mongo driver to be used with the application, and it returns ZIO's instead of futures
 
 
 ** Elevator Pitch
+MongoDB's asynchronous scala driver allows you to combine the worlds of mongo and functional programming. Scala's functional programming paradigm is well suited for multi-threaded applications, however, managing threads can be tricky especially if you have little control over the execution timing of threads. Come find out more about the MongoDB asynchronous scala driver and how we improved our thread management using ZIO! 
+
 
 ** Description
+1. Who should attend? 
+Developers who have some experience with applications that use concurrency. They do not need any knowledge about mongo.
+
+2. Why should they attend? 
+To find out what lessons we've learnt with scala asynchronous processing and concurrency in our application and what we did to improve our thread management. We applied these same concepts to the MongoDB asynchronous scala driver as well as the rest of our application. These concepts may be useful outside of scala as well, however, the library I talk about is scala specific. 
+
+3. What will I tell them?
+This is the rough outline:
+- Explain the asynchronous scala driver and the concept of Observable and why we chose to use the built in method to convert these to Futures instead 
+- Delve into Futures and the problems we have faced within our organisation by using Futures
+- Introduce ZIO and it's concepts used to solve the problems we faced with Futures
+- Finally I will show some code (and maybe a demo) of how this looks in practice
+
+The more detailed version:
+Mongo's official asynchronous scala driver is a wrapper for the java asynchronous driver. The driver introduces the concept of an 'Observable' which all database operations performed on the MongoCollection object returns. The operations are only kicked off once you subscribe to them. Furthermore the driver gives the option of converting these Observable objects to Futures, which is a common way of handling threads within Scala. A Future is an object that kicks off a thread and will return at some point. When you've declared a Future in your code, the code will continue running past this point and once the thread is completed it will execute the code that you specified it should execute after thread completion.
+
+Within our application we use Futures to deal with threads for all our asynchronous processing. Introducing the Observer / Subscriber paradigm to the code base adds complexity as it is now two different ways to manage asynchronous processing. Converting to Future fits in better with the rest of the application. Apart from that, the developers understands Futures but not yet Observables as it's a new concept, which could lead to different developers having different ideas of how this should be implemented.
+
+We came across several problems in our application using Futures (not specifically for Mongo operations), such as race conditions and unexpected order of execution. The reason for this is that as soon as a Future is declared a thread is kicked off to start the execution of that operation. Due to several reasons threads can be kicked off in different orders at times and this creates a problem as we lose some control over our threads.
+
+John De Goes created a Scala library for asynchronous and concurrent programming called ZIO. ZIO solves many issues that come with Futures, such as performance and race conditions. ZIO works on the concept of creating "instructions" of how operations will be executed instead of kicking off a thread as soon as the operation is defined. We started transitioning our application to use ZIO's instead of Futures throughout the code. 
+
+We wrote an abstraction of the Mongo driver which creates a MongoClient as a singleton, and also returns ZIO's on the operations called from MongoCollection instead of Observable's or Future's. 
+
+Note: At the point of writing this description we just implemented the mongo driver with returning ZIO, so I do not have the results yet. ZIO across the rest of the application is giving good results thus far and makes thread management a lot more controlled.
+
+
