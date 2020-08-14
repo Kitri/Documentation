@@ -159,3 +159,73 @@ Can use it for conditional updating
 
 
 https://docs.mongodb.com/manual/reference/operator/update/positional-filtered/
+
+
+** Session Management
+
+Can now list and kill sessions
+
+https://docs.mongodb.com/v3.6/release-notes/3.6/#client-sessions
+
+
+** Aggregation Improvements
+
+*** $mergeObjects
+
+Merge documents like a group accumulator
+
+like list: [ { x: 1, y: 2 }, { z : 3 } ]=> merge "list" => { x: 1, y: 2, z: 3 }
+
+*** $objectToArray and arrayToObject
+
+{..} <= ?? => [..]
+
+*** objectToArray
+
+Given the following document: 
+
+#+BEGIN_SRC javascripts
+{
+   details: {
+      type: 'brush',
+      colour: 'blue'
+   }
+}
+
+#+END_SRC
+
+Using objectToArray:
+
+#+BEGIN_SRC javascript
+db.product.aggregate([
+   {$project: {
+      details: {$objectToArray: "$details"}
+   }}
+])
+#+END_SRC
+
+Will result in:
+#+BEGIN_SRC javascript
+{
+   details: [
+      { 
+         k: "type",
+         v: "brush"
+      },
+      { 
+         k: "colour",
+         v: "blue"
+      }
+  ]
+}
+#+END_SRC
+
+Using arrayToObject on "details" will reverse it back to a document.
+
+arrayToObject will also work on an array that contains 2 values that is seen as a key and value ["a", 2]
+
+*** expressive $lookup
+
+Inner joins
+https://docs.mongodb.com/v3.6/reference/operator/aggregation/lookup/index.html
+
