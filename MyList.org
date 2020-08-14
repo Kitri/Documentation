@@ -9,21 +9,11 @@
 
 * Things todo
 ** Admin
-*** TODO [#B] Redo engineering log in org mode
-    SCHEDULED: <2019-11-15 Fri 08:00-09:00>
-*** TODO [#A] Find out if org mode can translate to phone
+*** TODO [#B] Engineering Log
+    SCHEDULED: <2020-05-20>
 
 ** Work
 *** FP
-**** TODO [#B] Understand IO
-     SCHEDULED: <2019-11-13 Wed>
-**** TODO [#C] Understand ZIO
-     SCHEDULED: <2019-11-13 Wed>
-**** TODO [#A] Understand Futures
-     SCHEDULED: <2019-11-12 Tue>
-
-*** Mongo
-**** TODO [#B] Test Mongo Driver with concurrency
-     SCHEDULED: <2019-11-19 Tue>
-**** TODO [#A] MongoClient Singleton
-     SCHEDULED: <2019-11-14 Thu>
+**** DONE [#B] Understand IO
+**** DONE [#C] Understand ZIO
+**** DONE [#A] Understand Futures

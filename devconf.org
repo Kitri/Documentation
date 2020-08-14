@@ -97,7 +97,15 @@ ultimate software solution!
      - Design can be elegant (if you understand the complex workings under the hood)
      - Hard to learn
 
+<<<<<<< HEAD
+***** Slides
+
+
+
+**** OO
+=======
 *** OO
+>>>>>>> ac7599aee73d5732e6803522e54b40314379ea9d
      - Object based
      - Work with 1 item at a time
      - Transformation done on a single object at a time
@@ -108,7 +116,17 @@ ultimate software solution!
      - Can miss errors
      - State per object
 
+<<<<<<< HEAD
+***** OO
+
+Object-oriented programming (OOP) is a programming language model that
+organizes software design around data, or objects, rather than
+functions and logic
+
+**** BI
+=======
 *** BI
+>>>>>>> ac7599aee73d5732e6803522e54b40314379ea9d
      - Work in sets
      - Transformations on sets
      - Allows for distributed processing
@@ -118,6 +136,24 @@ ultimate software solution!
      - Stores state but easy to change
 
 
+<<<<<<< HEAD
+*** 1. It's all about the data
+
+In all the time I've spent across these 3 worlds I've seen one pattern
+emerge. It's all about the data. Regardless of whether you're working in BI or backend development. 
+
+The purpose of any application is to solve some business need. That
+solution requires the storage, reading and manipulation of data. 
+
+I'm sure you've all seen one of these patterns before:
+- embed all your information in one collection in nosql databases
+- have 40 columns of which 20 are null at all times in relational
+- have a "generic" table with column names such as "field1", "field2"
+- SQL table with an embedded xml field containing c
+
+These patterns does not only make BI impossible, but it really makes
+development hard. All those if statements and loops required  
+=======
 *** Imperative programming (how to do)
 https://www.geeksforgeeks.org/introduction-of-programming-paradigms/
 
@@ -163,6 +199,7 @@ Javascript, Haskell, Scala, Erlang, Lisp, ML, Clojure
 
 **** Database/Data driven programming approach
 Based on data and its movement. Program statements are defined by data rather than hardcoding as steps.
+>>>>>>> ac7599aee73d5732e6803522e54b40314379ea9d
 
 **  5 core skills to help you become a better team lead - from an introvert dev who learnt the hard way 
 *** Talk Description
