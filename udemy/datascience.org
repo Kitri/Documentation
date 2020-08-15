@@ -17,11 +17,19 @@ Explores potential future events
 
 The process of analysing and reporting historical business data
 
-Aims to explain past events using business data
+Typical job titles in BI: 
+ - BI Analyst [ Performs analyses and reporting of past historical data ]
+ - BI Consultant [ "External BI analyst" ]
+ - BI Developer [ More advanced analyses specifically designed for the company using tools like SQL and Python ]
 
-Preliminary step of predictive analytics
-1. analyse past data and extract useful insights
-2. extract useful models
+*** Big Data vs Traditional Data
+
+Traditional data is data you can manage as a human
+
+Big Data is classified according the 3 V's:
+  - Volume [ A LOT of data, more than a human can manage without tools ]
+  - Variety [ Audio, Video, Text (structured and unstructured) .. ]
+  - Velocity [ Speed of data, e.g. recording stock prices once per second ]
 
 *** AI
 
@@ -44,5 +52,4 @@ Analytics is used in modern days to describe roles that technically do analytics
 -- see confusing diagram in Part 1 S2_L6: https://www.dropbox.com/home/The%20Data%20Science%20Course%202020%20-%20All%20Resources/Part_1_Intro_to_Data_and_Data_Science/S2_L6
 
 -- cute infografic part 1 S2_L7: https://www.dropbox.com/home/The%20Data%20Science%20Course%202020%20-%20All%20Resources/Part_1_Intro_to_Data_and_Data_Science/S2_L7?preview=365-DataScience.png
-
 
