@@ -1,0 +1,112 @@
+* Big Data Analysis with Scala and Spark
+
+** RDD - Resilient Distributed Datasets
+
+Like immutable sequential or parallel scala collecionts
+
+RDD high order functions: map, flatMap, filter, reduce, fold, aggregate etc
+
+"Hello world" of RDDs:
+#+BEGIN_SRC scala
+val rdd = spark.textFile("..")
+
+val count = rdd.flatMap(line =>line.split(" "))
+               .map(word => (word, 1))
+               .reduceByKey(_ + _)
+
+#+END_SRC
+
+
+*** How to create an RDD
+
+  - Transforming an existing RDD
+  - From a SparkContext (or SparkSession on later versions) object
+
+**** SparkContext
+
+sc.parallelize -> convert local scala collection to an RDD
+sc.textFile -> read text file from HDFS or local file system, results in RDD[String]
+
+*** Transformations and actions on RDD
+
+ - Transformations: return new RDD as results [Lazy, not immediately computed]
+ - Actions: compute a result based on an RDD and single value returned or saved to some storage [eager, result immediately computed]
+
+**** Common Transformations -- return type RDD -- lazy
+
+Similar to scala collections:
+- map (f: A => B): RDD[B]
+- flatMap (f: A => TraversableOnce[B]): RDD[B]
+- filter (pred: A => Boolean): RDD[A]
+- distinct(): RDD[B]
+
+For 2 RDDs:
+- union (other: RDD[T]): RDD[T] -- e.g. val rdd3 = rdd1.union(rdd2)
+- intersection (other: RDD[T]): RDD[T]
+- subtract (other: RDD[T]): RDD[T]
+- cartesian [U] (other: RDD[U]): RDD[(T, U)] -- cartesian product of 2 RDDs
+
+
+**** Common Actions --return type not RDD -- eager
+
+Similar to scala collections:
+- collect (): Array[T] --return all elements from RDD
+- count (): Long -- number of elements in RDD
+- take (num: Int): Array[T] -- return first num elements of the RDD
+- reduce (op: (A,A) => A): A -- combine elements in the RDD together using op function and return result
+- foreach (f: T => Unit): Unit --- apply function to each element in the RDD
+
+unrelated to scala collections:
+- takeSample (withRepl: Boolean, num: Int): Array[T] -- return array with random sample of num elements in dataset, with or without replacement
+- takeOrdered (num: Int)(implicit ord: Ordering[T]: Array[T] -- Return first n elements of RDD using natural order or custom operator
+- saveAsTextFile (path: String): Unit -- write to text file locally or HDFS
+- saveAsSequenceFile (path: String): Unit -- write to hadoop sequence file locally or HDFS
+
+
+** Evaluation in spark: Why it's unlike scala collections
+
+Spark computation is done in memory (as opposed to Hadoop that writes and reads between each iteration
+
+*** Caching and Persistence
+
+By default, RDDs are recomputed each time you run an action on them. This can be expensive in time.
+
+To tell spark to cache an RDD in memory call persist() or cache() on it - this keeps it in memory
+
+E.g. 
+val someRDD = rdd.map()
+val otherRDD = someRDD.map()
+val reduced = otherRDD.reduce()
+val taking = otherRDD.take(10)
+
+When reduced is reached, by default someRDD AND otherRDD's map functions will be computed.
+When taking is reached, the map functions will be recomputed.
+
+To make this better? 
+val otherRDD = someRDD.map().persist()
+
+**** cache()
+Shorthand for using the default storage level (MEMORY_ONLY), which is in memory only as regular Java objects
+
+**** persist(StorageLevel)
+Persistance can be customized, pass storage level as parameter:
+[space, cpu] - [L]ow, [M]edium, [H]igh
+ - [H,L] MEMORY_ONLY: in memory on java objects
+ - [L,H] DISK_ONLY: on disk as regular java objects 
+ - [L,H] MEMORY_ONLY_SER: in memory as serialized Java objects (more compact)
+ - [L,H] MEMORY_AND_DISK_SER: on disk as serialized Java objects (more compact, spill over to disk)
+ - [H,M] MEMORY_AND_DISK: both in memory and on disk (spill over to disk to avoid re-computation)
+
+
+** Spark job and spark cluster
+
+Spark cluster = master + workers
+
+Driver program accesses the master (where the spark context is). Each worker Node is an executor.
+
+Cluster Manager manages communication and scheduling and memory management between master and workers (YARN/Mesos typically)
+
+*** Note: foreach(println) prints to workers
+
+Since foreach is an action (returns Unit), it's eagerly executed on the worker nodes and not on driver program. Thus println's will not show in stdout of driver (master)
+Unit is returned to the driver program.
