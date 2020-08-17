@@ -1,5 +1,6 @@
 * Coursera: Functional Programming Principles in Scala
 
+
 ** Call-by-value vs Call-by-name
 
 The difference is in how the expression gets evaluated.
@@ -81,3 +82,63 @@ If a function calls itself as its last action, the function's stack frame can be
 
 In general, if the last action of a function consists of calling a function (which may be the same) ,one stack frame would be sufficient for both functions. Such calls are called tail-calls
 
+
+** Higher-order functions
+
+Functional languages treat functions as first-class values. This means that a function can be passed as a parameter and returned as a result.
+
+Functions that do this are called higher-order functions.
+
+#+BEGIN_SRC scala
+def sum(f: Int => Int, a: Int, b: Int): Int = 
+  if(a > b) 0
+  else f(a) + sum(f, a + 1, b)
+
+//to extend:
+def sumCubes(a: Int, b: Int) = sum(cube, a, b)
+
+def cube(x: Int): Int = x * x * x
+
+#+END_SRC
+
+*** Function Type
+
+A => B is the type of a function
+
+*** Anonymous Functions
+
+Functions that do not have a name.
+
+Example: A function that raises its argument to a cube:
+
+(x: Int) => x * x * x
+(can omit :Int if compiler can infer it)
+or
+
+(x: Int, y: Int) => x + y
+
+Anonymous functions are syntactic sugar, thus, we can combine the two lines of the example above:
+
+#+BEGIN_SRC scala
+
+def sumCubes(a: Int, b: Int) => sum(x => x * x * x, a, b)
+
+#+END_SRC
+
+** Currying
+
+Function returning functions
+
+example
+
+#+BEGIN_SRC scala
+
+def sum(f: Int => Int)(a: Int, b: Int): Int = 
+  if(a > b) 0 else f(a) + sum(f)(a + 1, b)
+
+//call it with:
+sum(cube)(1,10)
+
+#+END_SRC
+
+Type of above function = (Int => Int) => (Int, Int) => Int

@@ -110,3 +110,40 @@ Cluster Manager manages communication and scheduling and memory management betwe
 
 Since foreach is an action (returns Unit), it's eagerly executed on the worker nodes and not on driver program. Thus println's will not show in stdout of driver (master)
 Unit is returned to the driver program.
+
+
+** Reduction Operations
+
+Walk through a collection and combine neighbouring elements of the collection together to produce a single combined result
+
+Example
+
+#+BEGIN_SRC scala
+   case class Taco(kind: String, price: Double)
+
+   val tacoOrder = 
+     List(
+       Taco("Carnitas", 2.25),
+       Taco("Corn", 1.75"),
+       Taco("Barbacoa", 2.50),
+       Taco("Chicken", 2.00))
+#+END_SRC
+
+To calculate the sum of all the tacos, can use foldLeft:
+
+#+BEGIN_SRC scala
+   val cost = tacoOrder.foldLeft(0.0)((sum, taco) => sum + taco.price)
+#+END_SRC
+
+foldLeft is not parallelizable, because it has to iterate sequentially from left to right
+
+fold is parallelizable becaues the types has to be the same, which means the type can't be changed
+
+*** Aggregate
+
+parallelizable and can change the type
+
+aggregate[B](z: => B)(seqop: (B, A) => B, combop: (B,B) => B: B 
+
+** Distributed Key-Value Pairs (Pair RDDs)
+
