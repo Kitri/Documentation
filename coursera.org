@@ -1,0 +1,83 @@
+* Coursera: Functional Programming Principles in Scala
+
+** Call-by-value vs Call-by-name
+
+The difference is in how the expression gets evaluated.
+
+Call-by-value first evaluates the values in the expression, left to right, before applying the right side of a function to the left
+
+Call-by-value first evaluates the "name" and only at the last possible step evaluates the values.
+
+e.g.
+#+BEGIN_SRC scala
+  def sum(x: Int, y: Int) = x + y
+
+  //CBV
+  sum(1+2,3+4) = sum(3, 3+4) = sum(3, 7) = 3 + 7 = 10
+
+  //CBN
+  sum(1+2,3+4) = (1+2) + (3+4) = 3 + (3+4) = 3 + 7 = 10
+#+END_SRC
+
+To force call by name, add a => e.g. def sum(x: Int, y: => Int) would mean x is called by value and y is always called by name
+
+
+** Conditional Expressions
+
+if-else same as java but used for expressions, not statements
+
+Boolean expressions with && and || do not always need to evaluate their right operand, they use "short-circuit evaluation".
+
+
+** def vs val 
+
+#+BEGIN_SRC scala
+  val x = 2
+
+  //square(x) will be evaluated when y is called
+  def y = square(x)
+
+  //square(x) will be evaluated upon declaration as CBV because y is a val
+  //further in the program "y = 4" , not "square(2)"
+  val y = square(x) 
+#+END_SRC
+ 
+
+** Newton's sqrt method
+
+To compute sqrt(x):
+- start with an initial estimate y (e.g y = 1) 
+- repeatedly improve the estimate by taking the mean of y and x/y
+
+#+BEGIN_SRC scala
+  def sqrtIter(guess: Double, x: Double): Double =
+    if (isGoodEnough(guess, x)) guess
+    else sqrtIter(improve(guess, x), x)
+
+#+END_SRC
+
+** Blocks and lexical scope
+
+Blocks are delimited by braces { ... }
+
+Blocks are expressions. 
+ - definitions outside block is accessible inside block, as long as names aren't shadowed. (Thus if you use the same value names, you can't access the one outside the block) 
+ - definitions inside the block are only accessible inside the block
+
+** Semicolons and infix operators
+
+someLongExpression
+  + someOtherExpression
+
+is seen as:
+someLongExpression;
+  + someOtherExpression
+
+To successfully concatenate, either surround it in round brackets, or put the + at the end of the first line instead
+
+** Tail Recursion
+
+If a function calls itself as its last action, the function's stack frame can be reused. This is called tail recursion
+
+In general, if the last action of a function consists of calling a function (which may be the same) ,one stack frame would be sufficient for both functions. Such calls are called tail-calls
+
