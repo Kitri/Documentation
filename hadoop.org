@@ -34,4 +34,87 @@ Always only have 1 active Name node, several options to avoid losing data:
 - Java interface
 - NFS Gateway (network file system), way of remoting a remote file system on the server. Will just look like another mount point on your linux box.
 
+* MapReduce
+2 stages: Map and Reduce.
+
+Map phase includes shuffling and sorting. 
+
+Example using python. Can run locally with python script.py u.data 
+or on hadoop cluster with python scipt.py -r hadoop --hadoop-streaming-jar /usr/hdp/current/hadoop-mapreduce-client/hadoop-streaming.jar u.data
+
+#+BEGIN_SRC python
+  from mrjob.job import MRJob
+  from mrjob.step import MRStep
+
+  class RatingsBreakdown(MRJob):
+      def steps(self):
+          # Takes in 2 parameters - a mapper and a reducer
+          # in this case the mapper is the output of a mapper and reducer
+          return [
+              MRStep(mapper=self.mapper_get_ratings,
+                     reducer=self.reducer_count_ratings),
+              MRStep(reducer=self,reducer_sorted_output)
+              ]
+
+      def mapper_get_ratings(self, _, line):
+          (userID, movieID, rating, timestamp) = line.split('\t')
+          yield movieID, 1
+
+      def reducer_count_ratings(self, key, values):
+          yield str(sum(values)).zfill(5), key #zfill filss the number up to 5 spaces e.g. 00004
+
+      def reducer_sorted_output(self, count, movies):
+          for movie in movies:
+              yield movie, count
+
+
+  if __name__ == '__main__':
+      RatingsBreakdown.run()
+#+END_SRC
+
+* Pig
+
+Built on top of MapReduce or Tez, a SQL-like interface (Pig Latin) to write MapReduce pipelines without having to use the complex MapReduce
+
+Can run this using grunt, script or ambarai / hue
+
+Example on MapReduce: load movie data, transform to show average ratings, filter to show only ratings > 4, join datasets to get names of movies and not ID's.
+To execute on Tez (faster): check the "execute on Tez" checkbox and execute.
+(Tez uses acyclic graphs for computation)
+
+Each of the expressions is called a 'relation'
+
+#+BEGIN_SRC text
+  ratings = LOAD '/user/maria_dev/ml-100k/u.data' AS (userId:int, movieId:int, rating:int, ratingTime:int);
+
+  metadata = LOAD '/user/maria_dev/ml-100k/u.item' USING PigStorage('|')
+      AS (movieID:int, movieTitle:chararray, releaseDate:chararray, videoRelease:chararray, imdbLink:chararray);
+    
+  nameLookup = FOREACH metadata GENERATE movieID, movieTitle,
+      ToUnixTime(ToDate(releaseDate, 'dd-MMM-yyyy')) AS releaseTime;
+    
+  ratingsByMovie = GROUP ratings BY movieId;
+
+  avgRatings = FOREACH ratingsByMovie GENERATE group AS movieID, AVG(ratings.rating) AS avgRating;
+
+  fiveStarMovies = FILTER avgRatings BY avgRating > 4.0;
+
+  fiveStarsWithData = JOIN fiveStarMovies BY  movieID, nameLookup BY movieID;
+
+  oldestFiveStarMovies = ORDER fiveStarsWithData BY nameLookup::releaseTime;
+
+  DUMP oldestFiveStarMovies;
+#+END_SRC
+
+Pig Latin isn't very big. All keywords:
+
+ - LOAD STORE DUMP
+   - STORE ratings INTO 'outRatings' USING PigStorage(':');
+   - FILTER DISTINCT FOREACH/GENERATE MAPREDUCE STREAM STREAM SAMPLE
+   - JOIN COGROUP GROUP CUBE
+   - ORDER RANK LIMIT
+   - UNION SPLIT
+
+* Spark 
+
 
