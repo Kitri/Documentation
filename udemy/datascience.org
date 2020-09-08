@@ -159,3 +159,47 @@ rolling a 3: P(A') = 1/6
 P(A) + P(A') = 1
 
 
+** Combinatorics
+
+*** Permutations
+
+Number of possible ways we can arrange a set of objects
+
+The formula:
+
+P(n) = n!
+
+**** Factorials
+
+0! = 1
+negative factorials does not exist
+
+n! = (n-1)! x n
+(n+1)! = n! x (n+1)
+
+(n + k)! = n! x (n + 1) x (n + 2) x ... x (n + k)
+(n - k)! = n! / ((n - k + 1) x (n - k + 2)x ... x (n - k + k))
+
+If we have 2 factorials n, and k, with n > k:
+n! / k! = (k + 1) x (k + 2) x ... x n
+
+*** Variations with repetition
+The total number of ways we can pick and arrange some elements of a given set
+
+Formula for the variations with repetition:
+
+_n    
+Vp = n^p   (V bar of n and p where n is the total number of elements available and p the positions to fill)
+
+(e.g. combination lock with 2 dials, options A,B,C. If you choose A to start with, the second one can be A,B or C. Similar for other 2, and thus the resulting variations is 3*3*3 = 3^2)
+
+
+*** Variations without repetition
+
+Number of variations without repetition when arranging p elements out of a total of n
+
+ n   
+Vp = n! / (n - p)! 
+
+
+

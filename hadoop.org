@@ -1,0 +1,37 @@
+* HDFS
+
+Optimised for large files, not really many small files
+
+Stores data in blocks, and these blocks are stored across multiple servers. Data is stored in more than one block for fail-over
+
+Single Name Node - keeps track of where all blocks live. Knows the file name and path. Contains an edit block so it knows what has been created and edited.
+Data Nodes - contains data
+
+** Reading a file
+
+Client node talks to Name node to see which blocks to go look at, then client node goes to the actual data nodes.
+
+** Writing a file
+
+Client node tells name node the file node.
+Client talks to single data node to write file, and data nodes will talk to each other to store the data in replicated manner
+Data nodes send back a acknowledged and client node tells name node where it was stored and that it has been written
+
+** Name node DR
+
+Always only have 1 active Name node, several options to avoid losing data:
+
+- backup. In case of name node failure, bring up new name node with backups
+- Secondary namenode. Maintains merged copy of edit log you can restore from.
+- HDFS Federation. Each namenode manages a specific namespace volume. Separate name nodes for separate volumes (Namenode can reach name list limit)
+- HDFS High Available. If you can't afford downtime. Uses a shared edit log. Zookeeper tracks active namenode and extreme measures to ensure only one namenode is used at a time
+
+** Using HDFS
+
+- UI (Ambari) - looks like a giant file system
+- CLI
+- HTTP directly or via HDFS Proxies
+- Java interface
+- NFS Gateway (network file system), way of remoting a remote file system on the server. Will just look like another mount point on your linux box.
+
+
