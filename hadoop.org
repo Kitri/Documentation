@@ -106,15 +106,123 @@ Each of the expressions is called a 'relation'
   DUMP oldestFiveStarMovies;
 #+END_SRC
 
-Pig Latin isn't very big. All keywords:
+** Basic commands
+  - LOAD STORE DUMP
+  - STORE ratings INTO 'outRatings' USING PigStorage(':');
+  - FILTER DISTINCT FOREACH/GENERATE MAPREDUCE STREAM STREAM SAMPLE
+  - JOIN COGROUP GROUP CUBE
+  - ORDER RANK LIMIT
+  - UNION SPLIT
 
- - LOAD STORE DUMP
-   - STORE ratings INTO 'outRatings' USING PigStorage(':');
-   - FILTER DISTINCT FOREACH/GENERATE MAPREDUCE STREAM STREAM SAMPLE
-   - JOIN COGROUP GROUP CUBE
-   - ORDER RANK LIMIT
-   - UNION SPLIT
+** Diagnostics
+  - DESCRIBE
+  - EXPLAIN
+  - ILLUSTRATE
+ 
+** UDF's
+  - REGISTER
+  - DEFINE
+  - IMPORT
+
+** Some other functions and loaders
+  - AVG CONCAT COUNT MAX MIN SIZE SUM
+  - PigStorage
+  - TextLoader
+  - JsonLoader
+  - AvroStorage
+  - ParquetLoader
+  - OrcStorage
+  - HBaseStorage
 
 * Spark 
 
+DAG Engine (directed acyclic graph) optimizes workflows
+
+Components of spark part of spark core
+
+  - Spark streaming
+  - Spark SQL
+  - MLLib
+  - GraphX
+
+ssh into hadoop cluster, run: spark-submit file.py
+
+Can start a thrift service with spark sql and connect to it and query it
+
+More details in spark course
+
+* Hive
+
+On top of Mapreduce and Tez. 
+
+Short for HiveQL - allows you to query HDFS data using SQL syntax
+
+Basically smokes and mirrors to make it seem like you're working with a relational database
+
+** Why not hive?
+
+ - high latency - not appropriate for OLTP
+ - stores data de-normalized
+ - SQL is limited in what it can do (Pig, spark allows more complex stuff)
+ - No transactions
+ - no record-level updates, inserts, deletes
+
+In hive view, can upload table and then write queries in HQL.
+
+Can create views as well (which gets persisted as with usual relational db)
+
+** How does hive work?
+
+Schema on read
+
+Hive takes unstructured data and applies a schema to it as it reads, where relational databases write the schema first and read data according to that schema (schema on write)
+
+ LOAD DATA - hive will move data from a distributed filesystem into Hive (the raw data)
+ LOAD DATA LOCAL - copies data from local filesystem into Hive
+ Managed vs External tables: managed tables are where hive takes control of that data. 
+To create external table use "CREATE EXTERNAL TABLE", give it a location and then hive doesn't take ownership of it. Thus, dropping data will drop metadata but not the actual data.
+
+*** Partitioning
+
+You can store your data in partitioned subdirectories (optimisation)
+
+E.g. 
+#+BEGIN_SRC sql
+ CREATE TABLE person(
+   name STRING,
+   address STRUCT<street: String, city: String>
+ )
+PARTITIONED BY (country STRING)
+#+END_SRC
+
+Can use it through Ambari / Hue; JDBC/ODBC server; Thrift service (but remember hive is not suitable for OLTP); via Oozie
+
+
+
+* Scqoop
+
+Meant for large datasets.
+
+Kicks of mapreduce jobs to handle importing and exporting your data
+
+Takes data from mysql/postgres etc, distributes processing across several parallel mappers and writing to HDFS.
+
+Command line tool:
+
+#+BEGIN_SRC bash
+  sqoop import --connect jdbc:mysql://localhost/movielens --driver com.mysql.jdbc.Driver --table movies
+#+END_SRC
+
+To add to hive instead add '--hive-import'
+To set the number of mappers add -m 1
+
+Can do incremental imports in sqoop (can be used to keep table up to date) by using --check-column (to check like a date column) and --last-value 
+
+To export from hive table to mysql: (mysql table needs to exist)
+
+#+BEGIN_SRC bash
+  sqoop export --connect jdbc:mysql://localhost/movielens -m 1 --driver com.mysql.jdbc.Driver --table exported_movies --export-dir /apps/hive/warehouse/movies --input-fields-terminated-by '\0001'
+#+END_SRC
+
+* Integrating hadoop with nosql
 
