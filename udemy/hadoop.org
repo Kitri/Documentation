@@ -226,3 +226,108 @@ To export from hive table to mysql: (mysql table needs to exist)
 
 * Integrating hadoop with nosql
 
+** HBase
+
+HBase is built on top of hdfs, based on google's BigTable
+
+Does not have a query language but has a CRUD API's
+
+Auto-sharding on top of HDFS onto "region servers"
+
+HMaster (master nodes that keeps track of where which data is)
+Zookeeper is the "who is watching the watchers", keeps track of where the Master server is and its status.
+
+HBase is transactional on rows
+
+*** HBase data model
+
+keys stored lexographically in hbase 
+
+ROW referenced by a unique KEY
+Each ROW has some small number of COLUMN FAMILIES which may contain arbitrary COLUMNS.
+
+E.g. if you have ratings you'll have a column family for ratings, and the family has columns that may or may not be filled in
+
+CELL: intersection of a row and a column, and each cell can have many versions with given timestamps
+
+
+Example:
+
+key: com.cnn.www
+Contents Column family: contents (one column with multiple versions - history of the webpage)
+Anchor Column family: Anchor: cnnsi.com = "CNN"; Anchor:my.look.ca = "CNN.com"   >> syntax: key = columnFamily:Name value = whatever value
+
+*** Access HBase
+
+ - HBase shell
+ - Java API (wrappers for python, scala etc)
+ - Spark, Hive, Pig
+ - REST service
+ - Thrift service
+ - Avro service
+
+*** Examples
+
+HBASE table:
+
+UserID; Rating:50; Rating:33; Rating:233  # rating for movie 50 was e.g. 1 star (so value = 1)
+
+**** Start HBASE through admin 
+
+**** Kick off rest server running on top of HBASE
+
+log into cluster via ssh
+
+start and stop
+#+BEGIN_SRC bash
+  /usr/hdp/current/hbase-master/bin/hbase-daemon.sh start rest -p 8000 --infoport 8001 
+ /usr/hdp/current/hbase-master/bin/hbase-daemon.sh stop rest 
+#+END_SRC
+
+
+**** Do stuff to rest using python
+
+Use library called starbase
+
+#+BEGIN_SRC python
+  from starbase import Connection
+
+  c = Connection("sandbox-hdp.hortonworks.com", "8000")
+
+  ratings = c.table('ratings')
+
+  if(ratings.exists()):
+      print("Dropping existing ratings table\n")
+      ratings.drop()
+
+  ratings.create('rating')
+
+  print("Parsing data\n")
+  ratingFile = open('/opt/jemstep/code/udemy/ml-100k/u.data', 'r')
+
+  batch = ratings.batch()
+
+  for line in ratingFile: 
+      (userID, movieID, rating, timestamp) = line.split()
+      batch.update(userID, {'rating': {movieID: rating}})
+
+  ratingFile.close()
+
+  print("Committing ratings data to HBase via REST service\n")
+  batch.commit(finalize=True)
+
+  print("Fetch data. Ratings for user ID 1\n")
+  print(ratings.fetch("1"))
+  print("Ratings for user ID 33\n")
+  print(ratings.fetch("33"))
+#+END_SRC
+
+
+*** Integrating Pig with HBase
+
+ - Must create HBase table ahead of time
+ - Your relation must have a unique key as its first column, followed by subsequent columns as you want htem saved in HBase
+ - USING clause allows you to STORE into an HBase table
+ - Can work at scale because HBase is transactional on rows
+
+
