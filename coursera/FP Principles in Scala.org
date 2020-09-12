@@ -225,3 +225,46 @@ def eval(e: Expr): Int = e match {
 
 If a case matches, the expression's right hand side is replaced with that match's expression
 
+** Immutable collections
+
+Like arrays, lists are homogeneous - elements have to have the same type.
+
+To declare:
+
+ - val fruit: List[String] = List("apple", "pear")
+
+All lists in scala are constructor from Nil
+The construction operation :: (pronounced cons) 
+
+x :: xs :: Nil = list of x followed by xs (all ends with Nil)
+
+cons associate to the right, thus, this is the default:
+
+1 :: (2 :: (3 :: (4 :: Nil)))
+
+*** Operations on lists
+
+ - head
+ - tail
+ - isEmpty
+
+(empty list head will throw exception)
+
+*** Pattern matching on list
+
+  - Nil
+   - p :: ps - pattern that matches a list with head p and tail ps
+   - List(p1, ..., pn) - same as p1 :: ... :: pn :: Nil e.g. List(2 :: x) = a List that contains as only element another list starting with 2
+
+*** Example: Sort list using match
+
+This is a typical pattern match on a list - first check if empty, then head :: tail
+
+#+BEGIN_SRC scala
+  def isort(xs: List[Int]): List[Int] = xs match {
+    case List() => List()
+    case y :: ys => insert(y, isort(ys))
+  }
+
+#+END_SRC
+
