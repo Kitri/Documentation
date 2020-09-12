@@ -57,6 +57,7 @@ To compute sqrt(x):
 
 #+END_SRC
 
+
 ** Blocks and lexical scope
 
 Blocks are delimited by braces { ... }
@@ -64,6 +65,7 @@ Blocks are delimited by braces { ... }
 Blocks are expressions. 
  - definitions outside block is accessible inside block, as long as names aren't shadowed. (Thus if you use the same value names, you can't access the one outside the block) 
  - definitions inside the block are only accessible inside the block
+
 
 ** Semicolons and infix operators
 
@@ -75,6 +77,7 @@ someLongExpression;
   + someOtherExpression
 
 To successfully concatenate, either surround it in round brackets, or put the + at the end of the first line instead
+
 
 ** Tail Recursion
 
@@ -125,6 +128,7 @@ def sumCubes(a: Int, b: Int) => sum(x => x * x * x, a, b)
 
 #+END_SRC
 
+
 ** Currying
 
 Function returning functions
@@ -142,3 +146,82 @@ sum(cube)(1,10)
 #+END_SRC
 
 Type of above function = (Int => Int) => (Int, Int) => Int
+
+** Variance
+
+List is variance, Array is not (immutable vs mutable)
+
+Say C[T] is parameterized type and A, B are types such that A <: B (A is subtype of B)
+
+Relationships between C[A] and C[B]
+
+C[A] <: C[B]         -> C is covariant     -> to indicate write class C[+A]
+C[A] >: C[B]         -> C is contravariant -> to indicate write class C[-A]
+neither are subtypes -> C is nonvariant    -> to indicate write class C[A]
+ 
+If A2 <: A1 and B1 <: B2, then A1 => B1 <: A2 => B2
+
+A2 => B2
+/\    ..
+..    \/
+A1 => B1
+
+
+Functions are contravariant in their argument tyoe(s) and covariant in their result type
+
+*** When can we annotate + and - to indicate co and contravariance?
+
+Compiler will check this for you, roughly:
+
+ - covariant type parameters can only appear in method results
+ - contravariant type parameters can only appear in method parameters
+ - invariant types can appear anywhere
+
+
+** Pattern Matching
+
+*** Case classes
+
+#+BEGIN_SRC scala
+  trait Expr
+  case class Number(n: Int) extends Expr
+  case class Sum(e1: Expr, e2: Expr) extends Expr
+#+END_SRC
+
+Compiler will implicitly automatically att companion objects to case classes
+
+E.g.
+#+BEGIN_SRC scala
+  object Number {
+    def apply(n: Int) = new Number(n)
+  }
+#+END_SRC
+
+Then you can write Number(1) instead of new Number(1).
+
+*** match syntax
+
+Like "switch"
+
+#+BEGIN_SRC scala
+
+def eval(e: Expr): Int = e match {
+  case Number(n) => n
+  case Sum(e1,e2) => eval(e1) + eval(e2)
+}
+
+#+END_SRC
+
+  - match is followed by a sequence of cases, pat => expr
+  - each case associates an expression expr with a patterh pat
+  - A MatchError exception is thrown if no pattern matches
+
+*** Forms of patterns
+
+ - same variable (starting with lowercase letter) can only appear once per pattern
+ - Name of constants start with capital letter except null, true, false
+
+*** How are matches evaluated
+
+If a case matches, the expression's right hand side is replaced with that match's expression
+
