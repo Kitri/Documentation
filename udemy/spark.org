@@ -54,3 +54,44 @@ join, rightOuterJoin, leftOuterJoin, cogroup, subtractByKey (Though will use spa
 
 #+END_SRC
 
+
+* SparkSQL, DataFrames and DataSets
+
+** DataFrame
+
+ - Extends from RDD
+ - Contains row objects
+ - Has a schema
+ - Can run actual sql queries on it
+ - Easy to communicate to relational db's
+ - Schema inferred at runtime
+
+** DataSet
+
+ - A dataframe is really just a dataset of Row objects [DataSet[Row]]
+ - Dataset knows schema at compile time
+ - Datasets can only be used with Java and Scala (Python is not a compiled language)
+ - RDD .toDS()
+ - Can be more efficient, can be serialized very efficiently
+
+*** SparkSession
+
+Need a sparksession. Can get sparkcontext from sparksession
+
+*** examples
+
+#+BEGIN_SRC scala
+  ds.show()
+  ds.select("someField")
+  ds.filter(ds("someField")>200)
+  ds.groupBy(ds("someField)).mean()
+  ds.rdd().map(mapperFunction)
+#+END_SRC
+
+** SparkSQL
+
+Exposes a jdbc / odbc server so you can use it just like a sql db
+
+*** UDF
+
+spark.sql.funcitons.udf - can create user defined functions
