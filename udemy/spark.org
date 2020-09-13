@@ -1,0 +1,56 @@
+* Course details
+Apache Spark with Sclaa - Hands on with Big Data!
+
+* What's new in Spark 3?
+
+ - Deprecating MLLIB using RDDs (Dataframes one still available)
+ - Deprectate python2
+ - GraphX => SparkGraph (based on cypherquery language)
+
+ - Better performance
+ - Can use GPU hardware now, so you can use 3rd party deep learning add-ons
+ - Better kubernetes support
+ - Support binary files to be loaded into a dataframe
+ - ACID support and data lake 
+
+* RDD - Resilient Distributed Dataset
+
+Lazy evaluation
+
+#+BEGIN_SRC scala
+  val numbs = parallelize(List(1,2,3,4))
+  sc.textFile("file:/// ....") //or s3 or hdfs
+  rows = hiveCtx.sql("SELECT name...")
+
+#+END_SRC
+
+Can read from JDBC, Cassandra, HBase, Elasticsearch, JSON, CSV...
+
+** Operations on RDDs
+
+map, flatmap, filter, distinct, sample, union, intersection, subtract, cartesian
+
+collect, count, countByValue, take, top, reduce ...
+
+
+*** map and flatmap
+
+#+BEGIN_SRC scala
+  rdd.map(x => x * x)
+  rdd.flatMap(x => x.split(" ")) //Taking a sentence and splitting it into a list of words
+  rdd.flatMap(x => x.split("\\W+")) //using regex - split on "word"
+#+END_SRC
+
+** PairRDDS
+
+In scala, just convert to tuples then you have key,value RDDs
+
+Can then use some pair functions like reduceByKey, groupByKey, sortByKey, keys(), values(), mapValues(), flatMapValues()
+join, rightOuterJoin, leftOuterJoin, cogroup, subtractByKey (Though will use sparksql or dataframes in modern spark)
+
+
+#+BEGIN_SRC scala
+  rdd.reduceByKey((x,y) => x + y)
+
+#+END_SRC
+
