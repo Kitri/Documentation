@@ -1,6 +1,8 @@
 * Course details
 Apache Spark with Sclaa - Hands on with Big Data!
 
+Git repository: https://bitbucket.org/mercia_malan/sparkplay/src/master/
+
 * What's new in Spark 3?
 
  - Deprecating MLLIB using RDDs (Dataframes one still available)
@@ -77,6 +79,8 @@ join, rightOuterJoin, leftOuterJoin, cogroup, subtractByKey (Though will use spa
 *** SparkSession
 
 Need a sparksession. Can get sparkcontext from sparksession
+
+Note: Have to stop a session
 
 *** examples
 
