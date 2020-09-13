@@ -70,6 +70,11 @@ join, rightOuterJoin, leftOuterJoin, cogroup, subtractByKey (Though will use spa
 
 ** DataSet
 
+Works best with structured data!
+
+documentation: spark.apache.org/docs/latest/api/scala/org/apache/spark/sql/Dataset.html
+
+
  - A dataframe is really just a dataset of Row objects [DataSet[Row]]
  - Dataset knows schema at compile time
  - Datasets can only be used with Java and Scala (Python is not a compiled language)
@@ -82,9 +87,75 @@ Need a sparksession. Can get sparkcontext from sparksession
 
 Note: Have to stop a session
 
-*** examples
+To create a spark session:
 
 #+BEGIN_SRC scala
+  val spark = SparkSession
+    .builder
+    .appName("FriendsByAgeDS")
+    .master("local[*]")
+    .getOrCreate()
+
+  //remember to stop at the end
+  spark.stop()
+#+END_SRC
+
+
+*** Creating a dataset
+
+first create a case class with the schema, then read in the data with "as[caseclass]"
+
+If your data has headers, you can use option header true +
+inferschema. If it doesn't, inferschema might fail and thus you need
+to create an explicit schema and pass it in.
+
+Extra part: add logging level as error
+
+#+BEGIN_SRC scala
+  import org.apache.spark.sql.SparkSession
+  import org.apache.log4j._
+
+  case class Person(id:Int, name:String, age:Int, friends:Long)
+
+  //main function
+  Logger.getLogger("org").setLevel(Level.ERROR)
+
+  val ds = spark.read
+    .option("header", "true")
+    .option("inferSchema", "true")
+    .csv("src/main/resources/fakefriends.csv")
+    .as[Person]
+    .cache()
+
+  //Or use implicits to convert to dataset from dataframe
+
+  import spark.implicits._
+  val ds = spark.read.text("fakefriends.csv").as[Person]
+#+END_SRC
+
+
+Can also specify the schema as we're readying:
+
+#+BEGIN_SRC scala
+  import org.apache.spark.sql.types._
+
+  val personSchema = new StructType()
+        .add("id", StringType, nullable = true)
+        .add("name", StringType, nullable = true)
+        .add("age", IntegerType, nullable = true)
+        .add("friends", LongType, nullable = true)
+
+  val ds = spark.read
+    .schema(personSchema)
+    .csv("xx.csv")
+    .as[Person]
+#+END_SRC
+
+
+*** Examples
+
+#+BEGIN_SRC scala
+  //show shows the first 20 rows by default. Pass in an integer to set how many rows to show
   ds.show()
   ds.select("someField")
   ds.filter(ds("someField")>200)
@@ -92,10 +163,25 @@ Note: Have to stop a session
   ds.rdd().map(mapperFunction)
 #+END_SRC
 
+More advanced:
+
+#+BEGIN_SRC scala
+  import org.apache.spark.sql.functions._
+  ds.groupBy("age").agg(round(avg("friends"), 2).alias("friends_avg")).sort("age").show()
+
+  //note syntax, use $ to pass column names into sql functions, and weird =!= for not equal to
+  ds.select(explode(split($"value", "\\W+")).alias("word")).filter($"word" =!= "")
+#+END_SRC
+
+*** Useful functions
+
+  - withColumn (see git code MinTemperaturesDS) to add a new column
+
+
 ** SparkSQL
 
 Exposes a jdbc / odbc server so you can use it just like a sql db
 
-*** UDF
+** UDF
 
 spark.sql.funcitons.udf - can create user defined functions
