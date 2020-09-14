@@ -330,4 +330,134 @@ Use library called starbase
  - USING clause allows you to STORE into an HBase table
  - Can work at scale because HBase is transactional on rows
 
+To create a new table in hbase:
+
+#+BEGIN_SRC bash
+  hbase shell
+
+  list #shows tables
+
+  create 'users', 'userinfo' # create table user with one column family 'userinfo'
+ 
+  scan 'users' #peeks into table - timestamp built-in in result because hbase is versioned
+
+  disable 'users' #need to do this before being able to drop
+  drop 'users'
+
+#+END_SRC
+
+Create a pig file and run using 'pig file.pig'
+
+#+BEGIN_SRC sql
+ratings = LOAD '/xxx/u.user'
+USING PigStorage('|')
+AS (userID:int, age:int, gender:chararray, occupation:chararray, zip:int);
+
+STORE ratings INTO 'hbase://users'
+USING org.apache.pig.backend.hadoop.hbase.HBaseStorage (
+'userinfo:age,userinfo:gender,userinfo:occupation,userinfo:zip');
+#+END_SRC
+
+
+** Cassandra
+
+*** How did it start?
+
+comes from greek mythology - cassandra can tell the future
+
+CAP theorem: consistency, availability and partition-tolerance, they say you can only have 2 out of 3.
+
+Cassandra favors availability over consistency (eventually consistent), but you can tune it so "tunable consistency"
+
+*** What is it?
+
+Distributed nosql with no single point of failure
+
+No master node, every node runs exactly the same software and performs the same functions
+
+Data model similar to hbase
+
+non-relational but has limited CQL query language
+
+*** How does it compare?
+based on CAP: 
+
+Mysql = C/A
+cassandra = A/P
+Hbase and mongodb = C/P
+
+*** Cassandra architecture
+
+Ring architecture between all nodes for high availability
+
+Nodes talk to each other and manage themselves
+
+Can have multiple cassandra rings and replicate between. So you can use your replica ring for analytics without impacting transactional performance
+
+*** CQL
+
+no joins, all queries must be on some primary key
+
+data has to be de-normalized
+
+all tables must be in a keyspace (keyspaces are like databases)
+
+Can also use CQLSH which is CQL in shell to create tables and stuff
+Replication should ideally be higher than below example, but for local with one node this is fine.
+#+BEGIN_SRC sql
+cqlsh --cqlversion="3.4.0"
+CREATE KEYSPACE movielens WITH replication = {'class'= 'SimpleStrategy', 'replication_factor':'1'} AND durable_writes = true; 
+USE movielens
+CREATE TABLE users (user_id int, age int, PRIMARY KEY (user_id))
+DESCRIBE TABLE users
+
+#+END_SRC
+
+*** Cassandra + Spark
+
+DataStax has a spark-cassandra connector, which allows you to RW as dataframes         
+
+#+BEGIN_SRC python
+  # to set spark version, set env var SPARK_MAJOR_VERSION
+
+  from pyspark.sql import SparkSession
+  from pyspark.sql import Row
+  from pyspark.sql import functions
+
+  def parseInput(line):
+      fields = line.split('|')
+      return Row(user_id = int(fields[0]), age = int(fields[1]))
+
+  if __name-_ == "__main__":
+      spark = SparkSession.builder.appName("Cass").config("spark.cassandra.connection.host","127.0.0.1").getOrCreate()
+      lines = spark.sparkContext.textFile("hdfs:///user/maria_dev/ml-100k/u.user")
+
+       users = lines.map(parseInput)
+
+       usersDf = spark.createDataFrame(users)
+
+       usersDf.write\
+           .format("org.apache.spark.sql.cassandra")\
+           .mode('append')\
+           .options(table="users", keyspace="movielens")\
+           .save()
+
+       readUsers = spark.read\
+           .format("org.apache.spark.sql.cassandra")\
+           .options(table="users", keyspace="movielens")\
+           .load()
+
+       readUsers.createOrReplaceTempView("users")
+
+       sqlDF = spark.sql("SELECT * FROM users WHERE age < 20")
+       sqlDF.show()
+
+       spark.stop()
+#+END_SRC
+
+To run: (from hdp sandbox shell)
+spark-submit --packages datastax:spark-cassandra-connector:2.0.0-M2-s_2.11 CassandraSpark.py
+
+
+** MongoDB
 
