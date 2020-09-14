@@ -461,3 +461,67 @@ spark-submit --packages datastax:spark-cassandra-connector:2.0.0-M2-s_2.11 Cassa
 
 ** MongoDB
 
+Nothign new...
+
+*** MongoDB and Spark
+
+Can add mongo as a service to ambari - install via hdp sandbox shell, then add new service @ ambari and select it.
+
+Python script:
+
+#+BEGIN_SRC python
+ from pyspark.sql import SparkSession
+  from pyspark.sql import Row
+  from pyspark.sql import functions
+
+  def parseInput(line):
+      fields = line.split('|')
+      return Row(user_id = int(fields[0]), age = int(fields[1]))
+
+  if __name-_ == "__main__":
+      spark = SparkSession.builder.appName("mongo").getOrCreate()
+      lines = spark.sparkContext.textFile("hdfs:///user/maria_dev/ml-100k/u.user")
+
+       users = lines.map(parseInput)
+
+       usersDf = spark.createDataFrame(users)
+
+       usersDf.write\
+           .format("com.mongodb.spark.sql.DefaultSource")\
+           .mode('append')\
+           .option("uri","mongodb://127.0.0.1/movielens.users")\
+           .save()
+
+       readUsers = spark.read\
+           .format("com.mongodb.spark.sql.DefaultSource")\
+           .option("uri","mongodb://127.0.0.1/movielens.users")\
+           .load()
+
+       readUsers.createOrReplaceTempView("users")
+
+       sqlDF = spark.sql("SELECT * FROM users WHERE age < 20")
+       sqlDF.show()
+
+       spark.stop()
+
+
+#+END_SRC
+
+run:
+
+spark-submit --packages org.mongodb.spark:mongo-spark-connector 2.11:2.0.0 mongospark.py
+
+
+** So how do you choose?
+
+Integration consideration, e.g. if you're using spark, you probably want to choose a db that can work with spark.
+
+Scaling requirements, do you need distributed storing and processing?
+
+Support considerations - do you have the expertise needed to support the tech?
+
+Budget considerations
+
+CAP considerations
+
+Keep it simple, if you don't need to setup a complex nosql cluster, don't do it if you don't need to.
