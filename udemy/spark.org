@@ -56,7 +56,6 @@ join, rightOuterJoin, leftOuterJoin, cogroup, subtractByKey (Though will use spa
 
 #+END_SRC
 
-
 * SparkSQL, DataFrames and DataSets
 
 ** DataFrame
@@ -173,6 +172,8 @@ More advanced:
   ds.select(explode(split($"value", "\\W+")).alias("word")).filter($"word" =!= "")
 #+END_SRC
 
+Look at degreesOfSeperation.scala for example of using an accumulator to do a BFS 
+
 *** Useful functions
 
   - withColumn (see git code MinTemperaturesDS) to add a new column
@@ -185,3 +186,52 @@ Exposes a jdbc / odbc server so you can use it just like a sql db
 ** UDF
 
 spark.sql.funcitons.udf - can create user defined functions
+
+* Running spark on a cluster
+
+Before running:
+ - make sure all the paths in the project don't point to your local drive
+ - create jar file
+ - use spark-submit <mainClass> --jars <dependencies> --files <filesToUse> <pathToJar>
+
+** Set up local spark 
+
+ - go to spark website, download zip file (using 3.0.0 with hadoop 2.7 in this course)
+ - decompress zip file to somewhere you can find it again
+ - create jar from project
+
+*** Using SBT
+
+Project should have the following subdirectory structure:
+
+src - main - scala
+project
+
+Create assembly.sbt file inside the project folder with the following line:
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.10") 
+
+Check latest sbt-assembly documentation as this will change over time
+
+Create build.sbt:
+(Spark 3 requires scala 2.12 - check scala version to spark version)
+
+#+BEGIN_SRC sbt
+name := "PopularMovies"
+
+version := "1.0"
+
+organization := "com.sundogsoftware"
+
+scalaVersion := "2.12.3"
+
+libraryDependencies ++= Seq(
+  "org.apache.spark" %% "spark-core" % "3.0.0" % "provided"
+)
+#+END_SRC
+
+provided: We assume the package will be pre-installed where we run it on, thus the package will not be included in the compiled jar file
+
+Run: sbt assembly
+
+
+
