@@ -194,6 +194,14 @@ Before running:
  - create jar file
  - use spark-submit <mainClass> --jars <dependencies> --files <filesToUse> <pathToJar>
 
+** spark-submit parameters
+
+--master [yarn/hostname:port/mesos://masternode:port] //note master in your SparkConf will override this!
+--num-executors [num] //default: 2; have to explicitly set this with YARN
+--executor-memory //make sure this does not exceed physical memory
+--total-executor-cores
+
+
 ** Set up local spark 
 
  - go to spark website, download zip file (using 3.0.0 with hadoop 2.7 in this course)
@@ -225,7 +233,8 @@ organization := "com.sundogsoftware"
 scalaVersion := "2.12.3"
 
 libraryDependencies ++= Seq(
-  "org.apache.spark" %% "spark-core" % "3.0.0" % "provided"
+  "org.apache.spark" %% "spark-core" % "3.0.0" % "provided",
+  "org.apache.spark" %% "spark-sql" % "3.0.0" % "providec"
 )
 #+END_SRC
 
@@ -233,5 +242,59 @@ provided: We assume the package will be pre-installed where we run it on, thus t
 
 Run: sbt assembly
 
+** Amazon elastic MapReduce (EMR)
 
+Quick way to create a cluster with spark, hadoop and yarn
+(You pay by the hour-instance and for network and storage IO)
 
+Remember to terminate your cluster when you're done! Else you'll get charged quite a lot....
+
+Do dev and testing locally with a subset of data, and then only publish it to the cloud with your whole dataset.
+
+EMR should have the right defaults already (memory and that stuff)
+
+*** Setup
+
+ - Create AWS account
+ - Create an EC2 key pair and download the .pem file
+ - Need a terminal
+
+Upload files and jar to an S3 bucket (He uses S3 Browser)
+
+- Go to EMR or search "Elastic Map Reduce"
+- Create new cluster; launch mode - cluster; applications: Spark + hadoop + yarn
+  - hardware config m5xlarge; 3 (1 master and 2 core)
+
+Master and core should be in running state.
+
+Check Master public DNS, click on "ssh" it will show you exactly how to connect (hadoop@server.amazonaws.com)
+
+Might need to go to security group for master node and click on inbound to create a rule for ssh on port 22 for your machine IP
+
+1. SSH into EMR
+2. Copy data from s3: aws cp s3://directory ./
+3. spark-submit jarfile.jar
+4. see results :D 
+5. Terminate cluster: Go to EMR dashboard and click "Terminate"
+
+* Partitioning
+
+Splits data across executors. Spark does this automatically, but sometimes needs a hint to optimise.
+
+Use .repartition() on a Dataframe, or .partitionBy() on an RDD before running a large operation that benefits from partitioning
+  - join(), cogroup(), groupWith(), lookup(), combineByKey() .. any join, group or reduceby operations
+
+In general:
+ - At least as many partitions as executors to take full advantage of your cluster
+ - Too many partitions results in too much shuffling
+ - At least as many partitions as you have cores, or executors that fit within your available memory
+ - 100 is usually a reasonable place to start for large operations
+
+* Tweaking settings
+
+Generally, do not set this in driver or commandline, unless really needed. Most pre-set clusters already set this effectively
+
+Can manually set memory per executor or master, but both these will be predefined on your cluster
+
+spark-submit --executor-memory 1g
+             --master yarn
