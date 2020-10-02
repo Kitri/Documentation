@@ -298,3 +298,19 @@ Can manually set memory per executor or master, but both these will be predefine
 
 spark-submit --executor-memory 1g
              --master yarn
+* Spark ML
+
+Can achieve the same stuff with python, but if you have a really large dataset, spark ml might be useful
+
+** What can it do?
+ - Feature extraction
+   TIDF - Term Frequency / Inverse Document Frequency useful to search
+ - Basic Statistics
+   Chi-squared test, pearson spearman correlation, min, max, mean, variance
+ - linear regression, logistic regression
+ - support vector machines
+ - naive bayes classifier
+ - decision trees
+ - k-means clustering (unsupervised learning)
+ - principle component analysis (PCA), singular value decomposition (SVD) - dimensionality reduction techniques
+ - recommendations using Alternating Least Squares 

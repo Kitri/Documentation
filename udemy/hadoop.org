@@ -226,6 +226,12 @@ To export from hive table to mysql: (mysql table needs to exist)
 
 * Integrating hadoop with nosql
 
+CAP: Consistency, Availability, Partition-Tolerance
+
+Mysql = C/A
+cassandra = A/P
+Hbase and mongodb = C/P
+
 ** HBase
 
 HBase is built on top of hdfs, based on google's BigTable
@@ -379,13 +385,6 @@ Data model similar to hbase
 
 non-relational but has limited CQL query language
 
-*** How does it compare?
-based on CAP: 
-
-Mysql = C/A
-cassandra = A/P
-Hbase and mongodb = C/P
-
 *** Cassandra architecture
 
 Ring architecture between all nodes for high availability
@@ -525,3 +524,5 @@ Budget considerations
 CAP considerations
 
 Keep it simple, if you don't need to setup a complex nosql cluster, don't do it if you don't need to.
+
+* Querying data interactively
