@@ -366,7 +366,7 @@ USING org.apache.pig.backend.hadoop.hbase.HBaseStorage (
 
 
 ** Cassandra
-
+   
 *** How did it start?
 
 comes from greek mythology - cassandra can tell the future
@@ -526,3 +526,62 @@ CAP considerations
 Keep it simple, if you don't need to setup a complex nosql cluster, don't do it if you don't need to.
 
 * Querying data interactively
+
+Query engines:
+ - Drill [ SQL engine that allows you to run sql queries on non-relational databases and data files ]
+ - Hue
+ - Phoenix [ SQL driver for HBase ]
+ - Presto [ Distributing queries across different data stores ] (meant for analysis, not for fast queries)
+ - Apache Zeppelen
+
+* Manage your cluster
+
+** Yarn
+
+Yet Another Resources Negotiator
+
+HDFS is the cluster storage layer
+YARN is the cluster compute layer on top of the storage layer
+MapReduce, Spark and Tez sits on top of YARN and are YARN applications
+
+** Tez
+
+Makes Hive, Pig and MapReduce jobs faster
+Constructs DAGs
+Optimizes physical data flow and resource usage
+
+
+MapReduce / Spark / Tez (YARN Applications) 
+           YARN         (compute)
+           HDFS         (storage)
+
+** Mesos
+
+Came out of Twitter - managers resources across your data center
+
+More general, not just hadoop
+
+Spark and Storm can run on mesos instead of yarn.
+
+Can integrate yarn and mesos using myriad
+
+Spark on mesos is limited to one executor per slave
+
+** Zookeeper
+
+Coordinate your cluster
+
+Keeps track of information that must be synchhronized across your cluster - which node is the master, which tasks are assigned to which workers, which workers are available
+
+good idea to have zookeeper ensemble ("who's watching the watcher?")
+
+
+*** Failure modes
+
+zookeeper can help with some failures: 
+
+  - master crashes - needs to fail over to a backup
+  - worker crashes - work needs to be distributed
+  - network trouble - part of your cluster can't see the rest of it (zookeeper notifies you)
+
+** Oozie

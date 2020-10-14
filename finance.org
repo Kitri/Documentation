@@ -1,0 +1,129 @@
+#+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+OPTIONS: author:t broken-links:nil c:nil creator:nil
+#+OPTIONS: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
+#+OPTIONS: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+OPTIONS: timestamp:t title:t toc:t todo:t |:t
+#+TITLE: Finance Plan
+#+DATE: <2020-10-09>
+#+AUTHOR: Mercia Malan
+#+EMAIL: malan747@gmail.com
+#+TOC: nil
+#+LANGUAGE: en
+#+SELECT_TAGS: export
+#+EXCLUDE_TAGS: noexport
+#+CREATOR: Emacs 27.0.50 (Org mode 9.1.9)
+#+OPTIONS: html-link-use-abs-url:nil html-postamble:auto
+#+OPTIONS: html-preamble:t html-scripts:t html-style:t
+#+OPTIONS: html5-fancy:nil tex:t
+#+HTML_DOCTYPE: xhtml-strict
+#+HTML_CONTAINER: div
+#+HTML_HEAD: <link rel="stylesheet" href="./bootstrap.css" />
+#+HTML_HEAD: <style type="text/css"> body { width: 70em; margin: 50px 100px; } </style>
+#+CREATOR: <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.0.50 (<a href="https://orgmode.org">Org</a> mode 9.1.9)
+
+
+
+* Financy stuff
+
+** Income
+  - October: 1.8 x Salary coming in
+  - November: 2 x Salary + 8 weeks tax free + ~2 weeks leave + prorata bonus (?)
+  - December+ : Normal R80 000 salary
+
+
+** Medical Aid
+
+Transfer to individual capacity
+Reduce in January to ~R2500 (classic core)
+
++ Vitality R280
+
+   - October - December : R3800
+   - January+ R2500
+
+Email discovery: Medical aid late joiner penalty, do you have to have a medical aid in SA?
+
+** GAP cover
+
+Make it go away?
+
+** Pension stuff
+
+Currently:
+Provident fund with Sanlam via Jemstep. Contribution R10125 (15%)
+
+*** Provident preservation fund
+
+Move provident fund to somewhere Paul can manage (Provident preservation fund)
+
+  - Tax free movement of provident moneys
+  - Preserve 1 withdrawal (Can only withdraw lumpsum once)
+  - Can't make any contributions to it
+
+*** Open RA 
+  - At retirement change this as required
+
+**** Pre Netherlands
+
+ - R8000, decide to increase or not after November
+
+**** Post Netherlands
+
+ - Reduce RA depending on salary etc?
+
+** Savings
+
+*** Savings Pocket
+
+ 1 month nett salary [ emergency fund ]
+
+*** Home Loan
+
+ At least a month's nett salary
+
+(Do a test to see how easy it is to remove funds from here)
+
+*** Euro account
+
+Keep an eye on the price, when it goes down to ~17, buy some euros
+
+*** Tax-free
+36000 Before 28 Feb (end of tax year)
+36000 After Feb
+
+
+** Insurance
+
+PPS covers working abroad, so keep as is for now.
+
+* Financial Plan for the next 6 months
+
+(Something to keep in mind is to budget for putting 36000 per year in tax-free forever - until 500000 max)
+
+** October Salary
+ - R17 000 piano
+ - R10 000 credit 
+ - R10 000 in bond
+
+** November - everything above normal salary
+
+x = (Amount - 450000)
+
+Keep some for holiday, save the rest
+ - First contribution to RA (R8000)
+ - 36000 tax-free
+ - 45000 savings pocket
+ - 45000 bond
+ - Put remainder in bond
+
+** March 2021
+ - 36000 tax-free
+
+** May 2021 (Netherlands)
+
+ - Re-evaluate RA
+ - Re-evaluate PPS for netherlands coverage
+ - Stop or reduce medical aid (depending on late joiner conditions)
+ - Stop all SA services - gyms etc
+
+At some point in Europe, decide where to invest excess money (if any) - the money that should be in bond 
