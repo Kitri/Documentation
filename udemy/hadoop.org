@@ -602,10 +602,9 @@ Nodes:
   - Join
 
     
-#+NAME: fig:figure name
-#+CAPTION: figure name
-#+ATTR_ORG: :width 500px
-#+ATTR_HTML: :width 500px
+#+CAPTION: Example Workflow
+#+ATTR_HTML: :alt Example workflow
+#+ATTR_HTML: :width 300 :style border:2px solid black;
 [[file:./oozie_workflow.png]]
 
 Example: Start -> fork -> pig ; sqoop -> join -> hive -> End
