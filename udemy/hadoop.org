@@ -33,7 +33,7 @@ Always only have 1 active Name node, several options to avoid losing data:
 - HTTP directly or via HDFS Proxies
 - Java interface
 - NFS Gateway (network file system), way of remoting a remote file system on the server. Will just look like another mount point on your linux box.
-
+  
 * MapReduce
 2 stages: Map and Reduce.
 
@@ -601,12 +601,15 @@ Nodes:
   - Fork
   - Join
 
-#+attr_html: :width 50px
-#+attr_latex: :width 50px
-#+ATTR_ORG: :width 10
-[[./oozie_workflow.png]]
+    
+#+NAME: fig:figure name
+#+CAPTION: figure name
+#+ATTR_ORG: :width 500px
+#+ATTR_HTML: :width 500px
+[[file:./oozie_workflow.png]]
 
 Example: Start -> fork -> pig ; sqoop -> join -> hive -> End
+
 #+BEGIN_SRC xml
   <?xml>
 
