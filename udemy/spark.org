@@ -1,3 +1,9 @@
+#+TITLE: Apache Spark with Scala - Hands On
+#+OPTIONS: toc:nil num:0 H:4 ^:nil pri:t html-style:nil
+#+HTML_HEAD:  <link id="pagestyle" rel="stylesheet" type="text/css" href="../org.css"/>
+#+HTML_LINK_HOME: ../index.html
+#+TOC: headlines 1
+
 * Course details
 Apache Spark with Sclaa - Hands on with Big Data!
 

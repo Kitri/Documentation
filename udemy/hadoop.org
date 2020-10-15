@@ -1,5 +1,14 @@
-* HDFS
+#+TITLE: Ultimate Hands-on with Hadoop
+#+OPTIONS: toc:nil num:0 H:4 ^:nil pri:t html-style:nil
+#+HTML_HEAD:  <link id="pagestyle" rel="stylesheet" type="text/css" href="../org.css"/>
+#+HTML_LINK_HOME: ../index.html
+#+TOC: headlines 1
 
+#+CAPTION: Hadoop Eco System
+#+ATTR_HTML: :width 800 
+[[file:./hadoop.png]]
+
+* HDFS
 Optimised for large files, not really many small files
 
 Stores data in blocks, and these blocks are stored across multiple servers. Data is stored in more than one block for fail-over
@@ -199,7 +208,7 @@ Can use it through Ambari / Hue; JDBC/ODBC server; Thrift service (but remember 
 
 
 
-* Scqoop
+* Sqoop
 
 Meant for large datasets.
 
@@ -604,7 +613,7 @@ Nodes:
     
 #+CAPTION: Example Workflow
 #+ATTR_HTML: :alt Example workflow
-#+ATTR_HTML: :width 300 :style border:2px solid black;
+#+ATTR_HTML: :width 600 
 [[file:./oozie_workflow.png]]
 
 Example: Start -> fork -> pig ; sqoop -> join -> hive -> End
@@ -659,3 +668,5 @@ Example: Start -> fork -> pig ; sqoop -> join -> hive -> End
   oozie.wf.application.path=${nameNode}/user/maria_dev
 
 #+END_SRC
+
+

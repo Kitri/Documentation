@@ -1,0 +1,608 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2020-10-15 Thu 23:26 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Apache Spark with Scala - Hands On</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Mercia Malan" />
+<link id="pagestyle" rel="stylesheet" type="text/css" href="../org.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href=""> UP </a>
+ |
+ <a accesskey="H" href="../index.html"> HOME </a>
+</div><div id="content">
+<h1 class="title">Apache Spark with Scala - Hands On</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgfe71ef2">Course details</a></li>
+<li><a href="#orgfb177f8">What's new in Spark 3?</a></li>
+<li><a href="#org0010ea6">RDD - Resilient Distributed Dataset</a></li>
+<li><a href="#org6ba618c">SparkSQL, DataFrames and DataSets</a></li>
+<li><a href="#orge25327f">Running spark on a cluster</a></li>
+<li><a href="#orgd7baeef">Partitioning</a></li>
+<li><a href="#org4b3a418">Tweaking settings</a></li>
+<li><a href="#orga23bee5">Spark ML</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgfe71ef2" class="outline-2">
+<h2 id="orgfe71ef2">Course details</h2>
+<div class="outline-text-2" id="text-orgfe71ef2">
+<p>
+Apache Spark with Sclaa - Hands on with Big Data!
+</p>
+
+<p>
+Git repository: <a href="https://bitbucket.org/mercia_malan/sparkplay/src/master/">https://bitbucket.org/mercia_malan/sparkplay/src/master/</a>
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgfb177f8" class="outline-2">
+<h2 id="orgfb177f8">What's new in Spark 3?</h2>
+<div class="outline-text-2" id="text-orgfb177f8">
+<ul class="org-ul">
+<li>Deprecating MLLIB using RDDs (Dataframes one still available)</li>
+<li>Deprectate python2</li>
+<li>GraphX =&gt; SparkGraph (based on cypherquery language)</li>
+
+<li>Better performance</li>
+<li>Can use GPU hardware now, so you can use 3rd party deep learning add-ons</li>
+<li>Better kubernetes support</li>
+<li>Support binary files to be loaded into a dataframe</li>
+<li>ACID support and data lake</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org0010ea6" class="outline-2">
+<h2 id="org0010ea6">RDD - Resilient Distributed Dataset</h2>
+<div class="outline-text-2" id="text-org0010ea6">
+<p>
+Lazy evaluation
+</p>
+
+<div class="org-src-container">
+<pre class="src src-scala">val numbs = parallelize(List(1,2,3,4))
+sc.textFile("file:/// ....") //or s3 or hdfs
+rows = hiveCtx.sql("SELECT name...")
+
+</pre>
+</div>
+
+<p>
+Can read from JDBC, Cassandra, HBase, Elasticsearch, JSON, CSV&#x2026;
+</p>
+</div>
+
+<div id="outline-container-org46c1a05" class="outline-3">
+<h3 id="org46c1a05">Operations on RDDs</h3>
+<div class="outline-text-3" id="text-org46c1a05">
+<p>
+map, flatmap, filter, distinct, sample, union, intersection, subtract, cartesian
+</p>
+
+<p>
+collect, count, countByValue, take, top, reduce &#x2026;
+</p>
+</div>
+
+
+<div id="outline-container-org74f1c8e" class="outline-4">
+<h4 id="org74f1c8e">map and flatmap</h4>
+<div class="outline-text-4" id="text-org74f1c8e">
+<div class="org-src-container">
+<pre class="src src-scala">rdd.map(x =&gt; x * x)
+rdd.flatMap(x =&gt; x.split(" ")) //Taking a sentence and splitting it into a list of words
+rdd.flatMap(x =&gt; x.split("\\W+")) //using regex - split on "word"
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga81e572" class="outline-3">
+<h3 id="orga81e572">PairRDDS</h3>
+<div class="outline-text-3" id="text-orga81e572">
+<p>
+In scala, just convert to tuples then you have key,value RDDs
+</p>
+
+<p>
+Can then use some pair functions like reduceByKey, groupByKey, sortByKey, keys(), values(), mapValues(), flatMapValues()
+join, rightOuterJoin, leftOuterJoin, cogroup, subtractByKey (Though will use sparksql or dataframes in modern spark)
+</p>
+
+
+<div class="org-src-container">
+<pre class="src src-scala">rdd.reduceByKey((x,y) =&gt; x + y)
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6ba618c" class="outline-2">
+<h2 id="org6ba618c">SparkSQL, DataFrames and DataSets</h2>
+<div class="outline-text-2" id="text-org6ba618c">
+</div>
+<div id="outline-container-org9be85c5" class="outline-3">
+<h3 id="org9be85c5">DataFrame</h3>
+<div class="outline-text-3" id="text-org9be85c5">
+<ul class="org-ul">
+<li>Extends from RDD</li>
+<li>Contains row objects</li>
+<li>Has a schema</li>
+<li>Can run actual sql queries on it</li>
+<li>Easy to communicate to relational db's</li>
+<li>Schema inferred at runtime</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgd46fe81" class="outline-3">
+<h3 id="orgd46fe81">DataSet</h3>
+<div class="outline-text-3" id="text-orgd46fe81">
+<p>
+Works best with structured data!
+</p>
+
+<p>
+documentation: spark.apache.org/docs/latest/api/scala/org/apache/spark/sql/Dataset.html
+</p>
+
+
+<ul class="org-ul">
+<li>A dataframe is really just a dataset of Row objects [DataSet[Row]]</li>
+<li>Dataset knows schema at compile time</li>
+<li>Datasets can only be used with Java and Scala (Python is not a compiled language)</li>
+<li>RDD .toDS()</li>
+<li>Can be more efficient, can be serialized very efficiently</li>
+</ul>
+</div>
+
+<div id="outline-container-orgfe6c15c" class="outline-4">
+<h4 id="orgfe6c15c">SparkSession</h4>
+<div class="outline-text-4" id="text-orgfe6c15c">
+<p>
+Need a sparksession. Can get sparkcontext from sparksession
+</p>
+
+<p>
+Note: Have to stop a session
+</p>
+
+<p>
+To create a spark session:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-scala">val spark = SparkSession
+  .builder
+  .appName("FriendsByAgeDS")
+  .master("local[*]")
+  .getOrCreate()
+
+//remember to stop at the end
+spark.stop()
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orge73692e" class="outline-4">
+<h4 id="orge73692e">Creating a dataset</h4>
+<div class="outline-text-4" id="text-orge73692e">
+<p>
+first create a case class with the schema, then read in the data with "as[caseclass]"
+</p>
+
+<p>
+If your data has headers, you can use option header true +
+inferschema. If it doesn't, inferschema might fail and thus you need
+to create an explicit schema and pass it in.
+</p>
+
+<p>
+Extra part: add logging level as error
+</p>
+
+<div class="org-src-container">
+<pre class="src src-scala">import org.apache.spark.sql.SparkSession
+import org.apache.log4j._
+
+case class Person(id:Int, name:String, age:Int, friends:Long)
+
+//main function
+Logger.getLogger("org").setLevel(Level.ERROR)
+
+val ds = spark.read
+  .option("header", "true")
+  .option("inferSchema", "true")
+  .csv("src/main/resources/fakefriends.csv")
+  .as[Person]
+  .cache()
+
+//Or use implicits to convert to dataset from dataframe
+
+import spark.implicits._
+val ds = spark.read.text("fakefriends.csv").as[Person]
+</pre>
+</div>
+
+
+<p>
+Can also specify the schema as we're readying:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-scala">import org.apache.spark.sql.types._
+
+val personSchema = new StructType()
+      .add("id", StringType, nullable = true)
+      .add("name", StringType, nullable = true)
+      .add("age", IntegerType, nullable = true)
+      .add("friends", LongType, nullable = true)
+
+val ds = spark.read
+  .schema(personSchema)
+  .csv("xx.csv")
+  .as[Person]
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org8586258" class="outline-4">
+<h4 id="org8586258">Examples</h4>
+<div class="outline-text-4" id="text-org8586258">
+<div class="org-src-container">
+<pre class="src src-scala">//show shows the first 20 rows by default. Pass in an integer to set how many rows to show
+ds.show()
+ds.select("someField")
+ds.filter(ds("someField")&gt;200)
+ds.groupBy(ds("someField)).mean()
+ds.rdd().map(mapperFunction)
+</pre>
+</div>
+
+<p>
+More advanced:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-scala">import org.apache.spark.sql.functions._
+ds.groupBy("age").agg(round(avg("friends"), 2).alias("friends_avg")).sort("age").show()
+
+//note syntax, use $ to pass column names into sql functions, and weird =!= for not equal to
+ds.select(explode(split($"value", "\\W+")).alias("word")).filter($"word" =!= "")
+</pre>
+</div>
+
+<p>
+Look at degreesOfSeperation.scala for example of using an accumulator to do a BFS 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org00e2af9" class="outline-4">
+<h4 id="org00e2af9">Useful functions</h4>
+<div class="outline-text-4" id="text-org00e2af9">
+<ul class="org-ul">
+<li>withColumn (see git code MinTemperaturesDS) to add a new column</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org9cc850f" class="outline-3">
+<h3 id="org9cc850f">SparkSQL</h3>
+<div class="outline-text-3" id="text-org9cc850f">
+<p>
+Exposes a jdbc / odbc server so you can use it just like a sql db
+</p>
+</div>
+</div>
+
+<div id="outline-container-org497a06d" class="outline-3">
+<h3 id="org497a06d">UDF</h3>
+<div class="outline-text-3" id="text-org497a06d">
+<p>
+spark.sql.funcitons.udf - can create user defined functions
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge25327f" class="outline-2">
+<h2 id="orge25327f">Running spark on a cluster</h2>
+<div class="outline-text-2" id="text-orge25327f">
+<p>
+Before running:
+</p>
+<ul class="org-ul">
+<li>make sure all the paths in the project don't point to your local drive</li>
+<li>create jar file</li>
+<li>use spark-submit &lt;mainClass&gt; &#x2013;jars &lt;dependencies&gt; &#x2013;files &lt;filesToUse&gt; &lt;pathToJar&gt;</li>
+</ul>
+</div>
+
+<div id="outline-container-org8c60bfd" class="outline-3">
+<h3 id="org8c60bfd">spark-submit parameters</h3>
+<div class="outline-text-3" id="text-org8c60bfd">
+<p>
+&#x2013;master [yarn/hostname:port/mesos://masternode:port] //note master in your SparkConf will override this!
+&#x2013;num-executors [num] //default: 2; have to explicitly set this with YARN
+&#x2013;executor-memory //make sure this does not exceed physical memory
+&#x2013;total-executor-cores
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgdbe9cb8" class="outline-3">
+<h3 id="orgdbe9cb8">Set up local spark</h3>
+<div class="outline-text-3" id="text-orgdbe9cb8">
+<ul class="org-ul">
+<li>go to spark website, download zip file (using 3.0.0 with hadoop 2.7 in this course)</li>
+<li>decompress zip file to somewhere you can find it again</li>
+<li>create jar from project</li>
+</ul>
+</div>
+
+<div id="outline-container-org9e8d7ec" class="outline-4">
+<h4 id="org9e8d7ec">Using SBT</h4>
+<div class="outline-text-4" id="text-org9e8d7ec">
+<p>
+Project should have the following subdirectory structure:
+</p>
+
+<p>
+src - main - scala
+project
+</p>
+
+<p>
+Create assembly.sbt file inside the project folder with the following line:
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.10") 
+</p>
+
+<p>
+Check latest sbt-assembly documentation as this will change over time
+</p>
+
+<p>
+Create build.sbt:
+(Spark 3 requires scala 2.12 - check scala version to spark version)
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sbt">name := "PopularMovies"
+
+version := "1.0"
+
+organization := "com.sundogsoftware"
+
+scalaVersion := "2.12.3"
+
+libraryDependencies ++= Seq(
+  "org.apache.spark" %% "spark-core" % "3.0.0" % "provided",
+  "org.apache.spark" %% "spark-sql" % "3.0.0" % "providec"
+)
+</pre>
+</div>
+
+<p>
+provided: We assume the package will be pre-installed where we run it on, thus the package will not be included in the compiled jar file
+</p>
+
+<p>
+Run: sbt assembly
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5f0dee8" class="outline-3">
+<h3 id="org5f0dee8">Amazon elastic MapReduce (EMR)</h3>
+<div class="outline-text-3" id="text-org5f0dee8">
+<p>
+Quick way to create a cluster with spark, hadoop and yarn
+(You pay by the hour-instance and for network and storage IO)
+</p>
+
+<p>
+Remember to terminate your cluster when you're done! Else you'll get charged quite a lot&#x2026;.
+</p>
+
+<p>
+Do dev and testing locally with a subset of data, and then only publish it to the cloud with your whole dataset.
+</p>
+
+<p>
+EMR should have the right defaults already (memory and that stuff)
+</p>
+</div>
+
+<div id="outline-container-org96fd1ab" class="outline-4">
+<h4 id="org96fd1ab">Setup</h4>
+<div class="outline-text-4" id="text-org96fd1ab">
+<ul class="org-ul">
+<li>Create AWS account</li>
+<li>Create an EC2 key pair and download the .pem file</li>
+<li>Need a terminal</li>
+</ul>
+
+<p>
+Upload files and jar to an S3 bucket (He uses S3 Browser)
+</p>
+
+<ul class="org-ul">
+<li>Go to EMR or search "Elastic Map Reduce"</li>
+<li>Create new cluster; launch mode - cluster; applications: Spark + hadoop + yarn
+<ul class="org-ul">
+<li>hardware config m5xlarge; 3 (1 master and 2 core)</li>
+</ul></li>
+</ul>
+
+<p>
+Master and core should be in running state.
+</p>
+
+<p>
+Check Master public DNS, click on "ssh" it will show you exactly how to connect (hadoop@server.amazonaws.com)
+</p>
+
+<p>
+Might need to go to security group for master node and click on inbound to create a rule for ssh on port 22 for your machine IP
+</p>
+
+<ol class="org-ol">
+<li>SSH into EMR</li>
+<li>Copy data from s3: aws cp s3://directory ./</li>
+<li>spark-submit jarfile.jar</li>
+<li>see results :D</li>
+<li>Terminate cluster: Go to EMR dashboard and click "Terminate"</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd7baeef" class="outline-2">
+<h2 id="orgd7baeef">Partitioning</h2>
+<div class="outline-text-2" id="text-orgd7baeef">
+<p>
+Splits data across executors. Spark does this automatically, but sometimes needs a hint to optimise.
+</p>
+
+<p>
+Use .repartition() on a Dataframe, or .partitionBy() on an RDD before running a large operation that benefits from partitioning
+</p>
+<ul class="org-ul">
+<li>join(), cogroup(), groupWith(), lookup(), combineByKey() .. any join, group or reduceby operations</li>
+</ul>
+
+<p>
+In general:
+</p>
+<ul class="org-ul">
+<li>At least as many partitions as executors to take full advantage of your cluster</li>
+<li>Too many partitions results in too much shuffling</li>
+<li>At least as many partitions as you have cores, or executors that fit within your available memory</li>
+<li>100 is usually a reasonable place to start for large operations</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org4b3a418" class="outline-2">
+<h2 id="org4b3a418">Tweaking settings</h2>
+<div class="outline-text-2" id="text-org4b3a418">
+<p>
+Generally, do not set this in driver or commandline, unless really needed. Most pre-set clusters already set this effectively
+</p>
+
+<p>
+Can manually set memory per executor or master, but both these will be predefined on your cluster
+</p>
+
+<p>
+spark-submit &#x2013;executor-memory 1g
+             &#x2013;master yarn
+</p>
+</div>
+</div>
+<div id="outline-container-orga23bee5" class="outline-2">
+<h2 id="orga23bee5">Spark ML</h2>
+<div class="outline-text-2" id="text-orga23bee5">
+<p>
+Can achieve the same stuff with python, but if you have a really large dataset, spark ml might be useful
+</p>
+</div>
+
+<div id="outline-container-orge096dff" class="outline-3">
+<h3 id="orge096dff">What can it do?</h3>
+<div class="outline-text-3" id="text-orge096dff">
+<ul class="org-ul">
+<li>Feature extraction
+TIDF - Term Frequency / Inverse Document Frequency useful to search</li>
+<li>Basic Statistics
+Chi-squared test, pearson spearman correlation, min, max, mean, variance</li>
+<li>linear regression, logistic regression</li>
+<li>support vector machines</li>
+<li>naive bayes classifier</li>
+<li>decision trees</li>
+<li>k-means clustering (unsupervised learning)</li>
+<li>principle component analysis (PCA), singular value decomposition (SVD) - dimensionality reduction techniques</li>
+<li>recommendations using Alternating Least Squares</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Mercia Malan</p>
+<p class="date">Created: 2020-10-15 Thu 23:26</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,1147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2020-10-15 Thu 23:23 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ultimate Hands-on with Hadoop</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Mercia Malan" />
+<link id="pagestyle" rel="stylesheet" type="text/css" href="../org.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href=""> UP </a>
+ |
+ <a accesskey="H" href="../index.html"> HOME </a>
+</div><div id="content">
+<h1 class="title">Ultimate Hands-on with Hadoop</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org3954e93">HDFS</a></li>
+<li><a href="#org94ee3bf">MapReduce</a></li>
+<li><a href="#orge46a77c">Pig</a></li>
+<li><a href="#orgb77fc0f">Spark</a></li>
+<li><a href="#org3abaefa">Hive</a></li>
+<li><a href="#org00b3312">Sqoop</a></li>
+<li><a href="#orgc134ece">Integrating hadoop with nosql</a></li>
+<li><a href="#org094b72a">Querying data interactively</a></li>
+<li><a href="#org2f5301c">Manage your cluster</a></li>
+</ul>
+</div>
+</div>
+
+<div class="figure">
+<p><img src="./hadoop.png" alt="hadoop.png" width="800" />
+</p>
+<p><span class="figure-number">Figure 1: </span>Hadoop Eco System</p>
+</div>
+
+<div id="outline-container-org3954e93" class="outline-2">
+<h2 id="org3954e93">HDFS</h2>
+<div class="outline-text-2" id="text-org3954e93">
+<p>
+Optimised for large files, not really many small files
+</p>
+
+<p>
+Stores data in blocks, and these blocks are stored across multiple servers. Data is stored in more than one block for fail-over
+</p>
+
+<p>
+Single Name Node - keeps track of where all blocks live. Knows the file name and path. Contains an edit block so it knows what has been created and edited.
+Data Nodes - contains data
+</p>
+</div>
+
+<div id="outline-container-orgffb87c6" class="outline-3">
+<h3 id="orgffb87c6">Reading a file</h3>
+<div class="outline-text-3" id="text-orgffb87c6">
+<p>
+Client node talks to Name node to see which blocks to go look at, then client node goes to the actual data nodes.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org0b4b52d" class="outline-3">
+<h3 id="org0b4b52d">Writing a file</h3>
+<div class="outline-text-3" id="text-org0b4b52d">
+<p>
+Client node tells name node the file node.
+Client talks to single data node to write file, and data nodes will talk to each other to store the data in replicated manner
+Data nodes send back a acknowledged and client node tells name node where it was stored and that it has been written
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf9cf4e6" class="outline-3">
+<h3 id="orgf9cf4e6">Name node DR</h3>
+<div class="outline-text-3" id="text-orgf9cf4e6">
+<p>
+Always only have 1 active Name node, several options to avoid losing data:
+</p>
+
+<ul class="org-ul">
+<li>backup. In case of name node failure, bring up new name node with backups</li>
+<li>Secondary namenode. Maintains merged copy of edit log you can restore from.</li>
+<li>HDFS Federation. Each namenode manages a specific namespace volume. Separate name nodes for separate volumes (Namenode can reach name list limit)</li>
+<li>HDFS High Available. If you can't afford downtime. Uses a shared edit log. Zookeeper tracks active namenode and extreme measures to ensure only one namenode is used at a time</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org5af76f6" class="outline-3">
+<h3 id="org5af76f6">Using HDFS</h3>
+<div class="outline-text-3" id="text-org5af76f6">
+<ul class="org-ul">
+<li>UI (Ambari) - looks like a giant file system</li>
+<li>CLI</li>
+<li>HTTP directly or via HDFS Proxies</li>
+<li>Java interface</li>
+<li>NFS Gateway (network file system), way of remoting a remote file system on the server. Will just look like another mount point on your linux box.</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org94ee3bf" class="outline-2">
+<h2 id="org94ee3bf">MapReduce</h2>
+<div class="outline-text-2" id="text-org94ee3bf">
+<p>
+2 stages: Map and Reduce.
+</p>
+
+<p>
+Map phase includes shuffling and sorting. 
+</p>
+
+<p>
+Example using python. Can run locally with python script.py u.data 
+or on hadoop cluster with python scipt.py -r hadoop &#x2013;hadoop-streaming-jar /usr/hdp/current/hadoop-mapreduce-client/hadoop-streaming.jar u.data
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #51afef;">from</span> mrjob.job <span style="color: #51afef;">import</span> MRJob
+<span style="color: #51afef;">from</span> mrjob.step <span style="color: #51afef;">import</span> MRStep
+
+<span style="color: #51afef;">class</span> <span style="color: #ECBE7B;">RatingsBreakdown</span>(MRJob):
+    <span style="color: #51afef;">def</span> <span style="color: #c678dd;">steps</span>(<span style="color: #51afef;">self</span>):
+        <span style="color: #5B6268;"># </span><span style="color: #5B6268;">Takes in 2 parameters - a mapper and a reducer</span>
+        <span style="color: #5B6268;"># </span><span style="color: #5B6268;">in this case the mapper is the output of a mapper and reducer</span>
+        <span style="color: #51afef;">return</span> [
+            MRStep(mapper=<span style="color: #51afef;">self</span>.mapper_get_ratings,
+                   reducer=<span style="color: #51afef;">self</span>.reducer_count_ratings),
+            MRStep(reducer=<span style="color: #51afef;">self</span>,reducer_sorted_output)
+            ]
+
+    <span style="color: #51afef;">def</span> <span style="color: #c678dd;">mapper_get_ratings</span>(<span style="color: #51afef;">self</span>, _, line):
+        (userID, movieID, rating, timestamp) = line.split(<span style="color: #98be65;">'\t'</span>)
+        <span style="color: #51afef;">yield</span> movieID, 1
+
+    <span style="color: #51afef;">def</span> <span style="color: #c678dd;">reducer_count_ratings</span>(<span style="color: #51afef;">self</span>, key, values):
+        <span style="color: #51afef;">yield</span> <span style="color: #c678dd;">str</span>(<span style="color: #c678dd;">sum</span>(values)).zfill(5), key <span style="color: #5B6268;">#</span><span style="color: #5B6268;">zfill filss the number up to 5 spaces e.g. 00004</span>
+
+    <span style="color: #51afef;">def</span> <span style="color: #c678dd;">reducer_sorted_output</span>(<span style="color: #51afef;">self</span>, count, movies):
+        <span style="color: #51afef;">for</span> movie <span style="color: #51afef;">in</span> movies:
+            <span style="color: #51afef;">yield</span> movie, count
+
+
+<span style="color: #51afef;">if</span> <span style="color: #c678dd;">__name__</span> == <span style="color: #98be65;">'__main__'</span>:
+    RatingsBreakdown.run()
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge46a77c" class="outline-2">
+<h2 id="orge46a77c">Pig</h2>
+<div class="outline-text-2" id="text-orge46a77c">
+<p>
+Built on top of MapReduce or Tez, a SQL-like interface (Pig Latin) to write MapReduce pipelines without having to use the complex MapReduce
+</p>
+
+<p>
+Can run this using grunt, script or ambarai / hue
+</p>
+
+<p>
+Example on MapReduce: load movie data, transform to show average ratings, filter to show only ratings &gt; 4, join datasets to get names of movies and not ID's.
+To execute on Tez (faster): check the "execute on Tez" checkbox and execute.
+(Tez uses acyclic graphs for computation)
+</p>
+
+<p>
+Each of the expressions is called a 'relation'
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text">ratings = LOAD '/user/maria_dev/ml-100k/u.data' AS (userId:int, movieId:int, rating:int, ratingTime:int);
+
+metadata = LOAD '/user/maria_dev/ml-100k/u.item' USING PigStorage('|')
+    AS (movieID:int, movieTitle:chararray, releaseDate:chararray, videoRelease:chararray, imdbLink:chararray);
+
+nameLookup = FOREACH metadata GENERATE movieID, movieTitle,
+    ToUnixTime(ToDate(releaseDate, 'dd-MMM-yyyy')) AS releaseTime;
+
+ratingsByMovie = GROUP ratings BY movieId;
+
+avgRatings = FOREACH ratingsByMovie GENERATE group AS movieID, AVG(ratings.rating) AS avgRating;
+
+fiveStarMovies = FILTER avgRatings BY avgRating &gt; 4.0;
+
+fiveStarsWithData = JOIN fiveStarMovies BY  movieID, nameLookup BY movieID;
+
+oldestFiveStarMovies = ORDER fiveStarsWithData BY nameLookup::releaseTime;
+
+DUMP oldestFiveStarMovies;
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org96cd301" class="outline-3">
+<h3 id="org96cd301">Basic commands</h3>
+<div class="outline-text-3" id="text-org96cd301">
+<ul class="org-ul">
+<li>LOAD STORE DUMP</li>
+<li>STORE ratings INTO 'outRatings' USING PigStorage(':');</li>
+<li>FILTER DISTINCT FOREACH/GENERATE MAPREDUCE STREAM STREAM SAMPLE</li>
+<li>JOIN COGROUP GROUP CUBE</li>
+<li>ORDER RANK LIMIT</li>
+<li>UNION SPLIT</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org836986d" class="outline-3">
+<h3 id="org836986d">Diagnostics</h3>
+<div class="outline-text-3" id="text-org836986d">
+<ul class="org-ul">
+<li>DESCRIBE</li>
+<li>EXPLAIN</li>
+<li>ILLUSTRATE</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org78175a4" class="outline-3">
+<h3 id="org78175a4">UDF's</h3>
+<div class="outline-text-3" id="text-org78175a4">
+<ul class="org-ul">
+<li>REGISTER</li>
+<li>DEFINE</li>
+<li>IMPORT</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org5d846cf" class="outline-3">
+<h3 id="org5d846cf">Some other functions and loaders</h3>
+<div class="outline-text-3" id="text-org5d846cf">
+<ul class="org-ul">
+<li>AVG CONCAT COUNT MAX MIN SIZE SUM</li>
+<li>PigStorage</li>
+<li>TextLoader</li>
+<li>JsonLoader</li>
+<li>AvroStorage</li>
+<li>ParquetLoader</li>
+<li>OrcStorage</li>
+<li>HBaseStorage</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb77fc0f" class="outline-2">
+<h2 id="orgb77fc0f">Spark</h2>
+<div class="outline-text-2" id="text-orgb77fc0f">
+<p>
+DAG Engine (directed acyclic graph) optimizes workflows
+</p>
+
+<p>
+Components of spark part of spark core
+</p>
+
+<ul class="org-ul">
+<li>Spark streaming</li>
+<li>Spark SQL</li>
+<li>MLLib</li>
+<li>GraphX</li>
+</ul>
+
+<p>
+ssh into hadoop cluster, run: spark-submit file.py
+</p>
+
+<p>
+Can start a thrift service with spark sql and connect to it and query it
+</p>
+
+<p>
+More details in spark course
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3abaefa" class="outline-2">
+<h2 id="org3abaefa">Hive</h2>
+<div class="outline-text-2" id="text-org3abaefa">
+<p>
+On top of Mapreduce and Tez. 
+</p>
+
+<p>
+Short for HiveQL - allows you to query HDFS data using SQL syntax
+</p>
+
+<p>
+Basically smokes and mirrors to make it seem like you're working with a relational database
+</p>
+</div>
+
+<div id="outline-container-orgd5e9a7f" class="outline-3">
+<h3 id="orgd5e9a7f">Why not hive?</h3>
+<div class="outline-text-3" id="text-orgd5e9a7f">
+<ul class="org-ul">
+<li>high latency - not appropriate for OLTP</li>
+<li>stores data de-normalized</li>
+<li>SQL is limited in what it can do (Pig, spark allows more complex stuff)</li>
+<li>No transactions</li>
+<li>no record-level updates, inserts, deletes</li>
+</ul>
+
+<p>
+In hive view, can upload table and then write queries in HQL.
+</p>
+
+<p>
+Can create views as well (which gets persisted as with usual relational db)
+</p>
+</div>
+</div>
+
+<div id="outline-container-org00e22ee" class="outline-3">
+<h3 id="org00e22ee">How does hive work?</h3>
+<div class="outline-text-3" id="text-org00e22ee">
+<p>
+Schema on read
+</p>
+
+<p>
+Hive takes unstructured data and applies a schema to it as it reads, where relational databases write the schema first and read data according to that schema (schema on write)
+</p>
+
+<p>
+ LOAD DATA - hive will move data from a distributed filesystem into Hive (the raw data)
+ LOAD DATA LOCAL - copies data from local filesystem into Hive
+ Managed vs External tables: managed tables are where hive takes control of that data. 
+To create external table use "CREATE EXTERNAL TABLE", give it a location and then hive doesn't take ownership of it. Thus, dropping data will drop metadata but not the actual data.
+</p>
+</div>
+
+<div id="outline-container-org19899e0" class="outline-4">
+<h4 id="org19899e0">Partitioning</h4>
+<div class="outline-text-4" id="text-org19899e0">
+<p>
+You can store your data in partitioned subdirectories (optimisation)
+</p>
+
+<p>
+E.g. 
+</p>
+<div class="org-src-container">
+<pre class="src src-sql"> <span style="color: #51afef;">CREATE</span> <span style="color: #51afef;">TABLE</span> <span style="color: #c678dd;">person</span>(
+   <span style="color: #51afef;">name</span> STRING,
+   address STRUCT&lt;street: String, city: String&gt;
+ )
+PARTITIONED <span style="color: #51afef;">BY</span> (country STRING)
+</pre>
+</div>
+
+<p>
+Can use it through Ambari / Hue; JDBC/ODBC server; Thrift service (but remember hive is not suitable for OLTP); via Oozie
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org00b3312" class="outline-2">
+<h2 id="org00b3312">Sqoop</h2>
+<div class="outline-text-2" id="text-org00b3312">
+<p>
+Meant for large datasets.
+</p>
+
+<p>
+Kicks of mapreduce jobs to handle importing and exporting your data
+</p>
+
+<p>
+Takes data from mysql/postgres etc, distributes processing across several parallel mappers and writing to HDFS.
+</p>
+
+<p>
+Command line tool:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">sqoop import --connect jdbc:mysql://localhost/movielens --driver com.mysql.jdbc.Driver --table movies
+</pre>
+</div>
+
+<p>
+To add to hive instead add '&#x2013;hive-import'
+To set the number of mappers add -m 1
+</p>
+
+<p>
+Can do incremental imports in sqoop (can be used to keep table up to date) by using &#x2013;check-column (to check like a date column) and &#x2013;last-value 
+</p>
+
+<p>
+To export from hive table to mysql: (mysql table needs to exist)
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">sqoop export --connect jdbc:mysql://localhost/movielens -m 1 --driver com.mysql.jdbc.Driver --table exported_movies --export-dir /apps/hive/warehouse/movies --input-fields-terminated-by <span style="color: #98be65;">'\0001'</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc134ece" class="outline-2">
+<h2 id="orgc134ece">Integrating hadoop with nosql</h2>
+<div class="outline-text-2" id="text-orgc134ece">
+<p>
+CAP: Consistency, Availability, Partition-Tolerance
+</p>
+
+<p>
+Mysql = C/A
+cassandra = A/P
+Hbase and mongodb = C/P
+</p>
+</div>
+
+<div id="outline-container-org4aaf9bc" class="outline-3">
+<h3 id="org4aaf9bc">HBase</h3>
+<div class="outline-text-3" id="text-org4aaf9bc">
+<p>
+HBase is built on top of hdfs, based on google's BigTable
+</p>
+
+<p>
+Does not have a query language but has a CRUD API's
+</p>
+
+<p>
+Auto-sharding on top of HDFS onto "region servers"
+</p>
+
+<p>
+HMaster (master nodes that keeps track of where which data is)
+Zookeeper is the "who is watching the watchers", keeps track of where the Master server is and its status.
+</p>
+
+<p>
+HBase is transactional on rows
+</p>
+</div>
+
+<div id="outline-container-orgb07cc5a" class="outline-4">
+<h4 id="orgb07cc5a">HBase data model</h4>
+<div class="outline-text-4" id="text-orgb07cc5a">
+<p>
+keys stored lexographically in hbase 
+</p>
+
+<p>
+ROW referenced by a unique KEY
+Each ROW has some small number of COLUMN FAMILIES which may contain arbitrary COLUMNS.
+</p>
+
+<p>
+E.g. if you have ratings you'll have a column family for ratings, and the family has columns that may or may not be filled in
+</p>
+
+<p>
+CELL: intersection of a row and a column, and each cell can have many versions with given timestamps
+</p>
+
+
+<p>
+Example:
+</p>
+
+<p>
+key: com.cnn.www
+Contents Column family: contents (one column with multiple versions - history of the webpage)
+Anchor Column family: Anchor: cnnsi.com = "CNN"; Anchor:my.look.ca = "CNN.com"   &gt;&gt; syntax: key = columnFamily:Name value = whatever value
+</p>
+</div>
+</div>
+
+<div id="outline-container-org405e0ee" class="outline-4">
+<h4 id="org405e0ee">Access HBase</h4>
+<div class="outline-text-4" id="text-org405e0ee">
+<ul class="org-ul">
+<li>HBase shell</li>
+<li>Java API (wrappers for python, scala etc)</li>
+<li>Spark, Hive, Pig</li>
+<li>REST service</li>
+<li>Thrift service</li>
+<li>Avro service</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgd4322bb" class="outline-4">
+<h4 id="orgd4322bb">Examples</h4>
+<div class="outline-text-4" id="text-orgd4322bb">
+<p>
+HBASE table:
+</p>
+
+<p>
+UserID; Rating:50; Rating:33; Rating:233  # rating for movie 50 was e.g. 1 star (so value = 1)
+</p>
+</div>
+
+<div id="outline-container-org10c6fb8" class="outline-5">
+<h5 id="org10c6fb8">Start HBASE through admin</h5>
+</div>
+
+<div id="outline-container-org172c7eb" class="outline-5">
+<h5 id="org172c7eb">Kick off rest server running on top of HBASE</h5>
+<div class="outline-text-5" id="text-org172c7eb">
+<p>
+log into cluster via ssh
+</p>
+
+<p>
+start and stop
+</p>
+<div class="org-src-container">
+<pre class="src src-bash"> /usr/hdp/current/hbase-master/bin/hbase-daemon.sh start rest -p 8000 --infoport 8001 
+/usr/hdp/current/hbase-master/bin/hbase-daemon.sh stop rest 
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgcdb3d25" class="outline-5">
+<h5 id="orgcdb3d25">Do stuff to rest using python</h5>
+<div class="outline-text-5" id="text-orgcdb3d25">
+<p>
+Use library called starbase
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #51afef;">from</span> starbase <span style="color: #51afef;">import</span> Connection
+
+<span style="color: #dcaeea;">c</span> = Connection(<span style="color: #98be65;">"sandbox-hdp.hortonworks.com"</span>, <span style="color: #98be65;">"8000"</span>)
+
+<span style="color: #dcaeea;">ratings</span> = c.table(<span style="color: #98be65;">'ratings'</span>)
+
+<span style="color: #51afef;">if</span>(ratings.exists()):
+    <span style="color: #51afef;">print</span>(<span style="color: #98be65;">"Dropping existing ratings table\n"</span>)
+    ratings.drop()
+
+ratings.create(<span style="color: #98be65;">'rating'</span>)
+
+<span style="color: #51afef;">print</span>(<span style="color: #98be65;">"Parsing data\n"</span>)
+<span style="color: #dcaeea;">ratingFile</span> = <span style="color: #c678dd;">open</span>(<span style="color: #98be65;">'/opt/jemstep/code/udemy/ml-100k/u.data'</span>, <span style="color: #98be65;">'r'</span>)
+
+<span style="color: #dcaeea;">batch</span> = ratings.batch()
+
+<span style="color: #51afef;">for</span> line <span style="color: #51afef;">in</span> ratingFile: 
+    (userID, movieID, rating, timestamp) = line.split()
+    batch.update(userID, {<span style="color: #98be65;">'rating'</span>: {movieID: rating}})
+
+ratingFile.close()
+
+<span style="color: #51afef;">print</span>(<span style="color: #98be65;">"Committing ratings data to HBase via REST service\n"</span>)
+batch.commit(finalize=<span style="color: #a9a1e1;">True</span>)
+
+<span style="color: #51afef;">print</span>(<span style="color: #98be65;">"Fetch data. Ratings for user ID 1\n"</span>)
+<span style="color: #51afef;">print</span>(ratings.fetch(<span style="color: #98be65;">"1"</span>))
+<span style="color: #51afef;">print</span>(<span style="color: #98be65;">"Ratings for user ID 33\n"</span>)
+<span style="color: #51afef;">print</span>(ratings.fetch(<span style="color: #98be65;">"33"</span>))
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf28df5b" class="outline-4">
+<h4 id="orgf28df5b">Integrating Pig with HBase</h4>
+<div class="outline-text-4" id="text-orgf28df5b">
+<ul class="org-ul">
+<li>Must create HBase table ahead of time</li>
+<li>Your relation must have a unique key as its first column, followed by subsequent columns as you want htem saved in HBase</li>
+<li>USING clause allows you to STORE into an HBase table</li>
+<li>Can work at scale because HBase is transactional on rows</li>
+</ul>
+
+<p>
+To create a new table in hbase:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">hbase shell
+
+list <span style="color: #5B6268;">#</span><span style="color: #5B6268;">shows tables</span>
+
+create <span style="color: #98be65;">'users'</span>, <span style="color: #98be65;">'userinfo'</span> <span style="color: #5B6268;"># </span><span style="color: #5B6268;">create table user with one column family 'userinfo'</span>
+
+scan <span style="color: #98be65;">'users'</span> <span style="color: #5B6268;">#</span><span style="color: #5B6268;">peeks into table - timestamp built-in in result because hbase is versioned</span>
+
+<span style="color: #c678dd;">disable</span> <span style="color: #98be65;">'users'</span> <span style="color: #5B6268;">#</span><span style="color: #5B6268;">need to do this before being able to drop</span>
+drop <span style="color: #98be65;">'users'</span>
+
+</pre>
+</div>
+
+<p>
+Create a pig file and run using 'pig file.pig'
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sql">ratings = LOAD <span style="color: #98be65;">'/xxx/u.user'</span>
+<span style="color: #51afef;">USING</span> PigStorage(<span style="color: #98be65;">'|'</span>)
+<span style="color: #51afef;">AS</span> (userID:<span style="color: #ECBE7B;">int</span>, age:<span style="color: #ECBE7B;">int</span>, gender:chararray, occupation:chararray, zip:<span style="color: #ECBE7B;">int</span>);
+
+STORE ratings <span style="color: #51afef;">INTO</span> <span style="color: #98be65;">'hbase://users'</span>
+<span style="color: #51afef;">USING</span> org.apache.pig.backend.hadoop.hbase.HBaseStorage (
+<span style="color: #98be65;">'userinfo:age,userinfo:gender,userinfo:occupation,userinfo:zip'</span>);
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org0bfdb23" class="outline-3">
+<h3 id="org0bfdb23">Cassandra</h3>
+<div class="outline-text-3" id="text-org0bfdb23">
+</div>
+<div id="outline-container-orgba1a33e" class="outline-4">
+<h4 id="orgba1a33e">How did it start?</h4>
+<div class="outline-text-4" id="text-orgba1a33e">
+<p>
+comes from greek mythology - cassandra can tell the future
+</p>
+
+<p>
+CAP theorem: consistency, availability and partition-tolerance, they say you can only have 2 out of 3.
+</p>
+
+<p>
+Cassandra favors availability over consistency (eventually consistent), but you can tune it so "tunable consistency"
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgca4a68e" class="outline-4">
+<h4 id="orgca4a68e">What is it?</h4>
+<div class="outline-text-4" id="text-orgca4a68e">
+<p>
+Distributed nosql with no single point of failure
+</p>
+
+<p>
+No master node, every node runs exactly the same software and performs the same functions
+</p>
+
+<p>
+Data model similar to hbase
+</p>
+
+<p>
+non-relational but has limited CQL query language
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6278c8f" class="outline-4">
+<h4 id="org6278c8f">Cassandra architecture</h4>
+<div class="outline-text-4" id="text-org6278c8f">
+<p>
+Ring architecture between all nodes for high availability
+</p>
+
+<p>
+Nodes talk to each other and manage themselves
+</p>
+
+<p>
+Can have multiple cassandra rings and replicate between. So you can use your replica ring for analytics without impacting transactional performance
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd1fabf5" class="outline-4">
+<h4 id="orgd1fabf5">CQL</h4>
+<div class="outline-text-4" id="text-orgd1fabf5">
+<p>
+no joins, all queries must be on some primary key
+</p>
+
+<p>
+data has to be de-normalized
+</p>
+
+<p>
+all tables must be in a keyspace (keyspaces are like databases)
+</p>
+
+<p>
+Can also use CQLSH which is CQL in shell to create tables and stuff
+Replication should ideally be higher than below example, but for local with one node this is fine.
+</p>
+<div class="org-src-container">
+<pre class="src src-sql">cqlsh <span style="color: #5B6268;">--cqlversion="3.4.0"</span>
+<span style="color: #51afef;">CREATE</span> KEYSPACE movielens <span style="color: #51afef;">WITH</span> replication = {<span style="color: #98be65;">'class'</span>= <span style="color: #98be65;">'SimpleStrategy'</span>, <span style="color: #98be65;">'replication_factor'</span>:<span style="color: #98be65;">'1'</span>} <span style="color: #51afef;">AND</span> durable_writes = <span style="color: #51afef;">true</span>; 
+USE movielens
+<span style="color: #51afef;">CREATE</span> <span style="color: #51afef;">TABLE</span> <span style="color: #c678dd;">users</span> (user_id <span style="color: #ECBE7B;">int</span>, age <span style="color: #ECBE7B;">int</span>, <span style="color: #51afef;">PRIMARY</span> <span style="color: #51afef;">KEY</span> (user_id))
+<span style="color: #51afef;">DESCRIBE</span> <span style="color: #51afef;">TABLE</span> users
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1b8b918" class="outline-4">
+<h4 id="org1b8b918">Cassandra + Spark</h4>
+<div class="outline-text-4" id="text-org1b8b918">
+<p>
+DataStax has a spark-cassandra connector, which allows you to RW as dataframes         
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #5B6268;"># </span><span style="color: #5B6268;">to set spark version, set env var SPARK_MAJOR_VERSION</span>
+
+<span style="color: #51afef;">from</span> pyspark.sql <span style="color: #51afef;">import</span> SparkSession
+<span style="color: #51afef;">from</span> pyspark.sql <span style="color: #51afef;">import</span> Row
+<span style="color: #51afef;">from</span> pyspark.sql <span style="color: #51afef;">import</span> functions
+
+<span style="color: #51afef;">def</span> <span style="color: #c678dd;">parseInput</span>(line):
+    <span style="color: #dcaeea;">fields</span> = line.split(<span style="color: #98be65;">'|'</span>)
+    <span style="color: #51afef;">return</span> Row(user_id = <span style="color: #c678dd;">int</span>(fields[0]), age = <span style="color: #c678dd;">int</span>(fields[1]))
+
+<span style="color: #51afef;">if</span> __name-_ == <span style="color: #98be65;">"__main__"</span>:
+    <span style="color: #dcaeea;">spark</span> = SparkSession.builder.appName(<span style="color: #98be65;">"Cass"</span>).config(<span style="color: #98be65;">"spark.cassandra.connection.host"</span>,<span style="color: #98be65;">"127.0.0.1"</span>).getOrCreate()
+    <span style="color: #dcaeea;">lines</span> = spark.sparkContext.textFile(<span style="color: #98be65;">"hdfs:///user/maria_dev/ml-100k/u.user"</span>)
+
+     <span style="color: #dcaeea;">users</span> = lines.<span style="color: #c678dd;">map</span>(parseInput)
+
+     <span style="color: #dcaeea;">usersDf</span> = spark.createDataFrame(users)
+
+     usersDf.write\
+         .<span style="color: #c678dd;">format</span>(<span style="color: #98be65;">"org.apache.spark.sql.cassandra"</span>)\
+         .mode(<span style="color: #98be65;">'append'</span>)\
+         .options(table=<span style="color: #98be65;">"users"</span>, keyspace=<span style="color: #98be65;">"movielens"</span>)\
+         .save()
+
+     <span style="color: #dcaeea;">readUsers</span> = spark.read\
+         .<span style="color: #c678dd;">format</span>(<span style="color: #98be65;">"org.apache.spark.sql.cassandra"</span>)\
+         .options(table=<span style="color: #98be65;">"users"</span>, keyspace=<span style="color: #98be65;">"movielens"</span>)\
+         .load()
+
+     readUsers.createOrReplaceTempView(<span style="color: #98be65;">"users"</span>)
+
+     <span style="color: #dcaeea;">sqlDF</span> = spark.sql(<span style="color: #98be65;">"SELECT * FROM users WHERE age &lt; 20"</span>)
+     sqlDF.show()
+
+     spark.stop()
+</pre>
+</div>
+
+<p>
+To run: (from hdp sandbox shell)
+spark-submit &#x2013;packages datastax:spark-cassandra-connector:2.0.0-M2-s_2.11 CassandraSpark.py
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgad562e4" class="outline-3">
+<h3 id="orgad562e4">MongoDB</h3>
+<div class="outline-text-3" id="text-orgad562e4">
+<p>
+Nothign new&#x2026;
+</p>
+</div>
+
+<div id="outline-container-org3c2d7b6" class="outline-4">
+<h4 id="org3c2d7b6">MongoDB and Spark</h4>
+<div class="outline-text-4" id="text-org3c2d7b6">
+<p>
+Can add mongo as a service to ambari - install via hdp sandbox shell, then add new service @ ambari and select it.
+</p>
+
+<p>
+Python script:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #51afef;">from</span> pyspark.sql <span style="color: #51afef;">import</span> SparkSession
+ <span style="color: #51afef;">from</span> pyspark.sql <span style="color: #51afef;">import</span> Row
+ <span style="color: #51afef;">from</span> pyspark.sql <span style="color: #51afef;">import</span> functions
+
+ <span style="color: #51afef;">def</span> <span style="color: #c678dd;">parseInput</span>(line):
+     <span style="color: #dcaeea;">fields</span> = line.split(<span style="color: #98be65;">'|'</span>)
+     <span style="color: #51afef;">return</span> Row(user_id = <span style="color: #c678dd;">int</span>(fields[0]), age = <span style="color: #c678dd;">int</span>(fields[1]))
+
+ <span style="color: #51afef;">if</span> __name-_ == <span style="color: #98be65;">"__main__"</span>:
+     <span style="color: #dcaeea;">spark</span> = SparkSession.builder.appName(<span style="color: #98be65;">"mongo"</span>).getOrCreate()
+     <span style="color: #dcaeea;">lines</span> = spark.sparkContext.textFile(<span style="color: #98be65;">"hdfs:///user/maria_dev/ml-100k/u.user"</span>)
+
+      <span style="color: #dcaeea;">users</span> = lines.<span style="color: #c678dd;">map</span>(parseInput)
+
+      <span style="color: #dcaeea;">usersDf</span> = spark.createDataFrame(users)
+
+      usersDf.write\
+          .<span style="color: #c678dd;">format</span>(<span style="color: #98be65;">"com.mongodb.spark.sql.DefaultSource"</span>)\
+          .mode(<span style="color: #98be65;">'append'</span>)\
+          .option(<span style="color: #98be65;">"uri"</span>,<span style="color: #98be65;">"mongodb://127.0.0.1/movielens.users"</span>)\
+          .save()
+
+      <span style="color: #dcaeea;">readUsers</span> = spark.read\
+          .<span style="color: #c678dd;">format</span>(<span style="color: #98be65;">"com.mongodb.spark.sql.DefaultSource"</span>)\
+          .option(<span style="color: #98be65;">"uri"</span>,<span style="color: #98be65;">"mongodb://127.0.0.1/movielens.users"</span>)\
+          .load()
+
+      readUsers.createOrReplaceTempView(<span style="color: #98be65;">"users"</span>)
+
+      <span style="color: #dcaeea;">sqlDF</span> = spark.sql(<span style="color: #98be65;">"SELECT * FROM users WHERE age &lt; 20"</span>)
+      sqlDF.show()
+
+      spark.stop()
+
+
+</pre>
+</div>
+
+<p>
+run:
+</p>
+
+<p>
+spark-submit &#x2013;packages org.mongodb.spark:mongo-spark-connector 2.11:2.0.0 mongospark.py
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org2c5dd92" class="outline-3">
+<h3 id="org2c5dd92">So how do you choose?</h3>
+<div class="outline-text-3" id="text-org2c5dd92">
+<p>
+Integration consideration, e.g. if you're using spark, you probably want to choose a db that can work with spark.
+</p>
+
+<p>
+Scaling requirements, do you need distributed storing and processing?
+</p>
+
+<p>
+Support considerations - do you have the expertise needed to support the tech?
+</p>
+
+<p>
+Budget considerations
+</p>
+
+<p>
+CAP considerations
+</p>
+
+<p>
+Keep it simple, if you don't need to setup a complex nosql cluster, don't do it if you don't need to.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org094b72a" class="outline-2">
+<h2 id="org094b72a">Querying data interactively</h2>
+<div class="outline-text-2" id="text-org094b72a">
+<p>
+Query engines:
+</p>
+<ul class="org-ul">
+<li>Drill [ SQL engine that allows you to run sql queries on non-relational databases and data files ]</li>
+<li>Hue</li>
+<li>Phoenix [ SQL driver for HBase ]</li>
+<li>Presto [ Distributing queries across different data stores ] (meant for analysis, not for fast queries)</li>
+<li>Apache Zeppelen</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org2f5301c" class="outline-2">
+<h2 id="org2f5301c">Manage your cluster</h2>
+<div class="outline-text-2" id="text-org2f5301c">
+</div>
+<div id="outline-container-org23fff02" class="outline-3">
+<h3 id="org23fff02">Yarn</h3>
+<div class="outline-text-3" id="text-org23fff02">
+<p>
+Yet Another Resources Negotiator
+</p>
+
+<p>
+HDFS is the cluster storage layer
+YARN is the cluster compute layer on top of the storage layer
+MapReduce, Spark and Tez sits on top of YARN and are YARN applications
+</p>
+</div>
+</div>
+
+<div id="outline-container-org157b8c0" class="outline-3">
+<h3 id="org157b8c0">Tez</h3>
+<div class="outline-text-3" id="text-org157b8c0">
+<p>
+Makes Hive, Pig and MapReduce jobs faster
+Constructs DAGs
+Optimizes physical data flow and resource usage
+</p>
+
+
+<p>
+MapReduce / Spark / Tez (YARN Applications) 
+           YARN         (compute)
+           HDFS         (storage)
+</p>
+</div>
+</div>
+
+<div id="outline-container-org850a7e6" class="outline-3">
+<h3 id="org850a7e6">Mesos</h3>
+<div class="outline-text-3" id="text-org850a7e6">
+<p>
+Came out of Twitter - managers resources across your data center
+</p>
+
+<p>
+More general, not just hadoop
+</p>
+
+<p>
+Spark and Storm can run on mesos instead of yarn.
+</p>
+
+<p>
+Can integrate yarn and mesos using myriad
+</p>
+
+<p>
+Spark on mesos is limited to one executor per slave
+</p>
+</div>
+</div>
+
+<div id="outline-container-org85c1e0e" class="outline-3">
+<h3 id="org85c1e0e">Zookeeper</h3>
+<div class="outline-text-3" id="text-org85c1e0e">
+<p>
+Coordinate your cluster
+</p>
+
+<p>
+Keeps track of information that must be synchhronized across your cluster - which node is the master, which tasks are assigned to which workers, which workers are available
+</p>
+
+<p>
+good idea to have zookeeper ensemble ("who's watching the watcher?")
+</p>
+</div>
+
+
+<div id="outline-container-orgfed6e9a" class="outline-4">
+<h4 id="orgfed6e9a">Failure modes</h4>
+<div class="outline-text-4" id="text-orgfed6e9a">
+<p>
+zookeeper can help with some failures: 
+</p>
+
+<ul class="org-ul">
+<li>master crashes - needs to fail over to a backup</li>
+<li>worker crashes - work needs to be distributed</li>
+<li>network trouble - part of your cluster can't see the rest of it (zookeeper notifies you)</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0e88ed6" class="outline-3">
+<h3 id="org0e88ed6">Oozie</h3>
+<div class="outline-text-3" id="text-org0e88ed6">
+<p>
+Orchestrates your hadoop jobs (scheduling and running tasks)
+</p>
+
+<p>
+Oozie = Burmese word for "Elephant Keeper"
+</p>
+</div>
+
+<div id="outline-container-orgc5bee6e" class="outline-4">
+<h4 id="orgc5bee6e">Workflows</h4>
+<div class="outline-text-4" id="text-orgc5bee6e">
+<p>
+Has a workflow concept which is a multi-stage hadoop job to chain together mapreduce, hive, pig, sqoop and distcp tasks. Can chain others like spark with add-ons.
+DAG specified by XML
+</p>
+
+<p>
+Nodes:
+</p>
+<ul class="org-ul">
+<li>Start</li>
+<li>End</li>
+<li>Fork</li>
+<li>Join</li>
+</ul>
+
+
+
+<div class="figure">
+<p><img src="./oozie_workflow.png" alt="Example workflow" width="600" />
+</p>
+<p><span class="figure-number">Figure 2: </span>Example Workflow</p>
+</div>
+
+<p>
+Example: Start -&gt; fork -&gt; pig ; sqoop -&gt; join -&gt; hive -&gt; End
+</p>
+
+<div class="org-src-container">
+<pre class="src src-xml">&lt;?<span style="color: #51afef;">xml</span><span style="color: #83898d;">&gt;</span>
+
+<span style="color: #83898d;">&lt;workflow-app &gt;</span>
+<span style="color: #83898d;">  &lt;start to=</span><span style="color: #83898d;">"fork-node"</span><span style="color: #83898d;"> /&gt;</span>
+
+<span style="color: #83898d;">  &lt;fork name=</span><span style="color: #83898d;">"fork-node"</span><span style="color: #83898d;">&gt;</span>
+<span style="color: #83898d;">    &lt;path start=</span><span style="color: #83898d;">"sqoop-node"</span><span style="color: #83898d;"> /&gt;</span>
+<span style="color: #83898d;">    &lt;path start=</span><span style="color: #83898d;">"pig-node"</span><span style="color: #83898d;"> /&gt;</span>
+<span style="color: #83898d;">  &lt;/fork&gt;</span>
+
+<span style="color: #83898d;">  &lt;action name=</span><span style="color: #83898d;">"sqoop-node"</span><span style="color: #83898d;">&gt;</span>
+<span style="color: #83898d;">    &lt;sqoop xmlns=</span><span style="color: #83898d;">" .. "</span><span style="color: #83898d;">&gt;</span>
+<span style="color: #83898d;">      </span><span style="color: #83898d;">&lt;!-- </span><span style="color: #83898d;">Config here </span><span style="color: #83898d;">--&gt;</span>
+<span style="color: #83898d;">    &lt;/sqoop&gt;</span>
+
+<span style="color: #83898d;">    &lt;ok to=</span><span style="color: #83898d;">"joining"</span><span style="color: #83898d;"> /&gt;</span>
+<span style="color: #83898d;">    &lt;error to=</span><span style="color: #83898d;">"fail"</span><span style="color: #83898d;"> /&gt;</span>
+<span style="color: #83898d;">  &lt;/action&gt;</span>
+
+<span style="color: #83898d;">  &lt;join name=</span><span style="color: #83898d;">"joining"</span><span style="color: #83898d;"> to=</span><span style="color: #83898d;">"hive-node"</span><span style="color: #83898d;"> /&gt;</span>
+
+<span style="color: #83898d;">  </span><span style="color: #83898d;">&lt;!-- </span><span style="color: #83898d;">Hive same as scoop with ok to="end" </span><span style="color: #83898d;">--&gt;</span>
+
+<span style="color: #83898d;">  &lt;kill name=</span><span style="color: #83898d;">"fail"</span><span style="color: #83898d;">&gt;</span>
+<span style="color: #83898d;">    &lt;message&gt; Message here &lt;/message&gt;</span>
+<span style="color: #83898d;">  &lt;/kill&gt;</span>
+
+<span style="color: #83898d;">  &lt;end name=</span><span style="color: #83898d;">"end"</span><span style="color: #83898d;"> /&gt;</span>
+<span style="color: #83898d;">&lt;/workflow-app</span>&gt;
+
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org82e9d55" class="outline-5">
+<h5 id="org82e9d55">How to setup a workflow in Oozie</h5>
+<div class="outline-text-5" id="text-org82e9d55">
+<ul class="org-ul">
+<li>Make sure each action works on its own - debugging in Oozie is a nightmare</li>
+<li>Make a directory in HDFS for your job</li>
+<li>Create workflow.xml and put in HDFS folder</li>
+<li>Create job.properties to define any variables your workflow.xml needs
+<ul class="org-ul">
+<li>This goes in your local filesystem where you'll launch the job from</li>
+<li>Can use these properties in your xml:</li>
+</ul></li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #dcaeea;">nameNode</span>=hdfs://sandbox.hortonworks.com:8020
+<span style="color: #dcaeea;">jobTask</span>=hdfs://sandbox.hortonworks.com:8050
+<span style="color: #dcaeea;">queueName</span>=default
+oozie.use.system.libpath=true
+oozie.wf.application.path=${<span style="color: #dcaeea;">nameNode</span>}/user/maria_dev
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Mercia Malan</p>
+<p class="date">Created: 2020-10-15 Thu 23:23</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
