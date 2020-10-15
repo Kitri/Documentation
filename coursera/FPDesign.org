@@ -1,0 +1,71 @@
+* For Expressions and Monads
+** Queries with For
+
+
+Can chain commands
+
+Find names of all authors who have written at least two books
+#+BEGIN_SRC scala
+   {for {
+      b1 <- books
+      b2 <- books
+      if b1.title <= b2.title
+      a1 <- b1.authors
+      a2 <- b2.authors
+      if a1 == a2
+  } yield a1}.distinct
+#+END_SRC
+
+** For-expressions and higher order functions
+
+*** 1
+for (x <- e1) yield e2
+
+translated to e1.map(x => e2)
+
+*** 2
+for (x <- el if f; s) yield e2
+
+translated to
+
+for(x <- e1.withFilter(x => f); s) yield e2
+
+(and translation continues with new expression) 
+
+*** 3
+
+for (x <- e1; y <- e2; s) yield e3
+
+e1.flatMap(x => for (y <- e; s) yield e3)
+
+(and translation continues with new expression) 
+
+
+*** Example
+
+
+#+BEGIN_SRC scala
+for {
+ i <- 1 until n
+ j <- 1 until i
+ if isPrime(i + j)
+} yield (i,j)
+#+END_SRC
+
+translated to:
+
+#+BEGIN_SRC scala
+
+(1 until n) flatMap(i =>
+   (1 until i).withFilter(j => isPrime(i + j))
+   .map(j => (i,j)))
+
+#+END_SRC
+
+
+withFilter is lazily executed, it will know to apply the filter to future mapping functions. It doesn't create a new object off the bat.
+
+
+** Functional Random Generators
+
+** Monads

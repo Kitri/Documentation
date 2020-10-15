@@ -585,3 +585,72 @@ zookeeper can help with some failures:
   - network trouble - part of your cluster can't see the rest of it (zookeeper notifies you)
 
 ** Oozie
+
+Orchestrates your hadoop jobs (scheduling and running tasks)
+
+Oozie = Burmese word for "Elephant Keeper"
+
+*** Workflows
+
+Has a workflow concept which is a multi-stage hadoop job to chain together mapreduce, hive, pig, sqoop and distcp tasks. Can chain others like spark with add-ons.
+DAG specified by XML
+
+Nodes:
+  - Start
+  - End
+  - Fork
+  - Join
+
+./oozie_workflow.png
+
+Example: Start -> fork -> pig ; sqoop -> join -> hive -> End
+#+BEGIN_SRC xml
+  <?xml>
+
+  <workflow-app >
+    <start to="fork-node" />
+
+    <fork name="fork-node">
+      <path start="sqoop-node" />
+      <path start="pig-node" />
+    </fork>
+
+    <action name="sqoop-node">
+      <sqoop xmlns=" .. ">
+	<!-- Config here -->
+      </sqoop>
+
+      <ok to="joining" />
+      <error to="fail" />
+    </action>
+
+    <join name="joining" to="hive-node" />
+
+    <!-- Hive same as scoop with ok to="end" -->
+
+    <kill name="fail">
+      <message> Message here </message>
+    </kill>
+
+    <end name="end" />
+  </workflow-app>
+  
+#+END_SRC
+
+**** How to setup a workflow in Oozie
+
+ - Make sure each action works on its own - debugging in Oozie is a nightmare
+ - Make a directory in HDFS for your job
+ - Create workflow.xml and put in HDFS folder
+ - Create job.properties to define any variables your workflow.xml needs
+   - This goes in your local filesystem where you'll launch the job from
+   - Can use these properties in your xml:
+ 
+#+BEGIN_SRC bash
+  nameNode=hdfs://sandbox.hortonworks.com:8020
+  jobTask=hdfs://sandbox.hortonworks.com:8050
+  queueName=default
+  oozie.use.system.libpath=true
+  oozie.wf.application.path=${nameNode}/user/maria_dev
+
+#+END_SRC
