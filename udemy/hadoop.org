@@ -601,7 +601,10 @@ Nodes:
   - Fork
   - Join
 
-./oozie_workflow.png
+#+attr_html: :width 50px
+#+attr_latex: :width 50px
+#+ATTR_ORG: :width 10
+[[./oozie_workflow.png]]
 
 Example: Start -> fork -> pig ; sqoop -> join -> hive -> End
 #+BEGIN_SRC xml
