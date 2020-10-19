@@ -1,3 +1,8 @@
+#+TITLE: Functional Program Design in Scala
+#+OPTIONS: toc:nil num:0 H:4 ^:nil pri:t html-style:nil
+#+HTML_HEAD:  <link id="pagestyle" rel="stylesheet" type="text/css" href="../org.css"/>
+#+HTML_LINK_HOME: ../index.html
+#+TOC: headlines 2
 * For Expressions and Monads
 ** Queries with For
 
@@ -69,3 +74,12 @@ withFilter is lazily executed, it will know to apply the filter to future mappin
 ** Functional Random Generators
 
 ** Monads
+
+A Monad is a parametric type M[T] with two operations, flatMap and Unit that satisfy certain laws:
+
+#+begin_src scala
+  def stuff(num: String): Unit = {
+    
+  }
+#+end_src
+

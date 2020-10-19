@@ -670,3 +670,46 @@ Example: Start -> fork -> pig ; sqoop -> join -> hive -> End
 #+END_SRC
 
 
+To run the workflow:
+
+#+begin_src bash
+
+oozie job --ozie http://localhost:1100/oozie -config /home/maria_dev/job.properties -run
+
+#+end_src
+
+Monitor progress at http://127.0.0.1:1100/oozie
+
+*** Oozie Coordinator
+
+ - Schedules workflow execution.
+ - XML <coordinator-app ...>
+ - Runs the same as a workflow
+
+*** Oozie bundles
+
+ - new in oozie 3.0
+ - bundle is a collection of coordinators that can be managed together
+ - Gives you control over the bundle (e.g. pause the whole bundle)
+
+** Zeppelin
+
+Notebook interface to your big data, lets you interactively run scripts / code against your data
+
+go to localhost:9995 (default port), create new note to create notebook.
+
+** Hue
+
+Hadoop User Experience
+(won't see it in hortonworks, mainly in cloudera)
+
+Hortonworks uses ambari, cloudera uses Hue to show files UI and notebooks (not entirely ambari, but serves the same purpose)
+
+Hue has a built-in graphical oozie editor and built-in notebooks.
+
+** Other administrative technologies
+
+Some older techs in hadoop
+
+- Ganglia - monitoring system (ganglia is dead now), replaced by ambari etc
+- Chukwa - collecting and analyzing logs. Replaced by Flume and Kafka

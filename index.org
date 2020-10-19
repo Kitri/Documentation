@@ -15,3 +15,7 @@
 [[file:./udemy/hadoop.html][The Ultimate Hands-On Hadoop - Tame your Big Data!]] 
 
 [[file:./udemy/spark.org][Apache Spark with Scala - Hands on with Big Data!]]
+
+** Coursera Courses
+
+[[file:./coursera/FPDesign.html][Functional Program Design in Scala]]
