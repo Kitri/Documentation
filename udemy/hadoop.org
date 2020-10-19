@@ -713,3 +713,82 @@ Some older techs in hadoop
 
 - Ganglia - monitoring system (ganglia is dead now), replaced by ambari etc
 - Chukwa - collecting and analyzing logs. Replaced by Flume and Kafka
+* Feeding data into your cluster
+
+** Kafka
+
+ - pub/sub messaging system
+ - Stores all incoming messages from publishers for some period of time, and publishes them to a stream of data called a topic
+ - Consumers subscribe to one or more topics and receive data as it's published
+ - Kafka can run in a cluster of its own to distribute processes on many servers (as well as storage of stream data)
+ - Can distribute consumers too
+
+#+CAPTION: Kafka cluster (from kafka.apache.org)
+#+ATTR_HTML: :width 400 
+ [[file:./kafka.png]]
+
+*** Using kafka
+
+ - Can run kafka through ambari
+ - Create a kafka topic (kafka uses zookeeper to keep track of which topics exists)
+
+ #+begin_src bash
+ ./kafka-topics.sh --create --zookeeper sandbox.hortonworks.com:2181 --replication-factor 1 --partitions 1 --topic fred
+ ./kafka-topics.sh --list --zookeeper sandbox.hortonworks.com:2181
+ #+end_src
+
+*To publish a message*
+
+This keeps a thread open where you can type messages that will be publishing messages
+
+#+begin_src bash
+./kafka-console.producer.sh --broker-list sandbox.hortonworks.com:6667 --topic fred
+Sending message
+This is another a message
+#+end_src
+
+*To consume a message*
+
+This keeps a thread open where you can type messages that will be consuming messages
+
+Ommitting --from-beginning will only show new messages
+
+#+begin_src bash
+./kafka-console.consumer.sh --bootstrap-server sandbox.hortonworks.com:6667 --zookeeper localhost:2181 --topic fred --from-beginning
+#+end_src
+
+#+CAPTION: Kafka Produce / Consume
+#+ATTR_HTML: :width 600 
+ [[file:./kafka_pubsub.png]]
+
+*To use a connector*
+ 
+ - To use a connector, create a copy of the config templates inside the conf folder in kafka files and modify
+ - For a file connector:
+   - Copy connect-standalone.properties and change the bootstrap.servers property to specify the server we're running on (sandbox.hortonworks.com:6667)
+   - Copy connect-file-sink.properties and change 'file' (filename) which is where we'll write the results to and the topic that we're going to listen to ('topics')
+   - Copy connect-file-source.properties and change 'file' (filename that we're listening to) and the topic we'll be writing to ('topic')
+   - To run with properties, run: ./connect-standalone.sh standalone.properties source.properties sink.properties
+
+     
+** Flume
+
+Made from the start with hadoop in mind. Has built-in sinks for HDFS and Hbase
+
+*** Anatomy of a flume agent and flow
+
+#+ATTR_HTML: :width 600 
+ [[file:./flume.png]]
+
+**** Source
+ - Where the data is coming from
+ - Can optionally have channel selectors and interceptors
+
+**** Channel
+ - How the data is transferred (via memory or files)
+
+**** Sink
+ - Where data is going
+ - Can be organized into sing groups
+ - Sink can connect to only one channel
+   - Channel is notified to delete a message once the sink processes it
