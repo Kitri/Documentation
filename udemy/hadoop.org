@@ -758,7 +758,7 @@ Ommitting --from-beginning will only show new messages
 #+end_src
 
 #+CAPTION: Kafka Produce / Consume
-#+ATTR_HTML: :width 600 
+#+ATTR_HTML: :width 800 
  [[file:./kafka_pubsub.png]]
 
 *To use a connector*
