@@ -8,6 +8,26 @@
 #+ATTR_HTML: :width 800 
 [[file:./hadoop.png]]
 
+
+ - HDFS :: Distributed file system, manages data that stores it in blocks distributed across the system
+ - YARN :: Manages computation of your cluster (Yet another resource negotiator), what gets run where
+ - MapReduce :: Transform and aggregate data
+ - Hive :: SQL Like queries on your cluster
+ - Pig :: Scripting interface using pig-latin
+ - Tez :: DAG alternative to MapReduce. Hive and Pig has alternative interfaces for Tez
+ - Spark :: DAGs and in-memory processing. Ecosystem - streaming, graphs etc
+ - Apache HBase :: NoSQL BigTable - favours consistency
+ - MySQL, MongoDB, Cassandra :: Other databases
+ - Sqoop :: Import and export data from mysql into hadoop
+ - Zookeeper :: Keep track of who is the current master
+ - Oozie :: workflows and schedule jobs across cluster
+ - Querie Engines :: Apache Drill, Phoenix, Presto - allows SQL query writing across multiple databases
+ - Hue :: Cloudera's answer to Ambari , web ui
+ - Apache Zeppelin :: Notebook style writing
+ - Streaming :: Storm, spark streaming, flink
+ - Flume, Kafka :: Streams data into your cluster at high transaction rates
+ - Ambari :: In hortonworks gives web interface to manage everything
+
 * HDFS
 Optimised for large files, not really many small files
 
@@ -714,7 +734,7 @@ Some older techs in hadoop
 - Ganglia - monitoring system (ganglia is dead now), replaced by ambari etc
 - Chukwa - collecting and analyzing logs. Replaced by Flume and Kafka
 * Feeding data into your cluster
-
+  
 ** Kafka
 
  - pub/sub messaging system
@@ -792,3 +812,138 @@ Made from the start with hadoop in mind. Has built-in sinks for HDFS and Hbase
  - Can be organized into sing groups
  - Sink can connect to only one channel
    - Channel is notified to delete a message once the sink processes it
+* Analyzing streams of data
+
+** Spark streaming
+
+ - Spark cluster has receivers that receives streams of data
+ - Not really real-time, it does it in micro-batches. But very close.
+ - Abstraction on top of all of this is called a DStream ( Discretized Stream )
+ - Apply processing on DStreams
+
+*** Windowed transformation
+ 
+ - The batch interval is how often data is captured into a DStream
+ - The slide interval is how often a windowed transformation is computed
+ - The window interval is how far back in time the windowed transformation goes
+ 
+** Apache Storm
+
+Storm works on individual events, not micro-batches
+
+Different terms in storm:
+ - /Stream/ consists of tuples that flow through
+ - /Spouts/ that are sources of stream data (Kafka etc)
+ - /Bolts/ that process stream data as it's received (ETL)
+ - A /topology/ is a graph of spouts and bolts that process your stream
+
+Storm architecture:
+
+Nimbus, pipes to multiple zookeepers pipes to multiple supervisors.
+
+Developing storm is done in Java using either Storm Core or Trident
+
+** Spark Streaming vs Storm
+
+ - Having the rest of spark is useful
+ - Truly real-time processing = storm
+ - Core storm offers "tumbling windows" in addition to "sliding windows"
+ - Kafka + Storm seems to be a pretty good combination
+
+** Apache Flink
+(As of the time of the video (2020), technology advancing fast
+
+ - Highly scalable (1000s of nodes), similar to storm
+ - Very strong at fault tolerance
+ - faster than storm
+ - Event-base stream processing like storm
+ - has its own ecosystem like spark
+ - youngest of techs between spark, storm and flink
+* Designing Real-world systems
+
+** Other good to mention techs
+*** Impala
+
+Cloudera specific
+
+ - Cloudera's alternative to Hive
+ - Always running ready to run queries
+ - Made for BI-style queries
+
+*** Accumulo
+
+Another BigTable clone like HBase
+
+*** Redis
+
+Distributed in-memory storage (like memcache)
+
+Can also use it as persistent datastore
+
+*** Ignite
+
+Alternative to Redis
+Closer to a database
+ - ACID guarantee
+ - SQL support
+ - In memory processing
+
+*** Elasticsearch
+
+A distributed document search and analytics engine
+
+Cool when combined with Kibana
+
+Amazon has an ES service
+
+*** Kinesis (AWS)
+
+AWS version of Kafka
+
+(EMR is an easy way to spin up a hadoop cluster on demand)
+
+*** Apache Nifi
+
+Directed graphs of data routing
+
+*** Falcon
+
+A "data goverance engine" that sits on top of Oozie
+
+Organize the flow of your data in hadoop
+
+*** Apache Slider
+
+Deployment tool for apps on the YARN cluster
+
+** Hadoop architecture design
+
+Some questions to ask and things to keep in mind
+
+ - Working backwards:
+   - Start with user's needs and then decide what to use
+ - What access patterns do you anticipate?
+   - Analytics?
+   - High transactions?
+ - Availability constraints?
+   - availability & consistency needs
+ - How big is the data? How often do you get data and how much?
+   - Do you need a cluster?
+ - How much internal infrastructure and expertise is available?
+ - Data retension?
+   - Auditing? 
+ - What about security?
+   - Check with legal department
+ - Latency
+   - How fast must users get results?
+ - Timelines
+   - is batch ok?
+   - does it need to be real-time?
+ - Does it make sense to re-use things already existing in your organisation?
+   - Re-inventing the wheel is expensive and not always worth it
+
+
+
+
+
+
