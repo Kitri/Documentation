@@ -1,7 +1,7 @@
 #+TITLE: Designing Data-Intensive Applications
 #+OPTIONS: toc:nil num:0 H:4 ^:nil pri:t html-style:nil
-#+HTML_HEAD:  <link id="pagestyle" rel="stylesheet" type="text/css" href="../org.css"/>
-#+HTML_LINK_HOME: ../index.html
+#+HTML_HEAD:  <link id="pagestyle" rel="stylesheet" type="text/css" href="org.css"/>
+#+HTML_LINK_HOME: index.html
 #+TOC: headlines 1
 
 * Chapter 1: Reliable, Scalable and Maintainable Applications

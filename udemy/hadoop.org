@@ -943,7 +943,17 @@ Some questions to ask and things to keep in mind
    - Re-inventing the wheel is expensive and not always worth it
 
 
+*** Examples
+    
+An example architecture for a design for a system that does movie recommendations
+
+Working backwards
+ - Users want to discover movies they haven't seen and might enjoy
+ - Own behaviours (ratings, purchases, views) are probably best predictions
+ - Availability and partitioning is important, not consistency as much
 
 
-
+#+CAPTION: Architecture example
+#+ATTR_HTML: :width 800 
+[[file:./architecture_example.png]]
 

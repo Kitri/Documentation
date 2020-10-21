@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2020-10-21 Wed 21:47 -->
+<!-- 2020-10-21 Wed 22:14 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Ultimate Hands-on with Hadoop</title>
@@ -68,18 +68,18 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org00b4062">HDFS</a></li>
-<li><a href="#org1ea4f74">MapReduce</a></li>
-<li><a href="#org1b4d55d">Pig</a></li>
-<li><a href="#org437b55d">Spark</a></li>
-<li><a href="#org1956b2b">Hive</a></li>
-<li><a href="#orge130a1a">Sqoop</a></li>
-<li><a href="#orgfd33343">Integrating hadoop with nosql</a></li>
-<li><a href="#org7de8743">Querying data interactively</a></li>
-<li><a href="#orgf7fb202">Manage your cluster</a></li>
-<li><a href="#org5b7606f">Feeding data into your cluster</a></li>
-<li><a href="#orgb37771d">Analyzing streams of data</a></li>
-<li><a href="#orgd7c56f3">Designing Real-world systems</a></li>
+<li><a href="#org333a4ad">HDFS</a></li>
+<li><a href="#orgdc404a2">MapReduce</a></li>
+<li><a href="#orga912b54">Pig</a></li>
+<li><a href="#orgecb43d7">Spark</a></li>
+<li><a href="#org4f54031">Hive</a></li>
+<li><a href="#orgdd32ce9">Sqoop</a></li>
+<li><a href="#org01d3b5f">Integrating hadoop with nosql</a></li>
+<li><a href="#org7a89f9f">Querying data interactively</a></li>
+<li><a href="#orgaac9e3c">Manage your cluster</a></li>
+<li><a href="#org019c1af">Feeding data into your cluster</a></li>
+<li><a href="#orgc9f6927">Analyzing streams of data</a></li>
+<li><a href="#orgf759b85">Designing Real-world systems</a></li>
 </ul>
 </div>
 </div>
@@ -113,9 +113,9 @@ for the JavaScript code in this tag.
 <dt>Ambari</dt><dd>In hortonworks gives web interface to manage everything</dd>
 </dl>
 
-<div id="outline-container-org00b4062" class="outline-2">
-<h2 id="org00b4062">HDFS</h2>
-<div class="outline-text-2" id="text-org00b4062">
+<div id="outline-container-org333a4ad" class="outline-2">
+<h2 id="org333a4ad">HDFS</h2>
+<div class="outline-text-2" id="text-org333a4ad">
 <p>
 Optimised for large files, not really many small files
 </p>
@@ -130,18 +130,18 @@ Data Nodes - contains data
 </p>
 </div>
 
-<div id="outline-container-org2fbdbd6" class="outline-3">
-<h3 id="org2fbdbd6">Reading a file</h3>
-<div class="outline-text-3" id="text-org2fbdbd6">
+<div id="outline-container-org8b56bc3" class="outline-3">
+<h3 id="org8b56bc3">Reading a file</h3>
+<div class="outline-text-3" id="text-org8b56bc3">
 <p>
 Client node talks to Name node to see which blocks to go look at, then client node goes to the actual data nodes.
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgc607b8f" class="outline-3">
-<h3 id="orgc607b8f">Writing a file</h3>
-<div class="outline-text-3" id="text-orgc607b8f">
+<div id="outline-container-org7413833" class="outline-3">
+<h3 id="org7413833">Writing a file</h3>
+<div class="outline-text-3" id="text-org7413833">
 <p>
 Client node tells name node the file node.
 Client talks to single data node to write file, and data nodes will talk to each other to store the data in replicated manner
@@ -150,9 +150,9 @@ Data nodes send back a acknowledged and client node tells name node where it was
 </div>
 </div>
 
-<div id="outline-container-org290e700" class="outline-3">
-<h3 id="org290e700">Name node DR</h3>
-<div class="outline-text-3" id="text-org290e700">
+<div id="outline-container-org20d5d6e" class="outline-3">
+<h3 id="org20d5d6e">Name node DR</h3>
+<div class="outline-text-3" id="text-org20d5d6e">
 <p>
 Always only have 1 active Name node, several options to avoid losing data:
 </p>
@@ -166,9 +166,9 @@ Always only have 1 active Name node, several options to avoid losing data:
 </div>
 </div>
 
-<div id="outline-container-org6c1360d" class="outline-3">
-<h3 id="org6c1360d">Using HDFS</h3>
-<div class="outline-text-3" id="text-org6c1360d">
+<div id="outline-container-org8b3aefd" class="outline-3">
+<h3 id="org8b3aefd">Using HDFS</h3>
+<div class="outline-text-3" id="text-org8b3aefd">
 <ul class="org-ul">
 <li>UI (Ambari) - looks like a giant file system</li>
 <li>CLI</li>
@@ -180,9 +180,9 @@ Always only have 1 active Name node, several options to avoid losing data:
 </div>
 </div>
 
-<div id="outline-container-org1ea4f74" class="outline-2">
-<h2 id="org1ea4f74">MapReduce</h2>
-<div class="outline-text-2" id="text-org1ea4f74">
+<div id="outline-container-orgdc404a2" class="outline-2">
+<h2 id="orgdc404a2">MapReduce</h2>
+<div class="outline-text-2" id="text-orgdc404a2">
 <p>
 2 stages: Map and Reduce.
 </p>
@@ -229,9 +229,9 @@ or on hadoop cluster with python scipt.py -r hadoop &#x2013;hadoop-streaming-jar
 </div>
 </div>
 
-<div id="outline-container-org1b4d55d" class="outline-2">
-<h2 id="org1b4d55d">Pig</h2>
-<div class="outline-text-2" id="text-org1b4d55d">
+<div id="outline-container-orga912b54" class="outline-2">
+<h2 id="orga912b54">Pig</h2>
+<div class="outline-text-2" id="text-orga912b54">
 <p>
 Built on top of MapReduce or Tez, a SQL-like interface (Pig Latin) to write MapReduce pipelines without having to use the complex MapReduce
 </p>
@@ -274,9 +274,9 @@ DUMP oldestFiveStarMovies;
 </div>
 </div>
 
-<div id="outline-container-org486cd28" class="outline-3">
-<h3 id="org486cd28">Basic commands</h3>
-<div class="outline-text-3" id="text-org486cd28">
+<div id="outline-container-orgc330733" class="outline-3">
+<h3 id="orgc330733">Basic commands</h3>
+<div class="outline-text-3" id="text-orgc330733">
 <ul class="org-ul">
 <li>LOAD STORE DUMP</li>
 <li>STORE ratings INTO 'outRatings' USING PigStorage(':');</li>
@@ -288,9 +288,9 @@ DUMP oldestFiveStarMovies;
 </div>
 </div>
 
-<div id="outline-container-orgea66f77" class="outline-3">
-<h3 id="orgea66f77">Diagnostics</h3>
-<div class="outline-text-3" id="text-orgea66f77">
+<div id="outline-container-org18d5809" class="outline-3">
+<h3 id="org18d5809">Diagnostics</h3>
+<div class="outline-text-3" id="text-org18d5809">
 <ul class="org-ul">
 <li>DESCRIBE</li>
 <li>EXPLAIN</li>
@@ -299,9 +299,9 @@ DUMP oldestFiveStarMovies;
 </div>
 </div>
 
-<div id="outline-container-org652f900" class="outline-3">
-<h3 id="org652f900">UDF's</h3>
-<div class="outline-text-3" id="text-org652f900">
+<div id="outline-container-orgfc23011" class="outline-3">
+<h3 id="orgfc23011">UDF's</h3>
+<div class="outline-text-3" id="text-orgfc23011">
 <ul class="org-ul">
 <li>REGISTER</li>
 <li>DEFINE</li>
@@ -310,9 +310,9 @@ DUMP oldestFiveStarMovies;
 </div>
 </div>
 
-<div id="outline-container-orge32006d" class="outline-3">
-<h3 id="orge32006d">Some other functions and loaders</h3>
-<div class="outline-text-3" id="text-orge32006d">
+<div id="outline-container-org2c9023f" class="outline-3">
+<h3 id="org2c9023f">Some other functions and loaders</h3>
+<div class="outline-text-3" id="text-org2c9023f">
 <ul class="org-ul">
 <li>AVG CONCAT COUNT MAX MIN SIZE SUM</li>
 <li>PigStorage</li>
@@ -327,9 +327,9 @@ DUMP oldestFiveStarMovies;
 </div>
 </div>
 
-<div id="outline-container-org437b55d" class="outline-2">
-<h2 id="org437b55d">Spark</h2>
-<div class="outline-text-2" id="text-org437b55d">
+<div id="outline-container-orgecb43d7" class="outline-2">
+<h2 id="orgecb43d7">Spark</h2>
+<div class="outline-text-2" id="text-orgecb43d7">
 <p>
 DAG Engine (directed acyclic graph) optimizes workflows
 </p>
@@ -359,9 +359,9 @@ More details in spark course
 </div>
 </div>
 
-<div id="outline-container-org1956b2b" class="outline-2">
-<h2 id="org1956b2b">Hive</h2>
-<div class="outline-text-2" id="text-org1956b2b">
+<div id="outline-container-org4f54031" class="outline-2">
+<h2 id="org4f54031">Hive</h2>
+<div class="outline-text-2" id="text-org4f54031">
 <p>
 On top of Mapreduce and Tez. 
 </p>
@@ -375,9 +375,9 @@ Basically smokes and mirrors to make it seem like you're working with a relation
 </p>
 </div>
 
-<div id="outline-container-org987cd47" class="outline-3">
-<h3 id="org987cd47">Why not hive?</h3>
-<div class="outline-text-3" id="text-org987cd47">
+<div id="outline-container-org32aa5e5" class="outline-3">
+<h3 id="org32aa5e5">Why not hive?</h3>
+<div class="outline-text-3" id="text-org32aa5e5">
 <ul class="org-ul">
 <li>high latency - not appropriate for OLTP</li>
 <li>stores data de-normalized</li>
@@ -396,9 +396,9 @@ Can create views as well (which gets persisted as with usual relational db)
 </div>
 </div>
 
-<div id="outline-container-org3f43711" class="outline-3">
-<h3 id="org3f43711">How does hive work?</h3>
-<div class="outline-text-3" id="text-org3f43711">
+<div id="outline-container-org3bd1911" class="outline-3">
+<h3 id="org3bd1911">How does hive work?</h3>
+<div class="outline-text-3" id="text-org3bd1911">
 <p>
 Schema on read
 </p>
@@ -415,9 +415,9 @@ To create external table use "CREATE EXTERNAL TABLE", give it a location and the
 </p>
 </div>
 
-<div id="outline-container-org251c918" class="outline-4">
-<h4 id="org251c918">Partitioning</h4>
-<div class="outline-text-4" id="text-org251c918">
+<div id="outline-container-org7a2f41f" class="outline-4">
+<h4 id="org7a2f41f">Partitioning</h4>
+<div class="outline-text-4" id="text-org7a2f41f">
 <p>
 You can store your data in partitioned subdirectories (optimisation)
 </p>
@@ -444,9 +444,9 @@ Can use it through Ambari / Hue; JDBC/ODBC server; Thrift service (but remember 
 
 
 
-<div id="outline-container-orge130a1a" class="outline-2">
-<h2 id="orge130a1a">Sqoop</h2>
-<div class="outline-text-2" id="text-orge130a1a">
+<div id="outline-container-orgdd32ce9" class="outline-2">
+<h2 id="orgdd32ce9">Sqoop</h2>
+<div class="outline-text-2" id="text-orgdd32ce9">
 <p>
 Meant for large datasets.
 </p>
@@ -488,9 +488,9 @@ To export from hive table to mysql: (mysql table needs to exist)
 </div>
 </div>
 
-<div id="outline-container-orgfd33343" class="outline-2">
-<h2 id="orgfd33343">Integrating hadoop with nosql</h2>
-<div class="outline-text-2" id="text-orgfd33343">
+<div id="outline-container-org01d3b5f" class="outline-2">
+<h2 id="org01d3b5f">Integrating hadoop with nosql</h2>
+<div class="outline-text-2" id="text-org01d3b5f">
 <p>
 CAP: Consistency, Availability, Partition-Tolerance
 </p>
@@ -502,9 +502,9 @@ Hbase and mongodb = C/P
 </p>
 </div>
 
-<div id="outline-container-org98f3611" class="outline-3">
-<h3 id="org98f3611">HBase</h3>
-<div class="outline-text-3" id="text-org98f3611">
+<div id="outline-container-org472b2a5" class="outline-3">
+<h3 id="org472b2a5">HBase</h3>
+<div class="outline-text-3" id="text-org472b2a5">
 <p>
 HBase is built on top of hdfs, based on google's BigTable
 </p>
@@ -527,9 +527,9 @@ HBase is transactional on rows
 </p>
 </div>
 
-<div id="outline-container-org43e042c" class="outline-4">
-<h4 id="org43e042c">HBase data model</h4>
-<div class="outline-text-4" id="text-org43e042c">
+<div id="outline-container-orga7e4de8" class="outline-4">
+<h4 id="orga7e4de8">HBase data model</h4>
+<div class="outline-text-4" id="text-orga7e4de8">
 <p>
 keys stored lexographically in hbase 
 </p>
@@ -560,9 +560,9 @@ Anchor Column family: Anchor: cnnsi.com = "CNN"; Anchor:my.look.ca = "CNN.com"  
 </div>
 </div>
 
-<div id="outline-container-org768df81" class="outline-4">
-<h4 id="org768df81">Access HBase</h4>
-<div class="outline-text-4" id="text-org768df81">
+<div id="outline-container-orgddccd16" class="outline-4">
+<h4 id="orgddccd16">Access HBase</h4>
+<div class="outline-text-4" id="text-orgddccd16">
 <ul class="org-ul">
 <li>HBase shell</li>
 <li>Java API (wrappers for python, scala etc)</li>
@@ -574,9 +574,9 @@ Anchor Column family: Anchor: cnnsi.com = "CNN"; Anchor:my.look.ca = "CNN.com"  
 </div>
 </div>
 
-<div id="outline-container-org5ee4c8c" class="outline-4">
-<h4 id="org5ee4c8c">Examples</h4>
-<div class="outline-text-4" id="text-org5ee4c8c">
+<div id="outline-container-org4d9a110" class="outline-4">
+<h4 id="org4d9a110">Examples</h4>
+<div class="outline-text-4" id="text-org4d9a110">
 <p>
 HBASE table:
 </p>
@@ -586,13 +586,13 @@ UserID; Rating:50; Rating:33; Rating:233  # rating for movie 50 was e.g. 1 star 
 </p>
 </div>
 
-<div id="outline-container-org73868a4" class="outline-5">
-<h5 id="org73868a4">Start HBASE through admin</h5>
+<div id="outline-container-orgddaccbe" class="outline-5">
+<h5 id="orgddaccbe">Start HBASE through admin</h5>
 </div>
 
-<div id="outline-container-org82b9ac8" class="outline-5">
-<h5 id="org82b9ac8">Kick off rest server running on top of HBASE</h5>
-<div class="outline-text-5" id="text-org82b9ac8">
+<div id="outline-container-orgf37c6ea" class="outline-5">
+<h5 id="orgf37c6ea">Kick off rest server running on top of HBASE</h5>
+<div class="outline-text-5" id="text-orgf37c6ea">
 <p>
 log into cluster via ssh
 </p>
@@ -609,9 +609,9 @@ start and stop
 </div>
 
 
-<div id="outline-container-org1e0f19d" class="outline-5">
-<h5 id="org1e0f19d">Do stuff to rest using python</h5>
-<div class="outline-text-5" id="text-org1e0f19d">
+<div id="outline-container-org75cfdd3" class="outline-5">
+<h5 id="org75cfdd3">Do stuff to rest using python</h5>
+<div class="outline-text-5" id="text-org75cfdd3">
 <p>
 Use library called starbase
 </p>
@@ -654,9 +654,9 @@ batch.commit(finalize=<span style="color: #a9a1e1;">True</span>)
 </div>
 
 
-<div id="outline-container-org44e05cc" class="outline-4">
-<h4 id="org44e05cc">Integrating Pig with HBase</h4>
-<div class="outline-text-4" id="text-org44e05cc">
+<div id="outline-container-org4f2756f" class="outline-4">
+<h4 id="org4f2756f">Integrating Pig with HBase</h4>
+<div class="outline-text-4" id="text-org4f2756f">
 <ul class="org-ul">
 <li>Must create HBase table ahead of time</li>
 <li>Your relation must have a unique key as its first column, followed by subsequent columns as you want htem saved in HBase</li>
@@ -702,13 +702,13 @@ STORE ratings <span style="color: #51afef;">INTO</span> <span style="color: #98b
 </div>
 
 
-<div id="outline-container-org8bf4b90" class="outline-3">
-<h3 id="org8bf4b90">Cassandra</h3>
-<div class="outline-text-3" id="text-org8bf4b90">
+<div id="outline-container-orge6085a4" class="outline-3">
+<h3 id="orge6085a4">Cassandra</h3>
+<div class="outline-text-3" id="text-orge6085a4">
 </div>
-<div id="outline-container-orgd128c3c" class="outline-4">
-<h4 id="orgd128c3c">How did it start?</h4>
-<div class="outline-text-4" id="text-orgd128c3c">
+<div id="outline-container-orge56ccaa" class="outline-4">
+<h4 id="orge56ccaa">How did it start?</h4>
+<div class="outline-text-4" id="text-orge56ccaa">
 <p>
 comes from greek mythology - cassandra can tell the future
 </p>
@@ -723,9 +723,9 @@ Cassandra favors availability over consistency (eventually consistent), but you 
 </div>
 </div>
 
-<div id="outline-container-orge85ba47" class="outline-4">
-<h4 id="orge85ba47">What is it?</h4>
-<div class="outline-text-4" id="text-orge85ba47">
+<div id="outline-container-orge6dbec7" class="outline-4">
+<h4 id="orge6dbec7">What is it?</h4>
+<div class="outline-text-4" id="text-orge6dbec7">
 <p>
 Distributed nosql with no single point of failure
 </p>
@@ -744,9 +744,9 @@ non-relational but has limited CQL query language
 </div>
 </div>
 
-<div id="outline-container-org675cc51" class="outline-4">
-<h4 id="org675cc51">Cassandra architecture</h4>
-<div class="outline-text-4" id="text-org675cc51">
+<div id="outline-container-org305a43e" class="outline-4">
+<h4 id="org305a43e">Cassandra architecture</h4>
+<div class="outline-text-4" id="text-org305a43e">
 <p>
 Ring architecture between all nodes for high availability
 </p>
@@ -761,9 +761,9 @@ Can have multiple cassandra rings and replicate between. So you can use your rep
 </div>
 </div>
 
-<div id="outline-container-org4243f52" class="outline-4">
-<h4 id="org4243f52">CQL</h4>
-<div class="outline-text-4" id="text-org4243f52">
+<div id="outline-container-org56f6ca0" class="outline-4">
+<h4 id="org56f6ca0">CQL</h4>
+<div class="outline-text-4" id="text-org56f6ca0">
 <p>
 no joins, all queries must be on some primary key
 </p>
@@ -792,9 +792,9 @@ USE movielens
 </div>
 </div>
 
-<div id="outline-container-orgaaaa574" class="outline-4">
-<h4 id="orgaaaa574">Cassandra + Spark</h4>
-<div class="outline-text-4" id="text-orgaaaa574">
+<div id="outline-container-orgb4c335a" class="outline-4">
+<h4 id="orgb4c335a">Cassandra + Spark</h4>
+<div class="outline-text-4" id="text-orgb4c335a">
 <p>
 DataStax has a spark-cassandra connector, which allows you to RW as dataframes         
 </p>
@@ -847,17 +847,17 @@ spark-submit &#x2013;packages datastax:spark-cassandra-connector:2.0.0-M2-s_2.11
 </div>
 
 
-<div id="outline-container-orgf6c97b8" class="outline-3">
-<h3 id="orgf6c97b8">MongoDB</h3>
-<div class="outline-text-3" id="text-orgf6c97b8">
+<div id="outline-container-orgf584548" class="outline-3">
+<h3 id="orgf584548">MongoDB</h3>
+<div class="outline-text-3" id="text-orgf584548">
 <p>
 Nothign new&#x2026;
 </p>
 </div>
 
-<div id="outline-container-org5343b73" class="outline-4">
-<h4 id="org5343b73">MongoDB and Spark</h4>
-<div class="outline-text-4" id="text-org5343b73">
+<div id="outline-container-org37a9ddd" class="outline-4">
+<h4 id="org37a9ddd">MongoDB and Spark</h4>
+<div class="outline-text-4" id="text-org37a9ddd">
 <p>
 Can add mongo as a service to ambari - install via hdp sandbox shell, then add new service @ ambari and select it.
 </p>
@@ -917,9 +917,9 @@ spark-submit &#x2013;packages org.mongodb.spark:mongo-spark-connector 2.11:2.0.0
 </div>
 
 
-<div id="outline-container-orga0a9dae" class="outline-3">
-<h3 id="orga0a9dae">So how do you choose?</h3>
-<div class="outline-text-3" id="text-orga0a9dae">
+<div id="outline-container-org4d751da" class="outline-3">
+<h3 id="org4d751da">So how do you choose?</h3>
+<div class="outline-text-3" id="text-org4d751da">
 <p>
 Integration consideration, e.g. if you're using spark, you probably want to choose a db that can work with spark.
 </p>
@@ -947,9 +947,9 @@ Keep it simple, if you don't need to setup a complex nosql cluster, don't do it 
 </div>
 </div>
 
-<div id="outline-container-org7de8743" class="outline-2">
-<h2 id="org7de8743">Querying data interactively</h2>
-<div class="outline-text-2" id="text-org7de8743">
+<div id="outline-container-org7a89f9f" class="outline-2">
+<h2 id="org7a89f9f">Querying data interactively</h2>
+<div class="outline-text-2" id="text-org7a89f9f">
 <p>
 Query engines:
 </p>
@@ -963,13 +963,13 @@ Query engines:
 </div>
 </div>
 
-<div id="outline-container-orgf7fb202" class="outline-2">
-<h2 id="orgf7fb202">Manage your cluster</h2>
-<div class="outline-text-2" id="text-orgf7fb202">
+<div id="outline-container-orgaac9e3c" class="outline-2">
+<h2 id="orgaac9e3c">Manage your cluster</h2>
+<div class="outline-text-2" id="text-orgaac9e3c">
 </div>
-<div id="outline-container-org6c73634" class="outline-3">
-<h3 id="org6c73634">Yarn</h3>
-<div class="outline-text-3" id="text-org6c73634">
+<div id="outline-container-org30221ac" class="outline-3">
+<h3 id="org30221ac">Yarn</h3>
+<div class="outline-text-3" id="text-org30221ac">
 <p>
 Yet Another Resources Negotiator
 </p>
@@ -982,9 +982,9 @@ MapReduce, Spark and Tez sits on top of YARN and are YARN applications
 </div>
 </div>
 
-<div id="outline-container-org58f7237" class="outline-3">
-<h3 id="org58f7237">Tez</h3>
-<div class="outline-text-3" id="text-org58f7237">
+<div id="outline-container-org51a8739" class="outline-3">
+<h3 id="org51a8739">Tez</h3>
+<div class="outline-text-3" id="text-org51a8739">
 <p>
 Makes Hive, Pig and MapReduce jobs faster
 Constructs DAGs
@@ -1000,9 +1000,9 @@ MapReduce / Spark / Tez (YARN Applications)
 </div>
 </div>
 
-<div id="outline-container-orgdb3393f" class="outline-3">
-<h3 id="orgdb3393f">Mesos</h3>
-<div class="outline-text-3" id="text-orgdb3393f">
+<div id="outline-container-org76cd3d0" class="outline-3">
+<h3 id="org76cd3d0">Mesos</h3>
+<div class="outline-text-3" id="text-org76cd3d0">
 <p>
 Came out of Twitter - managers resources across your data center
 </p>
@@ -1025,9 +1025,9 @@ Spark on mesos is limited to one executor per slave
 </div>
 </div>
 
-<div id="outline-container-org7dcfb7a" class="outline-3">
-<h3 id="org7dcfb7a">Zookeeper</h3>
-<div class="outline-text-3" id="text-org7dcfb7a">
+<div id="outline-container-org1437897" class="outline-3">
+<h3 id="org1437897">Zookeeper</h3>
+<div class="outline-text-3" id="text-org1437897">
 <p>
 Coordinate your cluster
 </p>
@@ -1042,9 +1042,9 @@ good idea to have zookeeper ensemble ("who's watching the watcher?")
 </div>
 
 
-<div id="outline-container-org9192884" class="outline-4">
-<h4 id="org9192884">Failure modes</h4>
-<div class="outline-text-4" id="text-org9192884">
+<div id="outline-container-org9ef6660" class="outline-4">
+<h4 id="org9ef6660">Failure modes</h4>
+<div class="outline-text-4" id="text-org9ef6660">
 <p>
 zookeeper can help with some failures: 
 </p>
@@ -1058,9 +1058,9 @@ zookeeper can help with some failures:
 </div>
 </div>
 
-<div id="outline-container-orge3607fd" class="outline-3">
-<h3 id="orge3607fd">Oozie</h3>
-<div class="outline-text-3" id="text-orge3607fd">
+<div id="outline-container-org11500b2" class="outline-3">
+<h3 id="org11500b2">Oozie</h3>
+<div class="outline-text-3" id="text-org11500b2">
 <p>
 Orchestrates your hadoop jobs (scheduling and running tasks)
 </p>
@@ -1070,9 +1070,9 @@ Oozie = Burmese word for "Elephant Keeper"
 </p>
 </div>
 
-<div id="outline-container-org33744ca" class="outline-4">
-<h4 id="org33744ca">Workflows</h4>
-<div class="outline-text-4" id="text-org33744ca">
+<div id="outline-container-orgcbc286a" class="outline-4">
+<h4 id="orgcbc286a">Workflows</h4>
+<div class="outline-text-4" id="text-orgcbc286a">
 <p>
 Has a workflow concept which is a multi-stage hadoop job to chain together mapreduce, hive, pig, sqoop and distcp tasks. Can chain others like spark with add-ons.
 DAG specified by XML
@@ -1135,9 +1135,9 @@ Example: Start -&gt; fork -&gt; pig ; sqoop -&gt; join -&gt; hive -&gt; End
 </div>
 </div>
 
-<div id="outline-container-orgd08a914" class="outline-5">
-<h5 id="orgd08a914">How to setup a workflow in Oozie</h5>
-<div class="outline-text-5" id="text-orgd08a914">
+<div id="outline-container-org7358556" class="outline-5">
+<h5 id="org7358556">How to setup a workflow in Oozie</h5>
+<div class="outline-text-5" id="text-org7358556">
 <ul class="org-ul">
 <li>Make sure each action works on its own - debugging in Oozie is a nightmare</li>
 <li>Make a directory in HDFS for your job</li>
@@ -1178,9 +1178,9 @@ Monitor progress at <a href="http://127.0.0.1:1100/oozie">http://127.0.0.1:1100/
 </div>
 </div>
 
-<div id="outline-container-orga993ff2" class="outline-4">
-<h4 id="orga993ff2">Oozie Coordinator</h4>
-<div class="outline-text-4" id="text-orga993ff2">
+<div id="outline-container-org52ab12d" class="outline-4">
+<h4 id="org52ab12d">Oozie Coordinator</h4>
+<div class="outline-text-4" id="text-org52ab12d">
 <ul class="org-ul">
 <li>Schedules workflow execution.</li>
 <li>XML &lt;coordinator-app &#x2026;&gt;</li>
@@ -1189,9 +1189,9 @@ Monitor progress at <a href="http://127.0.0.1:1100/oozie">http://127.0.0.1:1100/
 </div>
 </div>
 
-<div id="outline-container-orge0f2f44" class="outline-4">
-<h4 id="orge0f2f44">Oozie bundles</h4>
-<div class="outline-text-4" id="text-orge0f2f44">
+<div id="outline-container-orgd75a3dc" class="outline-4">
+<h4 id="orgd75a3dc">Oozie bundles</h4>
+<div class="outline-text-4" id="text-orgd75a3dc">
 <ul class="org-ul">
 <li>new in oozie 3.0</li>
 <li>bundle is a collection of coordinators that can be managed together</li>
@@ -1201,9 +1201,9 @@ Monitor progress at <a href="http://127.0.0.1:1100/oozie">http://127.0.0.1:1100/
 </div>
 </div>
 
-<div id="outline-container-org10100b4" class="outline-3">
-<h3 id="org10100b4">Zeppelin</h3>
-<div class="outline-text-3" id="text-org10100b4">
+<div id="outline-container-orgcf1d5dc" class="outline-3">
+<h3 id="orgcf1d5dc">Zeppelin</h3>
+<div class="outline-text-3" id="text-orgcf1d5dc">
 <p>
 Notebook interface to your big data, lets you interactively run scripts / code against your data
 </p>
@@ -1214,9 +1214,9 @@ go to localhost:9995 (default port), create new note to create notebook.
 </div>
 </div>
 
-<div id="outline-container-org8a5aebb" class="outline-3">
-<h3 id="org8a5aebb">Hue</h3>
-<div class="outline-text-3" id="text-org8a5aebb">
+<div id="outline-container-orga8a1d8f" class="outline-3">
+<h3 id="orga8a1d8f">Hue</h3>
+<div class="outline-text-3" id="text-orga8a1d8f">
 <p>
 Hadoop User Experience
 (won't see it in hortonworks, mainly in cloudera)
@@ -1232,9 +1232,9 @@ Hue has a built-in graphical oozie editor and built-in notebooks.
 </div>
 </div>
 
-<div id="outline-container-org0624114" class="outline-3">
-<h3 id="org0624114">Other administrative technologies</h3>
-<div class="outline-text-3" id="text-org0624114">
+<div id="outline-container-org710ebd7" class="outline-3">
+<h3 id="org710ebd7">Other administrative technologies</h3>
+<div class="outline-text-3" id="text-org710ebd7">
 <p>
 Some older techs in hadoop
 </p>
@@ -1246,13 +1246,13 @@ Some older techs in hadoop
 </div>
 </div>
 </div>
-<div id="outline-container-org5b7606f" class="outline-2">
-<h2 id="org5b7606f">Feeding data into your cluster</h2>
-<div class="outline-text-2" id="text-org5b7606f">
+<div id="outline-container-org019c1af" class="outline-2">
+<h2 id="org019c1af">Feeding data into your cluster</h2>
+<div class="outline-text-2" id="text-org019c1af">
 </div>
-<div id="outline-container-org422348c" class="outline-3">
-<h3 id="org422348c">Kafka</h3>
-<div class="outline-text-3" id="text-org422348c">
+<div id="outline-container-org795d38f" class="outline-3">
+<h3 id="org795d38f">Kafka</h3>
+<div class="outline-text-3" id="text-org795d38f">
 <ul class="org-ul">
 <li>pub/sub messaging system</li>
 <li>Stores all incoming messages from publishers for some period of time, and publishes them to a stream of data called a topic</li>
@@ -1269,9 +1269,9 @@ Some older techs in hadoop
 </div>
 </div>
 
-<div id="outline-container-org6ab47ba" class="outline-4">
-<h4 id="org6ab47ba">Using kafka</h4>
-<div class="outline-text-4" id="text-org6ab47ba">
+<div id="outline-container-orgfebf1ba" class="outline-4">
+<h4 id="orgfebf1ba">Using kafka</h4>
+<div class="outline-text-4" id="text-orgfebf1ba">
 <ul class="org-ul">
 <li>Can run kafka through ambari</li>
 <li>Create a kafka topic (kafka uses zookeeper to keep track of which topics exists)</li>
@@ -1341,17 +1341,17 @@ Ommitting &#x2013;from-beginning will only show new messages
 </div>
 
 
-<div id="outline-container-orge205ebe" class="outline-3">
-<h3 id="orge205ebe">Flume</h3>
-<div class="outline-text-3" id="text-orge205ebe">
+<div id="outline-container-orgac47e31" class="outline-3">
+<h3 id="orgac47e31">Flume</h3>
+<div class="outline-text-3" id="text-orgac47e31">
 <p>
 Made from the start with hadoop in mind. Has built-in sinks for HDFS and Hbase
 </p>
 </div>
 
-<div id="outline-container-org77a5349" class="outline-4">
-<h4 id="org77a5349">Anatomy of a flume agent and flow</h4>
-<div class="outline-text-4" id="text-org77a5349">
+<div id="outline-container-org3c5bb02" class="outline-4">
+<h4 id="org3c5bb02">Anatomy of a flume agent and flow</h4>
+<div class="outline-text-4" id="text-org3c5bb02">
 
 <div class="figure">
 <p><img src="./flume.png" alt="flume.png" width="600" />
@@ -1359,9 +1359,9 @@ Made from the start with hadoop in mind. Has built-in sinks for HDFS and Hbase
 </div>
 </div>
 
-<div id="outline-container-orgccb66c7" class="outline-5">
-<h5 id="orgccb66c7">Source</h5>
-<div class="outline-text-5" id="text-orgccb66c7">
+<div id="outline-container-orgd96d143" class="outline-5">
+<h5 id="orgd96d143">Source</h5>
+<div class="outline-text-5" id="text-orgd96d143">
 <ul class="org-ul">
 <li>Where the data is coming from</li>
 <li>Can optionally have channel selectors and interceptors</li>
@@ -1369,18 +1369,18 @@ Made from the start with hadoop in mind. Has built-in sinks for HDFS and Hbase
 </div>
 </div>
 
-<div id="outline-container-org866ee48" class="outline-5">
-<h5 id="org866ee48">Channel</h5>
-<div class="outline-text-5" id="text-org866ee48">
+<div id="outline-container-org7e01cf5" class="outline-5">
+<h5 id="org7e01cf5">Channel</h5>
+<div class="outline-text-5" id="text-org7e01cf5">
 <ul class="org-ul">
 <li>How the data is transferred (via memory or files)</li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org43179eb" class="outline-5">
-<h5 id="org43179eb">Sink</h5>
-<div class="outline-text-5" id="text-org43179eb">
+<div id="outline-container-orgbcb6b89" class="outline-5">
+<h5 id="orgbcb6b89">Sink</h5>
+<div class="outline-text-5" id="text-orgbcb6b89">
 <ul class="org-ul">
 <li>Where data is going</li>
 <li>Can be organized into sing groups</li>
@@ -1394,13 +1394,13 @@ Made from the start with hadoop in mind. Has built-in sinks for HDFS and Hbase
 </div>
 </div>
 </div>
-<div id="outline-container-orgb37771d" class="outline-2">
-<h2 id="orgb37771d">Analyzing streams of data</h2>
-<div class="outline-text-2" id="text-orgb37771d">
+<div id="outline-container-orgc9f6927" class="outline-2">
+<h2 id="orgc9f6927">Analyzing streams of data</h2>
+<div class="outline-text-2" id="text-orgc9f6927">
 </div>
-<div id="outline-container-org03f61de" class="outline-3">
-<h3 id="org03f61de">Spark streaming</h3>
-<div class="outline-text-3" id="text-org03f61de">
+<div id="outline-container-org3729d19" class="outline-3">
+<h3 id="org3729d19">Spark streaming</h3>
+<div class="outline-text-3" id="text-org3729d19">
 <ul class="org-ul">
 <li>Spark cluster has receivers that receives streams of data</li>
 <li>Not really real-time, it does it in micro-batches. But very close.</li>
@@ -1409,9 +1409,9 @@ Made from the start with hadoop in mind. Has built-in sinks for HDFS and Hbase
 </ul>
 </div>
 
-<div id="outline-container-org21a928d" class="outline-4">
-<h4 id="org21a928d">Windowed transformation</h4>
-<div class="outline-text-4" id="text-org21a928d">
+<div id="outline-container-orga94278f" class="outline-4">
+<h4 id="orga94278f">Windowed transformation</h4>
+<div class="outline-text-4" id="text-orga94278f">
 <ul class="org-ul">
 <li>The batch interval is how often data is captured into a DStream</li>
 <li>The slide interval is how often a windowed transformation is computed</li>
@@ -1421,9 +1421,9 @@ Made from the start with hadoop in mind. Has built-in sinks for HDFS and Hbase
 </div>
 </div>
 
-<div id="outline-container-org5ea4183" class="outline-3">
-<h3 id="org5ea4183">Apache Storm</h3>
-<div class="outline-text-3" id="text-org5ea4183">
+<div id="outline-container-org537f6b6" class="outline-3">
+<h3 id="org537f6b6">Apache Storm</h3>
+<div class="outline-text-3" id="text-org537f6b6">
 <p>
 Storm works on individual events, not micro-batches
 </p>
@@ -1452,9 +1452,9 @@ Developing storm is done in Java using either Storm Core or Trident
 </div>
 </div>
 
-<div id="outline-container-org04c27bb" class="outline-3">
-<h3 id="org04c27bb">Spark Streaming vs Storm</h3>
-<div class="outline-text-3" id="text-org04c27bb">
+<div id="outline-container-orgd8cc230" class="outline-3">
+<h3 id="orgd8cc230">Spark Streaming vs Storm</h3>
+<div class="outline-text-3" id="text-orgd8cc230">
 <ul class="org-ul">
 <li>Having the rest of spark is useful</li>
 <li>Truly real-time processing = storm</li>
@@ -1464,9 +1464,9 @@ Developing storm is done in Java using either Storm Core or Trident
 </div>
 </div>
 
-<div id="outline-container-orgac9b146" class="outline-3">
-<h3 id="orgac9b146">Apache Flink</h3>
-<div class="outline-text-3" id="text-orgac9b146">
+<div id="outline-container-orgfaf8610" class="outline-3">
+<h3 id="orgfaf8610">Apache Flink</h3>
+<div class="outline-text-3" id="text-orgfaf8610">
 <p>
 (As of the time of the video (2020), technology advancing fast
 </p>
@@ -1482,17 +1482,17 @@ Developing storm is done in Java using either Storm Core or Trident
 </div>
 </div>
 </div>
-<div id="outline-container-orgd7c56f3" class="outline-2">
-<h2 id="orgd7c56f3">Designing Real-world systems</h2>
-<div class="outline-text-2" id="text-orgd7c56f3">
+<div id="outline-container-orgf759b85" class="outline-2">
+<h2 id="orgf759b85">Designing Real-world systems</h2>
+<div class="outline-text-2" id="text-orgf759b85">
 </div>
-<div id="outline-container-orga973605" class="outline-3">
-<h3 id="orga973605">Other good to mention techs</h3>
-<div class="outline-text-3" id="text-orga973605">
+<div id="outline-container-org1130be3" class="outline-3">
+<h3 id="org1130be3">Other good to mention techs</h3>
+<div class="outline-text-3" id="text-org1130be3">
 </div>
-<div id="outline-container-orgc88011b" class="outline-4">
-<h4 id="orgc88011b">Impala</h4>
-<div class="outline-text-4" id="text-orgc88011b">
+<div id="outline-container-orgefd2fbd" class="outline-4">
+<h4 id="orgefd2fbd">Impala</h4>
+<div class="outline-text-4" id="text-orgefd2fbd">
 <p>
 Cloudera specific
 </p>
@@ -1505,18 +1505,18 @@ Cloudera specific
 </div>
 </div>
 
-<div id="outline-container-orgef4bbc6" class="outline-4">
-<h4 id="orgef4bbc6">Accumulo</h4>
-<div class="outline-text-4" id="text-orgef4bbc6">
+<div id="outline-container-orga2a5457" class="outline-4">
+<h4 id="orga2a5457">Accumulo</h4>
+<div class="outline-text-4" id="text-orga2a5457">
 <p>
 Another BigTable clone like HBase
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgc663bec" class="outline-4">
-<h4 id="orgc663bec">Redis</h4>
-<div class="outline-text-4" id="text-orgc663bec">
+<div id="outline-container-orgea6af76" class="outline-4">
+<h4 id="orgea6af76">Redis</h4>
+<div class="outline-text-4" id="text-orgea6af76">
 <p>
 Distributed in-memory storage (like memcache)
 </p>
@@ -1527,9 +1527,9 @@ Can also use it as persistent datastore
 </div>
 </div>
 
-<div id="outline-container-org02d4b44" class="outline-4">
-<h4 id="org02d4b44">Ignite</h4>
-<div class="outline-text-4" id="text-org02d4b44">
+<div id="outline-container-org1e73700" class="outline-4">
+<h4 id="org1e73700">Ignite</h4>
+<div class="outline-text-4" id="text-org1e73700">
 <p>
 Alternative to Redis
 Closer to a database
@@ -1542,9 +1542,9 @@ Closer to a database
 </div>
 </div>
 
-<div id="outline-container-org0e4643d" class="outline-4">
-<h4 id="org0e4643d">Elasticsearch</h4>
-<div class="outline-text-4" id="text-org0e4643d">
+<div id="outline-container-orge8e1b24" class="outline-4">
+<h4 id="orge8e1b24">Elasticsearch</h4>
+<div class="outline-text-4" id="text-orge8e1b24">
 <p>
 A distributed document search and analytics engine
 </p>
@@ -1559,9 +1559,9 @@ Amazon has an ES service
 </div>
 </div>
 
-<div id="outline-container-org2286c30" class="outline-4">
-<h4 id="org2286c30">Kinesis (AWS)</h4>
-<div class="outline-text-4" id="text-org2286c30">
+<div id="outline-container-orgcf2f133" class="outline-4">
+<h4 id="orgcf2f133">Kinesis (AWS)</h4>
+<div class="outline-text-4" id="text-orgcf2f133">
 <p>
 AWS version of Kafka
 </p>
@@ -1572,18 +1572,18 @@ AWS version of Kafka
 </div>
 </div>
 
-<div id="outline-container-org39edaee" class="outline-4">
-<h4 id="org39edaee">Apache Nifi</h4>
-<div class="outline-text-4" id="text-org39edaee">
+<div id="outline-container-orgd717568" class="outline-4">
+<h4 id="orgd717568">Apache Nifi</h4>
+<div class="outline-text-4" id="text-orgd717568">
 <p>
 Directed graphs of data routing
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgaea46f7" class="outline-4">
-<h4 id="orgaea46f7">Falcon</h4>
-<div class="outline-text-4" id="text-orgaea46f7">
+<div id="outline-container-org211f21e" class="outline-4">
+<h4 id="org211f21e">Falcon</h4>
+<div class="outline-text-4" id="text-org211f21e">
 <p>
 A "data goverance engine" that sits on top of Oozie
 </p>
@@ -1594,9 +1594,9 @@ Organize the flow of your data in hadoop
 </div>
 </div>
 
-<div id="outline-container-org99e806e" class="outline-4">
-<h4 id="org99e806e">Apache Slider</h4>
-<div class="outline-text-4" id="text-org99e806e">
+<div id="outline-container-org2e09a21" class="outline-4">
+<h4 id="org2e09a21">Apache Slider</h4>
+<div class="outline-text-4" id="text-org2e09a21">
 <p>
 Deployment tool for apps on the YARN cluster
 </p>
@@ -1604,9 +1604,9 @@ Deployment tool for apps on the YARN cluster
 </div>
 </div>
 
-<div id="outline-container-org1dc3296" class="outline-3">
-<h3 id="org1dc3296">Hadoop architecture design</h3>
-<div class="outline-text-3" id="text-org1dc3296">
+<div id="outline-container-orge6c2f3d" class="outline-3">
+<h3 id="orge6c2f3d">Hadoop architecture design</h3>
+<div class="outline-text-3" id="text-orge6c2f3d">
 <p>
 Some questions to ask and things to keep in mind
 </p>
@@ -1653,12 +1653,39 @@ Some questions to ask and things to keep in mind
 </ul></li>
 </ul>
 </div>
+
+
+<div id="outline-container-org3c82d4d" class="outline-4">
+<h4 id="org3c82d4d">Examples</h4>
+<div class="outline-text-4" id="text-org3c82d4d">
+<p>
+An example architecture for a design for a system that does movie recommendations
+</p>
+
+<p>
+Working backwards
+</p>
+<ul class="org-ul">
+<li>Users want to discover movies they haven't seen and might enjoy</li>
+<li>Own behaviours (ratings, purchases, views) are probably best predictions</li>
+<li>Availability and partitioning is important, not consistency as much</li>
+</ul>
+
+
+
+<div class="figure">
+<p><img src="./architecture_example.png" alt="architecture_example.png" width="800" />
+</p>
+<p><span class="figure-number">Figure 6: </span>Architecture example</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Mercia Malan</p>
-<p class="date">Created: 2020-10-21 Wed 21:47</p>
+<p class="date">Created: 2020-10-21 Wed 22:14</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

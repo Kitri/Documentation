@@ -19,3 +19,7 @@
 ** Coursera Courses
 
 [[file:./coursera/FPDesign.html][Functional Program Design in Scala]]
+
+** Other
+
+[[file:./design-data-book.html][Designing Data-Intensive Applications - Martin Kleppmann]]
