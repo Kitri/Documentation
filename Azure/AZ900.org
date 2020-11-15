@@ -4,9 +4,7 @@
 #+HTML_LINK_HOME: ../index.html
 #+TOC: headlines 3
 
-* Understanding Cloud Concepts 
-
-15 - 20% of Exam
+* Understanding Cloud Concepts (15 - 20%) 
 
 ** Benefits of cloud computing
 
@@ -46,9 +44,7 @@ Operational Expenditure is spending money on products and services now, can dedu
  - Hybrid cloud :: Combination of the two - shares application between public and private cloud
 
 
-* Understand core Azure services
-
-(30 - 35%)
+* Understand core Azure services (30 - 35%)
 
 ** Azure Regions
 
@@ -205,4 +201,40 @@ Reserve capacity in advance
    
 
      
+** Core Azure Solutions
+
+*** Internet of Things
+
+ - IoT Hub
+ - IoT Central
+
+*** Big Data and Analytics
+
+ - Azure Synapse Analytics (formely SQL Data Warehouses)
+ - HDInsights
+ - Data Lake Analytics (not relevant anymore - rather use databricks)
+ - Azure Databricks
+
+*** AI
+
+ - Azure Machine Learning Service
+ - Studio
+
+*** Serverless
+
+ - Azure Functions
+ - Logic Apps
+ - Event Grid (used to be App Grid)
+** Management Tools
+
+Ways to connect to and manage Azure
+ - Azure CLI :: Bash - useful for scripting automation 
+ - Powershell :: SDK for powershell
+ - Azure Portal :: Web interface
+ - Azure Cloud Shell :: CLI in the browser (can choose between bash and powershell)
+ - Azure Advisor :: Advises you how you can optimise your performance regarding use of azure (e.g. where you can save money) - AI that analyses your usage
+   
+
+ 
+* [Understand security, privacy, compliance, and trust (25 - 30%)
 
