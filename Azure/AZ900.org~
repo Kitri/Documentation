@@ -1,0 +1,31 @@
+* Understanding Cloud Concepts 
+
+15 - 20% of Exam
+
+** Benefits of cloud computing
+
+ - High Availability
+ - Scalability
+ - Elasticity
+ - Agility
+ - Geo-distribution
+ - Disaster recovery
+   
+** Consumption-based model
+
+Cloud comoputing is consumption based
+ - No upfront costs
+ - Pay when needed, stop when done
+
+** CapEx vs OpEx
+
+Capital Expenditure is spending money upfront on physical infrastructure and deducting those expenses with tiem
+
+Operational Expenditure is spending money on products and services now, can deduct the expense the same year you spend it
+
+** Cloud service Categories
+
+ - IaaS :: Cloud provider keeps hardware up to date. E.g. virtual machines
+ - PaaS :: Shared responsibility, Cloud hosts platform, you control inner platform, E.g. ADF, Azure App Services to host apps
+ - SaaS :: Cloud responsible for everything e.g. office 365
+

@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2020-11-15 Sun 12:44 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Azure Fundamentals AZ-900</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Mercia Malan" />
+<link id="pagestyle" rel="stylesheet" type="text/css" href="../org.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href=""> UP </a>
+ |
+ <a accesskey="H" href="../index.html"> HOME </a>
+</div><div id="content">
+<h1 class="title">Azure Fundamentals AZ-900</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgd6b791f">Understanding Cloud Concepts</a>
+<ul>
+<li><a href="#orgd417507">Benefits of cloud computing</a></li>
+<li><a href="#orgc0a07b0">Consumption-based model</a></li>
+<li><a href="#org7f665bb">CapEx vs OpEx</a></li>
+<li><a href="#orged76809">Cloud service Categories</a></li>
+<li><a href="#org5329495">Types of cloud</a></li>
+</ul>
+</li>
+<li><a href="#org7b23913">Understand core Azure services</a>
+<ul>
+<li><a href="#org89160bc">Azure Regions</a>
+<ul>
+<li><a href="#org5bb3519">Availability Zones</a></li>
+</ul>
+</li>
+<li><a href="#org88d1b68">Resource Groups</a></li>
+<li><a href="#org6aa4d64">Azure Resource Manager (ARM)</a>
+<ul>
+<li><a href="#org6858c91">Benefits</a></li>
+</ul>
+</li>
+<li><a href="#org33eeba2">Core architectural components</a>
+<ul>
+<li><a href="#orgd6c8cff">Compute</a></li>
+<li><a href="#org6e6d946">Networking</a></li>
+<li><a href="#org1970b31">Storage</a></li>
+<li><a href="#orgecae7d8">Databases</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgd6b791f" class="outline-2">
+<h2 id="orgd6b791f">Understanding Cloud Concepts</h2>
+<div class="outline-text-2" id="text-orgd6b791f">
+<p>
+15 - 20% of Exam
+</p>
+</div>
+
+<div id="outline-container-orgd417507" class="outline-3">
+<h3 id="orgd417507">Benefits of cloud computing</h3>
+<div class="outline-text-3" id="text-orgd417507">
+<ul class="org-ul">
+<li>High Availability</li>
+<li>Scalability</li>
+<li>Elasticity</li>
+<li>Agility</li>
+<li>Geo-distribution</li>
+<li>Disaster recovery</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgc0a07b0" class="outline-3">
+<h3 id="orgc0a07b0">Consumption-based model</h3>
+<div class="outline-text-3" id="text-orgc0a07b0">
+<p>
+Cloud comoputing is consumption based
+</p>
+<ul class="org-ul">
+<li>No upfront costs</li>
+<li>Pay when needed, stop when done</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org7f665bb" class="outline-3">
+<h3 id="org7f665bb">CapEx vs OpEx</h3>
+<div class="outline-text-3" id="text-org7f665bb">
+<p>
+Capital Expenditure is spending money upfront on physical infrastructure and deducting those expenses with tiem
+</p>
+
+<p>
+Operational Expenditure is spending money on products and services now, can deduct the expense the same year you spend it
+</p>
+</div>
+</div>
+
+<div id="outline-container-orged76809" class="outline-3">
+<h3 id="orged76809">Cloud service Categories</h3>
+<div class="outline-text-3" id="text-orged76809">
+<dl class="org-dl">
+<dt>IaaS</dt><dd>Cloud provider keeps hardware up to date. E.g. virtual machines</dd>
+<dt>PaaS</dt><dd>Shared responsibility, Cloud hosts platform, you control inner platform, E.g. ADF, Azure App Services to host apps</dd>
+<dt>SaaS</dt><dd>Cloud responsible for everything e.g. office 365</dd>
+</dl>
+
+
+<div class="figure">
+<p><img src="./iaas-paas-saas.png" alt="iaas-paas-saas.png" width="800" />
+</p>
+<p><span class="figure-number">Figure 1: </span>Comparison</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5329495" class="outline-3">
+<h3 id="org5329495">Types of cloud</h3>
+<div class="outline-text-3" id="text-org5329495">
+<dl class="org-dl">
+<dt>Public Cloud</dt><dd>Services offered on public internet and available to anyone.</dd>
+<dt>Private Cloud</dt><dd>Computing resources used exclusively by users from one business or organization. Can be on-prem or hosted by third-party</dd>
+<dt>Hybrid cloud</dt><dd>Combination of the two - shares application between public and private cloud</dd>
+</dl>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org7b23913" class="outline-2">
+<h2 id="org7b23913">Understand core Azure services</h2>
+<div class="outline-text-2" id="text-org7b23913">
+<p>
+(30 - 35%)
+</p>
+</div>
+
+<div id="outline-container-org89160bc" class="outline-3">
+<h3 id="org89160bc">Azure Regions</h3>
+<div class="outline-text-3" id="text-org89160bc">
+<p>
+54 regions curently (2 in SA - north and west)
+</p>
+</div>
+
+<div id="outline-container-org5bb3519" class="outline-4">
+<h4 id="org5bb3519">Availability Zones</h4>
+<div class="outline-text-4" id="text-org5bb3519">
+<p>
+Within each region there are multiple (3) data centres that have geographical distance between them. 
+</p>
+
+<p>
+If a region has a diamond on it on the map, it has an availability zone, so you can deploy to all 3 data centres, which means if one goes down you still have data in the other 2.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org88d1b68" class="outline-3">
+<h3 id="org88d1b68">Resource Groups</h3>
+<div class="outline-text-3" id="text-org88d1b68">
+<p>
+Way of organising resource groups
+</p>
+
+
+<div class="figure">
+<p><img src="./resource_group.png" alt="resource_group.png" width="800" />
+</p>
+<p><span class="figure-number">Figure 2: </span>resource groups</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6aa4d64" class="outline-3">
+<h3 id="org6aa4d64">Azure Resource Manager (ARM)</h3>
+<div class="outline-text-3" id="text-org6aa4d64">
+<p>
+Model of deployments
+</p>
+
+<p>
+Used to use Azure Service Manager (ASM)
+</p>
+
+<p>
+Basically like a router between the user and Azure. How you interface with Azure
+</p>
+
+<p>
+Enables you to interface with Azure in a consistent way, regardless of what you're trying to access.
+</p>
+</div>
+
+<div id="outline-container-org6858c91" class="outline-4">
+<h4 id="org6858c91">Benefits</h4>
+<div class="outline-text-4" id="text-org6858c91">
+<ul class="org-ul">
+<li>Deploy things as a group</li>
+<li>Repeatedly deploy these things with templates</li>
+<li>Access Control (role-based)</li>
+<li>Tagging</li>
+</ul>
+
+
+<div class="figure">
+<p><img src="./ARM.png" alt="ARM.png" width="800" />
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org33eeba2" class="outline-3">
+<h3 id="org33eeba2">Core architectural components</h3>
+<div class="outline-text-3" id="text-org33eeba2">
+<p>
+Broken up into 4 categories
+</p>
+</div>
+
+<div id="outline-container-orgd6c8cff" class="outline-4">
+<h4 id="orgd6c8cff">Compute</h4>
+<div class="outline-text-4" id="text-orgd6c8cff">
+<p>
+"Executing code" in the cloud. A website, batch process, anything that computes on the cloud.
+</p>
+
+<p>
+There are many different ways to compute on the cloud
+</p>
+
+<dl class="org-dl">
+<dt>Virtual machines</dt><dd>Running windows or linux machine, full control - as if it was your machine (You have a "slice" of a physical machine). Over 200 options between CPU, RAM etc</dd>
+<dt>Virtual machine Scale Set</dt><dd>Multiple VMs running behind a load balancer. Infinitely scale horizontally; limited vertical scale due to hardware limit</dd>
+<dt>Azure App Services</dt><dd>PaaS - Give your code and config to Azure, and they will run it. Promise of performance but no access to hardware</dd>
+<dt>Functions</dt><dd>No longer in exam :) Small bits of code that run natively in code (write on editor in azure)</dd>
+<dt>Azure Container Instance (ACI)</dt><dd>Single instance, quickest way to deploy a container</dd>
+<dt>Azure Kubernetes Service (AKS)</dt><dd>Runs on a cluster of servers, enterprise-grade</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-org6e6d946" class="outline-4">
+<h4 id="org6e6d946">Networking</h4>
+<div class="outline-text-4" id="text-org6e6d946">
+</div>
+<div id="outline-container-orgd7afb1f" class="outline-5">
+<h5 id="orgd7afb1f">Connectivity Service</h5>
+<div class="outline-text-5" id="text-orgd7afb1f">
+<p>
+When you create a virtual machine you have to create a virtual network
+</p>
+<dl class="org-dl">
+<dt>Virtual Network</dt><dd>Emulating a physical network. MS Global Network already exists, so a VN is just software config</dd>
+<dt>Virtual Private Network (VPN)</dt><dd>Connecting two networks as if they were on the same network</dd>
+<dt>ExpressRoute</dt><dd>high-speed private connection to Azure (physical fibre connection to an actual Azure box)</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-org94018d3" class="outline-5">
+<h5 id="org94018d3">Protection Service</h5>
+<div class="outline-text-5" id="text-org94018d3">
+<p>
+Firewall, privacy measures
+</p>
+
+<dl class="org-dl">
+<dt>DDos Protection</dt><dd>Basic level included to protect their own network. You can pay for enhancement for your services</dd>
+<dt>Azure Firewall</dt><dd>You can configure traffic connecting to your services. Can handle brute-force attacks and stuff</dd>
+<dt>Network Security Groups</dt><dd>access control list (ACL(, static list of rules that allow traffic through</dd>
+<dt>Private Link</dt><dd>Take public services and turn them into private services.</dd>
+</dl>
+
+<p>
+All of the services are protected by an access key
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgefc6baf" class="outline-5">
+<h5 id="orgefc6baf">Delivery Service</h5>
+<div class="outline-text-5" id="text-orgefc6baf">
+<p>
+Distributes or reloads traffic
+</p>
+
+<dl class="org-dl">
+<dt>Load Balancer</dt><dd>distribute traffic evenly between multiple backend servers</dd>
+<dt>Application Gateway</dt><dd>a higher level of load balancer with an optional firewall</dd>
+<dt>Content Delivery Network (CDN)</dt><dd>Stores common static files on the edge, closer to the users for (perceived) imporoved performance</dd>
+<dt>Azure Front Door Service</dt><dd>Load balancer, CDN and firewall all-in-one</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-org80ee973" class="outline-5">
+<h5 id="org80ee973">Monitoring Service</h5>
+<div class="outline-text-5" id="text-org80ee973">
+<p>
+g     
+Watch traffic that travels across your network
+</p>
+<ul class="org-ul">
+<li>Network Watcher</li>
+<li>ExpressRoute Monitor</li>
+<li>Azure Monitor</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1970b31" class="outline-4">
+<h4 id="org1970b31">Storage</h4>
+<div class="outline-text-4" id="text-org1970b31">
+</div>
+<div id="outline-container-org378ddb1" class="outline-5">
+<h5 id="org378ddb1">Unmanages Storage</h5>
+<div class="outline-text-5" id="text-org378ddb1">
+<p>
+The Azure storage account.
+</p>
+
+<dl class="org-dl">
+<dt>General Purpose v2 (gpv2)</dt><dd>most common: Blobs, tables, queries, files</dd>
+<dt>Azure Data Lake Storage Gen2</dt><dd>Cheapest type of storage. Designed for big data</dd>
+</dl>
+
+<p>
+Cheapest storage option - pay per GB
+</p>
+
+<p>
+Benefits:
+</p>
+<ul class="org-ul">
+<li>Access tiers: Hot, cool, archive</li>
+<li>Performance tiers: Standard or premium</li>
+<li>Location</li>
+<li>Redundancy / Replication</li>
+<li>Failover options</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-orgc9d7848" class="outline-5">
+<h5 id="orgc9d7848">Managed storage</h5>
+<div class="outline-text-5" id="text-orgc9d7848">
+<p>
+Azure Virtual Machine Disks - for VMs
+</p>
+
+<p>
+Reserve capacity in advance
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5126267" class="outline-5">
+<h5 id="org5126267">Backup, Replication and Recovery Storage</h5>
+<div class="outline-text-5" id="text-org5126267">
+<ul class="org-ul">
+<li>Recovery Services Vault
+<ul class="org-ul">
+<li>Backup storage</li>
+<li>Can have retention policy</li>
+<li>Also for replication</li>
+</ul></li>
+<li>Azure Site Recovery</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgecae7d8" class="outline-4">
+<h4 id="orgecae7d8">Databases</h4>
+<div class="outline-text-4" id="text-orgecae7d8">
+<ul class="org-ul">
+<li>Cosmos DB
+<ul class="org-ul">
+<li>Extremely fast storage</li>
+<li>Designed for modern applications - requiring thousands of global replication</li>
+<li>NoSQL</li>
+<li>Multi-modal</li>
+<li>Supports many open-source API's and protocalls</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Mercia Malan</p>
+<p class="date">Created: 2020-11-15 Sun 12:44</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
