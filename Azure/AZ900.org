@@ -200,7 +200,6 @@ Reserve capacity in advance
  - (not in exam) Azure Synapse Analytics (SQL DW) :: SQL Data warehouse - analytical not transactional
    
 
-     
 ** Core Azure Solutions
 
 *** Internet of Things
@@ -238,3 +237,8 @@ Ways to connect to and manage Azure
  
 * [Understand security, privacy, compliance, and trust (25 - 30%)
 
+
+** fjdsklfa
+  - 
+  - 
+    - 
