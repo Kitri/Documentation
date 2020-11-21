@@ -4,30 +4,148 @@
 #+HTML_LINK_HOME: ../index.html
 #+TOC: headlines 3
 
-* Understanding Cloud Concepts (15 - 20%) 
+# Image template:
+# #+CAPTION: Comparison
+# #+ATTR_HTML: :width 800 
+# [[file:./image.png] > Add one more ] 
+
+
+* Exam skills measured
+
+** Describe Cloud Concepts (20-25%)
+ - Identify the benefits and considerations of using cloud services
+   - Identify the benefits of cloud computing, such as High
+     Availability, Scalability, Elasticity, Agility, and Disaster
+     Recovery
+   - Identify the differences between CapEx and OpEx
+   - Describe the consumption-based model
+ - Describe the differences between categories of cloud services
+   - describe the shared responsibility model
+   - describe Infrastructure-as-a-Service
+   - describe Platform-as-a-Service
+   - describe Software-as-a-Service
+   - describe serverless computing
+   - identify a service type based on a use case
+ - Describe the differences between types of cloud computing
+   - define cloud computing
+   - describe Public cloud
+   - describe Private cloud
+   - describe Hybrid cloud
+   - compare and contrast the three types of cloud computing
+
+** Describe Core Azure Services (15 - 20%)
+ - Describe the core Azure architectural components
+   - describe the benefits and usage of Regions and Region Pairs
+   - describe the benefits and usage of Availability Zones
+   - describe the benefits and usage of Resource Groups
+   - describe the benefits and usage of Subscriptions
+   - describe the benefits and usage of Management Groups
+   - describe the benefits and usage of Azure Resource Manager
+   - explain Azure resources
+ - Describe core resources available in Azure
+   - describe the benefits and usage of Virtual Machines, Azure App
+     Services, Azure Container Instances (ACI), Azure Kubernetes
+     Service (AKS), and Windows Virtual Desktop
+   - describe the benefits and usage of Virtual Networks, VPN Gateway,
+     Virtual Network peering, and ExpressRoute
+   - describe the benefits and usage of Container (blob) storage, Disk
+     Storage, File Storage and storage tiers
+   - describe the benefits and usage of Cosmos DB, Azure SQL Database,
+     Azure Database for MySQL, Azure Datbase for PostgreSQL, and SQL
+     Managed Instance
+   - describe the benefits and usage of Azure Marketplace 
+
+** Describe core solutions and management tools on Azure (10 - 15%)
+ - Describe core solutions available in Azure
+   - describe the benefits and usage of Internet of Things (IoT) Hub, IoT Central, and Azure Sphere
+   - describe the benefits and usage of Azure Synapse Analytics, HDInsight, and Azure Databricks
+   - describe the benefits and usage of Azure Machine Learning, Cognitive Services, and Azure Bot Service
+   - describe the benefits and usage of serverless computing solutions that include Azure Functions, and Logic Apps
+   - describe the benefits and usage of Azure DevOps, GitHub, GitHub Actions, and Azure DevTest Labs
+ - Describe Azure management tools
+   - describe the functionality and usage of the Azure Portal, Azure
+     PowerShell, Azure CLI, Cloud Shell and Azure Mobile App
+   - describe the functionality and usage of Azure Advisor
+   - describe the functionality and usage of Azure Resource Manager (ARM) templates
+   - describe the functionality and usage of Azure Monitor
+   - describe the functionality and usage of Azure Service Health
+     
+** Describe general security and network security features (10 - 15%)
+ - Describe Azure security features
+   - describe basic features of Azure Security Center, including
+     policy compliance, security alerts, secure score, and resource
+     hygiene
+   - describe the functionality and usage of Key Vault
+   - describe the functionality and usage of Azure Sentinel
+   - describe the functionality and usage of Azure Dedicated Hosts
+     
+ - Describe Azure network security
+   - describe the concept of defence in depth
+   - describe the functionality and usage of Network Security Groups (NSG)
+   - describe the functionality and usage of Azure Firewall
+   - describe the functionality and usage of Azure DDoS protection
+     
+** Describe identity, governance, privacy, and compliance features (20 - 25%)
+ - Describe core Azure identity services
+   - explain the difference between authentication and authorization
+   - define Azure Active Directory
+   - describe the functionality and usage of Azure Active Directory
+   - describe the functionality and usage of Conditional Access,
+     Multi-Factor Authentication (MFA), and Single Sign-On (SS)
+ - Describe Azure governance features
+   - describe the functionality and usage of Role-Based Access Control (RBAC)
+   - describe the functionality and usage of resource locks
+   - describe the functionality and usage of tags
+   - describe the functionality and usage of Azure Policy
+   - describe the functionality and usage of Azure Blueprints
+   - describe the Cloud Adoption Framework for Azure
+ - Describe privacy and compliance resources
+   - describe the Microsoft core tenets of Security, Privacy, and Compliance
+   - describe the purpose of the Microsoft Privacy Statement, Online
+     Services Terms (OST), and Data Protection Amendment (DPA)
+   - describe the purpose of the Trust Center
+   - describe the purpose of the Azure compliance documentation
+   - describe the purpose of Azure Sovereign Regions (Azure Government cloud services and Azure China cloud services)
+
+** Describe Azure cost management and Service Level Agreements (10 - 15%)
+ - Describe methods for planning and managing costs
+   - identify factors that can affect costs, resource types, services, locations, ingress and egress traffic
+   - identify factors that can reduce costs (reserved instances,
+     reserved capacity, hybrid use benefit, spot pricing)
+   - describe the functionality and usage of Pricing calculator and the Total Cost of Ownership (TCO) calculator
+   - describe the functionality and usage of Azure Cost Management
+ - Describe Azure Service Level Agreements (SLAs) and service lifecycles
+   - describe the purpose of an Azure SLA
+   - identify actions that can impact an SLA (i.e. Avilability Zones)
+   - describe the service lifecycle in Azure (Public Preview and General Availability)
+
+
+* Describe Cloud Concepts (20-25%) 
 
 ** Benefits of cloud computing
-
- - High Availability
- - Scalability
- - Elasticity
- - Agility
- - Geo-distribution
- - Disaster recovery
+  
+ - Cost savings - both real and accounting :: It's cheaper for MS to run servers because of economies of scale etc. They're saving on TCO. You can also take action to reduce your costs e.g. autoscaling
+ - Global reach :: Can run your servers anywhere in the world. It's not possible for most business to run services in multiple data centres in the world.
+ - Geo-distribution :: Best performance per region of users
+ - High Availability :: Depending on SLA, cloud-based apps can provide a continuous user experience with no apparent downtime een when things go wrong
+ - Scalability :: Vertical or horizontal
+ - Elasticity :: Apps can be configured to auto scale
+ - Agility :: Resources can be deployed and configured quickly as your app requirements change
+ - Disaster recovery :: Backup services, data replication and geo-distribution
    
-** Consumption-based model
+*** Consumption-based model
 
 Cloud comoputing is consumption based
  - No upfront costs
  - Pay when needed, stop when done
 
-** CapEx vs OpEx
+*** CapEx vs OpEx
 
 Capital Expenditure is spending money upfront on physical infrastructure and deducting those expenses with tiem
 
 Operational Expenditure is spending money on products and services now, can deduct the expense the same year you spend it
 
-** Cloud service Categories
+** Categories of Cloud Services
 
  - IaaS :: Cloud provider keeps hardware up to date. E.g. virtual machines
  - PaaS :: Shared responsibility, Cloud hosts platform, you control inner platform, E.g. ADF, Azure App Services to host apps
@@ -37,18 +155,45 @@ Operational Expenditure is spending money on products and services now, can dedu
 #+ATTR_HTML: :width 800 
 [[file:./iaas-paas-saas.png]]
 
-** Types of cloud
+*** Shared responsibility model 
 
- - Public Cloud :: Services offered on public internet and available to anyone.
- - Private Cloud :: Computing resources used exclusively by users from one business or organization. Can be on-prem or hosted by third-party
+Responsibility shared between consumer and cloud service provider
+
+Azure takes more responsibility the closer to SaaS you get 
+
+#+CAPTION: Comparison
+#+ATTR_HTML: :width 800 
+[[file:./sharedresponsibility.png]]
+
+   
+*** Serverless computing
+There are still servers.. you just don't ever have to deal with then. 
+ - Even less access to the server than PaaS. Means not worrying about choosing your plan - don't have to set scaling
+ - Cloud service provider automatically provisions, scales and manages the infrastructure required to run the code
+ - serverless architectures are highly scalable and event-driven
+ - Only use resources when a specific function or trigger occurs
+ - Examples
+   - Compute - Azure functions
+   - Compute - Serverless Kubernetes (Virtual Nodes with ACI)
+   - Database - Azure SQL Database Serverless
+   - Database - Cosmos DB Serverless (preview)
+
+** Types of cloud computing
+   
+Cloud computing is the delivery of computing services over the internet, which is otherwise known as the cloud.
+
+ - Public Cloud :: Azure owns the hardware. Services offered on public internet and available to anyone.
+ - Private Cloud :: Looks and acts like a cloud, customer owns or leases or has exclusive access to the hardware. Computing resources used exclusively by users from one business or organization. Can be on-prem or hosted by third-party
  - Hybrid cloud :: Combination of the two - shares application between public and private cloud
 
+As your resources move from on-premises to off-premises, your costs are reduced, and your administration requirements decrease
 
-* Understand core Azure services (30 - 35%)
+
+* Describe Core Azure services (15 - 20%)
 
 ** Azure Regions
 
-54 regions curently (2 in SA - north and west)
+60+ regions curently (2 in SA - north and west)
 
 *** Availability Zones
 
@@ -56,9 +201,20 @@ Within each region there are multiple (3) data centres that have geographical di
 
 If a region has a diamond on it on the map, it has an availability zone, so you can deploy to all 3 data centres, which means if one goes down you still have data in the other 2.
 
-** Resource Groups
+*** Region Pairs
 
-Way of organising resource groups
+ - Each region has one other region which is treated as it's "Pair"
+ - Almost always in the same geography - data storage laws
+ - The data connection between region pairs is the highest speed available
+ - Software rollouts are deployed to one region of a pair and the other is not touched
+ - If multiple regions go down, one region of each pair is treated as a priority
+
+E.g. Canada Central - Canada East; North Central US - South Central US
+
+** Resource Groups
+   
+
+Way of organising resources
 
 #+CAPTION: resource groups
 #+ATTR_HTML: :width 800 
@@ -83,7 +239,29 @@ Enables you to interface with Azure in a consistent way, regardless of what you'
 #+ATTR_HTML: :width 800
 [[file:./ARM.png]]
 
-** Core architectural components
+** Azure Subscription
+
+Billing unit
+
+ - Create an account for yourself
+ - Other people in organisation have their own accounts, but it all bubbles up to one subscriptions
+ - Users have access to one or more subscriptions, with different roles
+ - All resources consumed by a subscription will be billed to the owner
+ - Can be used to organize resources into completely distinct accounts
+
+# #+ATTR_HTML: :width 800 
+[[file:./subscriptions.png]]
+
+*** Management groups
+
+Many different subscriptions, and group them
+
+# #+ATTR_HTML: :width 800 
+[[file:./managementgroup.png]]
+
+** Core Resources available in Azure
+
+*Azure Resource*: Instance of services that you create, that are yours to use
 
 Broken up into 4 categories
 
@@ -94,12 +272,14 @@ Broken up into 4 categories
 There are many different ways to compute on the cloud
 
  - Virtual machines :: Running windows or linux machine, full control - as if it was your machine (You have a "slice" of a physical machine). Over 200 options between CPU, RAM etc
- - Virtual machine Scale Set :: Multiple VMs running behind a load balancer. Infinitely scale horizontally; limited vertical scale due to hardware limit
+ - Virtual machine Scale Set :: Multiple VMs running behind a load balancer. Infinitly scale horizontally; limited vertical scale due to hardware limit
  - Azure App Services :: PaaS - Give your code and config to Azure, and they will run it. Promise of performance but no access to hardware
- - Functions :: No longer in exam :) Small bits of code that run natively in code (write on editor in azure)
+ - Azure Functions :: Small bits of code that run natively in code (write on editor in azure). An event-driven, serverless compute service
  - Azure Container Instance (ACI) :: Single instance, quickest way to deploy a container
- - Azure Kubernetes Service (AKS) :: Runs on a cluster of servers, enterprise-grade 
-
+ - Azure Kubernetes Service (AKS) :: Cluster management for VMs that run containerized services
+ - Windows Virtual Desktop :: Desktop version of windows that runs in the cloud
+ - Azure Service Fabric :: Distributed systems platform that runs in Azure or on-premises
+ - Azure Batch :: Managed service for parallel and high-performance computing applications
    
 *** Networking
 
@@ -137,9 +317,15 @@ Watch traffic that travels across your network
  - ExpressRoute Monitor
  - Azure Monitor
 
-   
 *** Storage
-
+    
+4 types of storage services: Blob, File, Queue and Table. Services share common characteristics:
+ - Durable and highly available with redundancy and replication.
+ - Secure through automatic encryption and role-based access control.
+ - Scalable with virtually unlimited storage.
+ - Managed, handling maintenance and any critical problems for you.
+ - Accessible from anywhere in the world over HTTP or HTTPS.
+    
 **** Unmanages Storage
 
 The Azure storage account.
@@ -170,7 +356,6 @@ Reserve capacity in advance
    - Also for replication
  - Azure Site Recovery 
 
-
 *** Databases
 
  - Cosmos DB
@@ -199,51 +384,154 @@ Reserve capacity in advance
 
  - (not in exam) Azure Synapse Analytics (SQL DW) :: SQL Data warehouse - analytical not transactional
    
+ - SQL Managed Instance :: Most compatible with existing SQL Server, fully managed by azure. Always up-to-date
+   
+   
+*** Azure Marketplace:
 
-** Core Azure Solutions
+Azure Marketplace customers can find, try, purchase, and provision
+applications and services from hundreds of leading service
+providers. All solutions and services are certified to run on Azure.
 
+
+* Describe core solutions and management tools on Azure  (10 - 15%)
+** Core Solutions
 *** Internet of Things
 
- - IoT Hub
- - IoT Central
+ - Azure IoT Hub :: Messaging hub that provides secure communications between and monitoring of millions of IoT devices
+ - IoT Central :: Fully managed global IoT software as a SaaS solution that makes it easy to connect, monitor and manage IoT assets at scale
+ - IoT Edge :: Fully managed service that allows data analysis models to be pushed directly onto IoT devices, which allows them to react quickly to state changes without needing to consult cloud-based AI models
+ - Azure Sphere :: A platform designed to work with connected devices. Can order secure, silicon chip and Sphere OS
 
 *** Big Data and Analytics
 
- - Azure Synapse Analytics (formely SQL Data Warehouses)
- - HDInsights
- - Data Lake Analytics (not relevant anymore - rather use databricks)
- - Azure Databricks
+ - Azure Synapse Analytics (formely SQL Data Warehouses) :: Run analytics at scale (parallel processing)
+ - HDInsights :: Process massive amounts of data with managed clusters of Hadoop clusters in the cloud
+ - Azure Databricks :: Integrate this collaborative Apache Spark-based analytics service with other big data services in Azure
 
 *** AI
 
- - Azure Machine Learning Service
- - Studio
+ - Azure Machine Learning Service :: Develop, train, test, deploy, manage, and track machine learning models
+ - Azure Machine Learning Studio :: Collaborative visual workspace - has prebuilt machine learning algorithms and data-handling modules. 
+ - Azure Bot Service :: Natural language chatbot service with a database of FAQs
 
 *** Serverless
 
  - Azure Functions
  - Logic Apps
  - Event Grid (used to be App Grid)
+*** DevOps
+    
+ - Azure DevOps :: Pipelines, Git, Kanban board, automated and cloud based testing
+ - Azure DevTest Labs :: Quickly create on-demand Windows and Linux environments to test or demo apps directly from deployment pipelines
+ - GitHub :: MS owns this
+ - Github Actions :: Automate software workflows e.g. post-commit hook. Possibly run tests
+
+   
 ** Management Tools
 
 Ways to connect to and manage Azure
  - Azure CLI :: Bash - useful for scripting automation 
  - Powershell :: SDK for powershell
- - Azure Portal :: Web interface
+ - Azure Portal :: Web interface. More details below
  - Azure Cloud Shell :: CLI in the browser (can choose between bash and powershell)
  - Azure Advisor :: Advises you how you can optimise your performance regarding use of azure (e.g. where you can save money) - AI that analyses your usage
+ - Azure Mobile App :: Monitor the health and status of resources from your phone
+ - Azure Resource Manager (ARM) :: All actions from portal/CLI etc run through ARM layer. CRUD on resources ("deployments"). ARM templates for resources (json)
+ - Azure Monitor :: Monitors resources (metrics and logs). See picture below
+ - Azure Service Health :: Global service issues within Azure. Shows things like connectivity issues in certain regions
    
+*** Azure Portal:
 
- 
-* Understand security, privacy, compliance, and trust (25 - 30%)
+Web-based, unified console that provides an alternative to CLI tools. You can manage your Azure subscription via a GUI
+ - Build, manage, and monitor everything from simple web apps to complex cloud deployments
+ - Create custom dashboards for an organized view of resources
+ - Configure accessibility options for an optimal experience
+
+*** Azure Monitor
+
+# #+ATTR_HTML: :width 800 
+[[file:./monitor.png]]
+
+
+* Describe general security and network security features (10-15%)
+
+** Choose an appropriate Azure security solution
+
+Here are some advice on best practices (from udemy)
+
+ - All virtual network subnets should use NSG
+   - It's a strong lock on windows and doors that you don't use
+   - Lock doors that's not being used
+ - DDos - as needed or after attacked (this will cost extra money)
+ - Applicatio Gateway with WAF. If you have enterprise level apps - get a good firewall
+ - Security through layers - defence in depth
+   - Not good enough to just have one level of security
+     
+** Describe Azure Security Features
   
-** Azure Firewall
+Shared security model: 
+ - Physical :: Don't give out location of actual server, autolock physical machines etc 
+ - Digital :: Use built-in services for digital security instead of building your own e.g. Azure AD, MFA, RBAC
+ - Shared? :: If you have a VM you are responsible for windows updates and digital security of the VM, where as SaaS Azure is fully responsible
+   
+*** Azure Security Center
+
+Dashboard for security. Unified infrastructure security management system that monitors and protects your systems inside and outside of Azure
+
+Free tier and paid tier available
+
+Analyses and monitors the security on your azure services and makes
+recommendations of where you can improve security. Gives a security score and stuff.
+
+**** Benefits 
+ - Strengthen security
+ - Protect against threats
+ - Get secure faster
+
+*** Azure Key Vault
+    
+Central, secure repository for your secrets, certificates and keys
+
+ - SSL certs, api keys, public/private key etc
+ - Create signed keys and store them online
+ - Generate or import SSL certificates
+ - Authorised access only (can also have levels of access - admin can manage keys and logs vs developer who only gets dev keys)
+*** Azure Sentinel
+Like splunk
+    
+ - Centralizes all the log files from various resources
+ - Analyzes them to detect threats
+ - Allows you to run queries on those logs yourself
+ - Investigate an incident
+ - Orchestration and automation to fix the issues
+
+*** Azure Dedicated Hosts
+    
+Takes concept of private cloud and puts it in public cloud
+
+Hardware that is dedicated to you and only you
+
+You can reserve a machine and run multiple virtual machines on it (to the machine limit)
+
+** Describe Azure Network Security
+*** Defence in depth
+Kind of like security layers - have security in more than one place
+
+# #+ATTR_HTML: :width 800 
+[[file:./securitylayer.png]]
+
+
+# #+ATTR_HTML: :width 800 
+[[file:./defence in depth.png]]
+
+*** Azure Firewall
 
 Block invalid attacks, block ports, can apply whitelists etc
 
 WAF = Web Application Firewall
 
-** Azure DDoS Protection
+*** Azure DDoS Protection
 
 Distributed Denial of Service attack
 
@@ -255,12 +543,13 @@ Distributed Denial of Service attack
  - Logging, alerting, and telemetry
  - Resource cost scale protection
 
-** Network Security Group (NSG)
+*** Network Security Group (NSG)
 
 When you create a virtual network, you can apply NSG (set of rules on inbound or outbound traffic)
 
 In front of subnet - e.g. can allow traffic to frontend and deny to backend
 
+# #+ATTR_HTML: :width 800 
 [[file:./nsg.png]]
 
  - Inbound NSG rules protect a destination IP address and port
@@ -268,32 +557,15 @@ In front of subnet - e.g. can allow traffic to frontend and deny to backend
 Application security group concept if you want to create a group of rules e.g. "All VMs"
 
 
+# #+ATTR_HTML: :width 800 
 [[file:./asg.png]]
 
-** User Defined Routes (UDR)
 
-Specify exact path that network needs to travel
+* Describe identify, governance, privacy, and compliance features (20 - 25%)
+  
+** Describe core Azure identity services
 
- - Force traffic over a route ::  e.g. force traffic to go through firewall before it can get to devices
-
-** Choose an appropriate Azure security solution
-
-Exam will ask this. Here is some advice on best practices
-
- - All virtual network subnets should use NSG
-   - It's a strong lock on windows and doors that you don't use
-   - Lock doors that's not being used
- - DDos - as needed or after attacked (this will cost extra money)
- - Applicatio Gateway with WAF. If you have enterprise level apps - get a good firewall
- - Security through layers
-   - Not good enough to just have one level of security
-     
-[[file:./securitylayer.png]]
-
-** MS Identity solution
-   
-Know the difference between authentication and authorization
-
+*** Authenticate vs Authorization
  - Authentication is a user proving who they are - password etc
  - Authorization is ensuring that a user is permitted to perform an action
    
@@ -305,53 +577,77 @@ Microsoft's preferred solutions for identity management
 
 Complete solution for managing users, groups, roles
 
- - Single-sign on :: Use same login details to sign in everywhere
+ - Single-sign on :: Use same login details to sign in multiple applications. Single point to change password. Azure AD is this central source
  - Synchronize with your corporate AD :: Azure AD is not the same as corporate AD, but it can be synchronized
  - Does not support LDAP :: Azure AD is web-based identity management, so does not have the same features as corporate AD
- - Azure Multi-Factory Authentication :: User ID is first factor, Password is second factor, Mobile phone is third factor
-  
+
 Recommended authentication method: Role-based access control (RBAC)
 
-** Azure Security
+**** Conditional Access
+Different types of access, some needs admin access, some in different countries, some needs continuous access, some only once in a while
+
+You can treat access attempts as "routine" and some as "not normal"
+
+[[file:./conditional access.png]]
+
+Have a number of Signals such as:
+ - Who they are
+ - What rights they have
+ - Physical location
+ - What device they're using
+
+Then make a decision: Allow, ask for MFA, block etc
+
+Lastly, enforce the decision
+
+**** Azure Multi-Factor Authentication
+
+Require 2 or more pieces of evidence (factors) in order to log in
+
+ 1 - Something that you know i.e. password
+ 2 - Something you have i.e. mobile phone, access to email
+ 3 - Something you are i.e. fingerprint
+
+** Describe Azure governance features
+ 
+*** Role-based Access Control (RBAC)
+
+Microsoft recommended solution for authorization
+
+Create roles that represent the common tasks of the job e.g.
+ - Accountant 
+ - Developer
+ - Business Lead
+
+Assign granular permissions to those roles, assign users to that role
+
+People can have more than one role
+
+Do not assign granular permissions to an individual. Can give people too much permissions, and what if they leave?
+
+Built-in roles:
+ - Reader (read-only) 
+ - Contributor (RW)
+ - Owner (Contributer but can give permissions to people too)
+
+*** Resource Locks
+
+Two locks:
+ - Read Only
+ - Can Not Delete
    
-"Azure security" is the exams requirement. 
+Can go to resource - Locks - Add Lock
 
-Shared security model: 
- - Physical :: Don't give out location of actual server, autolock physical machines etc 
- - Digital :: Use built-in services for digital security instead of building your own e.g. Azure AD, MFA, RBAC
- - Shared? :: If you have a VM you are responsible for windows updates and digital security of the VM, where as SaaS Azure is fully responsible
-   
-*** Azure Security Center
+Need to delete lock before being able to delete resources
 
-Unified security management and advanced threat protection
+Using RBAC, you can restrict who has access to locks
 
-Free tier and paid tier available
+*** Tags
+Can add metadata to resources
 
-Analyses and monitors the security on your azure services and makes recommendations of where you can improve security
-
-*** Azure Key Vault
-    
-Central, secure repository for your secrets, certificates and keys
-
- - SSL certs, api keys, public/private key etc
- - Create signed keys and store them online
- - Generate or import SSL certificates
- - Authorised access only (can also have levels of access - admin can manage keys and logs vs developer who only gets dev keys)
-   
-*** Azure Information Protection (AIP)
-
-DRM process for emails and documents. Can apply labels to these with permissions e.g. Confidential, secret etc
-
-Can e.g. have office 365 block printing of documents 
-
-*** Advanced Thread Protection (ATP)
-
- - Monitor and profile user behaviour and activities
- - Protect user identities and reduce the attack surface (can also block brute force attacks by doing this)
- - Identify suspicious activities and advanced attacks
- - Investigate alers and user activities
-
-E.g. the user never logs in from home or over weekends. So when user logs in on a weekend the ATP can request a MFA, or don't allow user to login because it's unusual activity
+Benefits:
+ - Can force certain data to be deployed alongside resources
+ - Good for billing and support issues, like who to notify / owner
 
 *** Azure Policy
 
@@ -377,110 +673,47 @@ A set of policies, grouped together
 e.g. a group can have:
 "Every resourec and resource group must have these five tags"
 
-*** Role-based Access Control (RBAC)
-
-Microsoft recommended solution for authorization
-
-Create roles that represent the common tasks of the job e.g.
- - Accountant 
- - Developer
- - Business Lead
-
-Assign granular permissions to those roles, assign users to that role
-
-People can have more than one role
-
-Do not assign granular permissions to an individual. Can give people too much permissions, and what if they leave?
-
-Built-in roles:
- - Reader (read-only) 
- - Contributor (RW)
- - Owner (Contributer but can give permissions to people too)
-
-*** Locks
-
-Two locks:
- - Read Only
- - Can Not Delete
-   
-Can go to resource - Locks - Add Lock
-
-Need to delete lock before being able to delete resources
-
-Using RBAC, you can restrict who has access to locks
-
-*** Azure Advisor security assistance
-
-Security of security advisor shows some warnings and recommendations (some of these will also show in security center)
-
 *** Azure Blueprints
     
 Create a subscription template with Roles and Policies already defined, and can then use this template to create others
 
-*** Azure Monitor
+*** Cloud Adoption Framework for Azure 
 
-[[file:./monitor.png]]
+Basically how to move to the cloud
 
-**** Azure Service Health
+#+ATTR_HTML: :width 800 
+[[file:./cloud adoption.png]]
 
-Global service issues within Azure. Shows things like connectivity issues in certain regions
+** Describe privacy and compliance resources
+*** Microsoft core tenets of Security, Privacy and Compliance
 
-** Compliance
+Azure: Trusted Cloud
+ - Security :: Azure was built with security in mind. Uses Encryption. Offers advanced tools to detect and defend against security threats
+ - Privacy :: You own all your data in Azure, MS will not mine your data. You control where it is and who has access to it. You can access your own data
+ - Compliance :: Azure has more than 90 compliance certifications
+ - Reliability and Resiliency :: High availability, DR and backup
+ - Intellectual Property (IP) protection :: If you buiuld your stuff on top of Azure's product, Azure protects you from lawsuits. Protection against frivolous infringement claims
 
-Terms like
- - GDPR
- - ISO
- - NIST
+*** Purpose of documents
 
-Many different standards for technology across the world
-MS publishes the standards they're compliant with and claim to be compliant with most and gives you tools to help you be in compliance with others
+ - Microsoft Privacy statement :: States MS privacy guarantees @ privacy.microsoft.com
+ - Online Service Terms (OST) :: Terms and conditions for use. To use their website you have to abide by this.
+ - Data Protection Addendum (DPA) :: How they handle retention of data
 
-*** General Data Protection Regulation (GDPR)
- - New set of rules designed to give EU citizens more control over their personal data
- - Affects companies outside of the EU that handles EU citizen's data 
- - Data has to be collected legally under strict conditions
- - Data has to be protected from misuse
- - Certain reporting standards if any of these are breached
 
-*** ISO
-
-e.g. ISO 9001:2015 - quality management systems (QMS)
-
-Azure is compliant with:
- - CSA STAR Certification
- - ISO 27001:2013
- - ISO 27017:2015
- - ISO 27018:2014
- - ISO 20000-1:2011
- - ISO 22301:2012
- - ISO 9001:2015
-
-*** NIST Cybersecurity Framework (CSF)
-
-National Institute of Standards and Technology
-
-Audited for compliance
-
-*** Microsoft Privacy statement
-
-privacy.microsoft.com
 *** Trust Centre
 
 Portal that talks about MS's compliance and standards
 
 High level
 
-*** Service trust portal
+*** Compliance
+Many different standards for technology across the world MS publishes
+the standards they're compliant with and claim to be compliant with
+most and gives you tools to help you be in compliance with others
 
-Pen test reports, white papers, blueprints
-
-**** Compliance manager
-    
-workflow-based risk assessment tool to help you manage regulatory compliance
-
-Shows you your compliance score and what you need to do to reach compliance for E.g. GDPR
-
-*** Azure Government Services
+*** Azure Sovereign Regions
+**** Azure Government Services
 
 Separate account. e.g. porta.azure vs portal.azure.us
 
@@ -490,7 +723,7 @@ Isolated data centers separate from Azure public cloud
 
 Meets standards specific to US govenment: FedRAMP, NIST, DIB, ITAR, .... 
 
-*** Azure Germany Services
+**** Azure Germany Services
 
 EU's equivalend of Azure government 
 
@@ -498,7 +731,7 @@ Germany has the strictest EU data protection
 
 German Data trustee - unique requirement in germany
 
-*** Azure China
+**** Azure China
 
  - Separate account
  - Data remains in china
@@ -506,27 +739,8 @@ German Data trustee - unique requirement in germany
 You can deploy stuff here, but you need to follow their standards and rules
 
 
-* Describe Azure pricing, Service Level Agreements, and Lifecycles (20 - 25%)
-
-** Azure Subscription
-
-Billing unit
-
- - Create an account for yourself
- - Other people in organisation have their own accounts, but it all bubbles up to one subscriptions
- - Users have access to one or more subscriptions, with different roles
- - All resources consumed by a subscription will be billed to the owner
- - Can be used to organize resources into completely distinct accounts
-
-[[file:./subscriptions.png]]
-
-*** Management groups
-
-Many different subscriptions, and group them
-
-[[file:./managementgroup.png]]
-
-** Planning and management of costs
+* Describe Azure Service Level Agreements (SLAs) and service lifecycles (10 - 15%)
+** Describe methods for planning and managing costs
    
 Purchase subscriptions and services from Microsoft
 
@@ -572,8 +786,8 @@ Different services are billed based on different factors:
    - costs are different per zones e.g. Zone 1 is $0.05 to $0.087 per GB 
    - 1 PB of data transfer = $52000
      
-
 *** Pricing Calculator
+
 Microsoft provides a pricing calculator. Keep in mind estimates are hard to make 100% accurate.
 Configurable options:
  - Region
@@ -612,6 +826,12 @@ Let costs minimize over time and not increase over time
  - Auto scaling resources
  - Downsize when resources over-provisioned (e.g. if you thought you're gonna use 1TB but only using like 200GB)
  - Ensure every resource has an owner (tags)
+   
+For exam, know these terms:
+ - Reserved instances :: Reserve an instance of a VM for 1+ years (cheaper than short-term)
+ - Reserved capacity :: Reserve storage capacity for long-term (cheaper than short-term)
+ - Hybrid use benefit :: ?
+ - Spot pricing :: Ability to use VM when nobody is using it for a discounted price. When someone needs to use it, you get kicked off
 
 *** Azure cost management (free service)
 
@@ -620,7 +840,8 @@ Let costs minimize over time and not increase over time
  - Scheduling and sending reports
  - Analyze spending over time
 
-** Azure Service Level Agreements (SLAs)
+** Describe Azure Service Level Agreement (SLAs) and service lifecycles
+*** Azure Service Level Agreements (SLAs)
    
 Many producst have SLAs
 
@@ -628,7 +849,7 @@ Financial guarantee that advertised service will work - Microsoft makes a promis
 
 If the guarantee does not hold, Microsoft will pay you (financial guarantee)
 
-*** Composite SLAs
+**** Composite SLAs
 
 If you have multiple services, each with their own SLA's, you now have multiple SLAs covering a solution
 
@@ -649,7 +870,7 @@ Storage account SLA becomes:
 
 Thus our new SLA becomes 99.84% (using the same formula as above
 
-** Preview features
+*** Preview features
    
 Microsoft announces preview features that are for "testing" and not production use
 
@@ -668,5 +889,64 @@ How do you know it's been released?
 
 
 
-* New content (post oct 2020)
 
+
+  
+
+* (Nov2020) Removed from exam
+   
+** Azure Information Protection (AIP)
+
+DRM process for emails and documents. Can apply labels to these with permissions e.g. Confidential, secret etc
+
+Can e.g. have office 365 block printing of documents 
+
+** Advanced Thread Protection (ATP)
+
+ - Monitor and profile user behaviour and activities
+ - Protect user identities and reduce the attack surface (can also block brute force attacks by doing this)
+ - Identify suspicious activities and advanced attacks
+ - Investigate alers and user activities
+
+E.g. the user never logs in from home or over weekends. So when user logs in on a weekend the ATP can request a MFA, or don't allow user to login because it's unusual activity
+
+** Azure Advisor security assistance
+
+Security of security advisor shows some warnings and recommendations (some of these will also show in security center)
+** Compliance
+
+**** General Data Protection Regulation (GDPR)
+ - New set of rules designed to give EU citizens more control over their personal data
+ - Affects companies outside of the EU that handles EU citizen's data 
+ - Data has to be collected legally under strict conditions
+ - Data has to be protected from misuse
+ - Certain reporting standards if any of these are breached
+
+**** ISO
+
+e.g. ISO 9001:2015 - quality management systems (QMS)
+
+Azure is compliant with:
+ - CSA STAR Certification
+ - ISO 27001:2013
+ - ISO 27017:2015
+ - ISO 27018:2014
+ - ISO 20000-1:2011
+ - ISO 22301:2012
+ - ISO 9001:2015
+
+**** NIST Cybersecurity Framework (CSF)
+
+National Institute of Standards and Technology
+
+Audited for compliance
+
+**** Service trust portal
+
+Pen test reports, white papers, blueprints
+
+***** Compliance manager
+    
+workflow-based risk assessment tool to help you manage regulatory compliance
+
+Shows you your compliance score and what you need to do to reach compliance for E.g. GDPR
