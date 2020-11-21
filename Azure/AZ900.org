@@ -235,7 +235,7 @@ Ways to connect to and manage Azure
    
 
  
-* [Understand security, privacy, compliance, and trust (25 - 30%)
+* Understand security, privacy, compliance, and trust (25 - 30%)
   
 ** Azure Firewall
 
@@ -504,4 +504,169 @@ German Data trustee - unique requirement in germany
  - Data remains in china
    
 You can deploy stuff here, but you need to follow their standards and rules
+
+
+* Describe Azure pricing, Service Level Agreements, and Lifecycles (20 - 25%)
+
+** Azure Subscription
+
+Billing unit
+
+ - Create an account for yourself
+ - Other people in organisation have their own accounts, but it all bubbles up to one subscriptions
+ - Users have access to one or more subscriptions, with different roles
+ - All resources consumed by a subscription will be billed to the owner
+ - Can be used to organize resources into completely distinct accounts
+
+[[file:./subscriptions.png]]
+
+*** Management groups
+
+Many different subscriptions, and group them
+
+[[file:./managementgroup.png]]
+
+** Planning and management of costs
+   
+Purchase subscriptions and services from Microsoft
+
+Purchase from Microsoft:
+
+ - Pay as you go :: Can set restrictions, but basically pay as you use stuff
+ - Enterprise Agreement :: Negotiated minimum spend annual - custom prices (arrange with Microsoft directly)
+
+Purchase from a MS Partner:
+ - Microsoft Cloud Solution Provider (CSP)
+   
+Azure Free Account - Around $200 credits for first 30 days + 12 months of free services (smallest ones)
+
+Some service are always free (e.g. 50 virtual networks, some web apps)
+
+*** Factors affecting costs
+
+Different services are billed based on different factors:
+ - Free services (no effects on costs)
+   - Resource groups
+   - Virtual network (up to 50)
+   - Load balancer (basic)
+   - Azure AD (basic)
+   - Network security groups
+   - Free-tier web apps (up to 10)
+   - etc
+ - Pay per usage (consumption model) 
+   - Azure functions :: has 1 million executions free per month, then $0.20 per extar million executions vs cheapest VM is $20 per month
+   - Logic Apps
+   - Storage (pay per GB
+   - Outbound bandwidth
+   - Cognitive Services API
+ - Pay for time (per second)
+   - Per second billing means billing stops when the VM is stopped (but keep in mind storage accounts etc linked to the VM does not stop) 
+ - Stability in pricing
+   - Pay a fixed price per month for computing power or storage capacity
+   - Whether you use it or not
+   - Discounts for 1-year or 3-year commitment in VM (Reserved Instances)
+   - Multi-tenant or isolated environment
+ - Pay for bandwidth
+   - First 5GB is free for outbound bandwidth
+   - Inbound data is free
+   - costs are different per zones e.g. Zone 1 is $0.05 to $0.087 per GB 
+   - 1 PB of data transfer = $52000
+     
+
+*** Pricing Calculator
+Microsoft provides a pricing calculator. Keep in mind estimates are hard to make 100% accurate.
+Configurable options:
+ - Region
+ - Tier
+ - Subscription Type
+ - Support Options
+ - Dev/Test Pricing
+
+Can export and share the estimates
+
+*** Total cost of ownership (TCO)
+
+The cost of a server is more than just the cost of the hardware:
+ - Electricity
+ - Cooling
+ - Internet
+ - Rack space
+ - Setup labor
+ - Maintenance labor
+ - Backup
+
+Thus, just saying "oh azure is asking x per month, if I just buy a server it's the same as 10 months of azure"
+
+Specific pricing calculator for this (pricing/tco/calculator)
+
+*** Best pratices for minimizing Azure costs
+
+Let costs minimize over time and not increase over time
+
+ - Azure Advisor has a cost tab that makes recommendations such as resources that haven't been used etc
+ - Auto shutdown on dev/qa resources
+ - Utilize cool/archive storage where possible (archive is 90% saving off the hot tier)
+ - Reserved instances (if you reserve VM for 1 - 3 years you also save)
+ - Configure alerts when billing exceeds an expected level (daily/weekly email etc)
+ - Use policy to restrict access to certain expensive resources
+ - Auto scaling resources
+ - Downsize when resources over-provisioned (e.g. if you thought you're gonna use 1TB but only using like 200GB)
+ - Ensure every resource has an owner (tags)
+
+*** Azure cost management (free service)
+
+ - Analyse historical spending 
+ - Tracking over budgets
+ - Scheduling and sending reports
+ - Analyze spending over time
+
+** Azure Service Level Agreements (SLAs)
+   
+Many producst have SLAs
+
+Financial guarantee that advertised service will work - Microsoft makes a promise e.g. about availability. 
+
+If the guarantee does not hold, Microsoft will pay you (financial guarantee)
+
+*** Composite SLAs
+
+If you have multiple services, each with their own SLA's, you now have multiple SLAs covering a solution
+
+Example SLAs per service:
+ - Azure AD, Premium - 99.9%
+ - 2 VMs, In Availability Set - 99.95%
+ - Azure SQL Databaset, Basic Tier - 99.99%
+ - Azure Storage, LRS storage reads - 99.9%
+
+Calculate composite SLA: 99.9 x 99.95 x 99.99 x 99.9 = 99.74% SLA across solution
+
+*Introducing Redundancy*   
+
+Assuming that the storage account is fully replicated in another region, and can fallback to reading from a second location
+
+Storage account SLA becomes:
+ 1.0 - (0.001% x 0.001%) = 99.9999%
+
+Thus our new SLA becomes 99.84% (using the same formula as above
+
+** Preview features
+   
+Microsoft announces preview features that are for "testing" and not production use
+
+Could change significantly before it goes live.
+
+Preview features might never go live.
+
+Two types of preview:
+ - Public :: Anyone can use it
+ - Private :: Need to sign up for it, they can decline your request
+
+General Availability (GA): When it goes live from preview
+
+How do you know it's been released? 
+  azure.microsoft.com/country/updates
+
+
+
+* New content (post oct 2020)
 
