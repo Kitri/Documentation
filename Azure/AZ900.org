@@ -236,9 +236,272 @@ Ways to connect to and manage Azure
 
  
 * [Understand security, privacy, compliance, and trust (25 - 30%)
+  
+** Azure Firewall
+
+Block invalid attacks, block ports, can apply whitelists etc
+
+WAF = Web Application Firewall
+
+** Azure DDoS Protection
+
+Distributed Denial of Service attack
+
+ - Always on monitoring
+ - Automatic mitigation of L3/L4 attacks
+ - L7 protection with Application Gateway Web application firewall
+ - Globally deployed
+ - Protection policies tuned to your VNet
+ - Logging, alerting, and telemetry
+ - Resource cost scale protection
+
+** Network Security Group (NSG)
+
+When you create a virtual network, you can apply NSG (set of rules on inbound or outbound traffic)
+
+In front of subnet - e.g. can allow traffic to frontend and deny to backend
+
+[[file:./nsg.png]]
+
+ - Inbound NSG rules protect a destination IP address and port
+
+Application security group concept if you want to create a group of rules e.g. "All VMs"
 
 
-** fjdsklfa
-  - 
-  - 
-    - 
+[[file:./asg.png]]
+
+** User Defined Routes (UDR)
+
+Specify exact path that network needs to travel
+
+ - Force traffic over a route ::  e.g. force traffic to go through firewall before it can get to devices
+
+** Choose an appropriate Azure security solution
+
+Exam will ask this. Here is some advice on best practices
+
+ - All virtual network subnets should use NSG
+   - It's a strong lock on windows and doors that you don't use
+   - Lock doors that's not being used
+ - DDos - as needed or after attacked (this will cost extra money)
+ - Applicatio Gateway with WAF. If you have enterprise level apps - get a good firewall
+ - Security through layers
+   - Not good enough to just have one level of security
+     
+[[file:./securitylayer.png]]
+
+** MS Identity solution
+   
+Know the difference between authentication and authorization
+
+ - Authentication is a user proving who they are - password etc
+ - Authorization is ensuring that a user is permitted to perform an action
+   
+Move away from all authenticated users having admin access
+
+*** Azure Active Directory (Identity as a service - IDaaS)
+
+Microsoft's preferred solutions for identity management
+
+Complete solution for managing users, groups, roles
+
+ - Single-sign on :: Use same login details to sign in everywhere
+ - Synchronize with your corporate AD :: Azure AD is not the same as corporate AD, but it can be synchronized
+ - Does not support LDAP :: Azure AD is web-based identity management, so does not have the same features as corporate AD
+ - Azure Multi-Factory Authentication :: User ID is first factor, Password is second factor, Mobile phone is third factor
+  
+Recommended authentication method: Role-based access control (RBAC)
+
+** Azure Security
+   
+"Azure security" is the exams requirement. 
+
+Shared security model: 
+ - Physical :: Don't give out location of actual server, autolock physical machines etc 
+ - Digital :: Use built-in services for digital security instead of building your own e.g. Azure AD, MFA, RBAC
+ - Shared? :: If you have a VM you are responsible for windows updates and digital security of the VM, where as SaaS Azure is fully responsible
+   
+*** Azure Security Center
+
+Unified security management and advanced threat protection
+
+Free tier and paid tier available
+
+Analyses and monitors the security on your azure services and makes recommendations of where you can improve security
+
+*** Azure Key Vault
+    
+Central, secure repository for your secrets, certificates and keys
+
+ - SSL certs, api keys, public/private key etc
+ - Create signed keys and store them online
+ - Generate or import SSL certificates
+ - Authorised access only (can also have levels of access - admin can manage keys and logs vs developer who only gets dev keys)
+   
+*** Azure Information Protection (AIP)
+
+DRM process for emails and documents. Can apply labels to these with permissions e.g. Confidential, secret etc
+
+Can e.g. have office 365 block printing of documents 
+
+*** Advanced Thread Protection (ATP)
+
+ - Monitor and profile user behaviour and activities
+ - Protect user identities and reduce the attack surface (can also block brute force attacks by doing this)
+ - Identify suspicious activities and advanced attacks
+ - Investigate alers and user activities
+
+E.g. the user never logs in from home or over weekends. So when user logs in on a weekend the ATP can request a MFA, or don't allow user to login because it's unusual activity
+
+*** Azure Policy
+
+Governance
+
+- Create rules across all of your Azure resources
+- Evaluate compliance to those rules
+- Can create custom policies using JSON
+
+Examples of built-in policies
+ - Require SQL Server 12.0
+ - Allowed Storage Account SKUs
+ - Allowed Locations
+ - Allowed Virtual Machine SKUs (e.g. don't allow devs to get the most expensive VMs)
+ - Apply tag and its default value (can use this for billing, e.g. not allowed to create resource if it doesn't have a billing code)
+ - Not allowed resource types
+ 
+
+**** Policy initiative
+
+A set of policies, grouped together
+
+e.g. a group can have:
+"Every resourec and resource group must have these five tags"
+
+*** Role-based Access Control (RBAC)
+
+Microsoft recommended solution for authorization
+
+Create roles that represent the common tasks of the job e.g.
+ - Accountant 
+ - Developer
+ - Business Lead
+
+Assign granular permissions to those roles, assign users to that role
+
+People can have more than one role
+
+Do not assign granular permissions to an individual. Can give people too much permissions, and what if they leave?
+
+Built-in roles:
+ - Reader (read-only) 
+ - Contributor (RW)
+ - Owner (Contributer but can give permissions to people too)
+
+*** Locks
+
+Two locks:
+ - Read Only
+ - Can Not Delete
+   
+Can go to resource - Locks - Add Lock
+
+Need to delete lock before being able to delete resources
+
+Using RBAC, you can restrict who has access to locks
+
+*** Azure Advisor security assistance
+
+Security of security advisor shows some warnings and recommendations (some of these will also show in security center)
+
+*** Azure Blueprints
+    
+Create a subscription template with Roles and Policies already defined, and can then use this template to create others
+
+*** Azure Monitor
+
+[[file:./monitor.png]]
+
+**** Azure Service Health
+
+Global service issues within Azure. Shows things like connectivity issues in certain regions
+
+** Compliance
+
+Terms like
+ - GDPR
+ - ISO
+ - NIST
+
+Many different standards for technology across the world
+MS publishes the standards they're compliant with and claim to be compliant with most and gives you tools to help you be in compliance with others
+
+*** General Data Protection Regulation (GDPR)
+ - New set of rules designed to give EU citizens more control over their personal data
+ - Affects companies outside of the EU that handles EU citizen's data 
+ - Data has to be collected legally under strict conditions
+ - Data has to be protected from misuse
+ - Certain reporting standards if any of these are breached
+
+*** ISO
+
+e.g. ISO 9001:2015 - quality management systems (QMS)
+
+Azure is compliant with:
+ - CSA STAR Certification
+ - ISO 27001:2013
+ - ISO 27017:2015
+ - ISO 27018:2014
+ - ISO 20000-1:2011
+ - ISO 22301:2012
+ - ISO 9001:2015
+
+*** NIST Cybersecurity Framework (CSF)
+
+National Institute of Standards and Technology
+
+Audited for compliance
+
+*** Microsoft Privacy statement
+
+privacy.microsoft.com
+*** Trust Centre
+
+Portal that talks about MS's compliance and standards
+
+High level
+
+*** Service trust portal
+
+Pen test reports, white papers, blueprints
+
+**** Compliance manager
+    
+workflow-based risk assessment tool to help you manage regulatory compliance
+
+Shows you your compliance score and what you need to do to reach compliance for E.g. GDPR
+
+*** Azure Government Services
+
+Separate account. e.g. porta.azure vs portal.azure.us
+
+Department of Defence (DoD) has its own too
+
+Isolated data centers separate from Azure public cloud
+
+Meets standards specific to US govenment: FedRAMP, NIST, DIB, ITAR, .... 
+
+*** Azure Germany Services
+
+EU's equivalend of Azure government 
+
+Germany has the strictest EU data protection
+
+German Data trustee - unique requirement in germany
+
+*** Azure China
+
+ - Separate account
+ - Data remains in china
+   
+You can deploy stuff here, but you need to follow their standards and rules
+
