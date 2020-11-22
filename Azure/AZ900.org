@@ -121,7 +121,7 @@
 
 
 * Describe Cloud Concepts (20-25%) 
-
+  
 ** Benefits of cloud computing
   
  - Cost savings - both real and accounting :: It's cheaper for MS to run servers because of economies of scale etc. They're saving on TCO. You can also take action to reduce your costs e.g. autoscaling
@@ -190,6 +190,11 @@ As your resources move from on-premises to off-premises, your costs are reduced,
 
 
 * Describe Core Azure services (15 - 20%)
+  
+ - Resources :: Instances of services that you create
+ - Resource groups :: resources combined into groups that act as logical containers
+ - Subscriptions :: groups together user accounts and resources
+ - Management Groups :: Help you manage access, policy, and compliance for multiple subscriptions
 
 ** Azure Regions
 
@@ -213,7 +218,6 @@ E.g. Canada Central - Canada East; North Central US - South Central US
 
 ** Resource Groups
    
-
 Way of organising resources
 
 #+CAPTION: resource groups
@@ -230,19 +234,28 @@ Basically like a router between the user and Azure. How you interface with Azure
 
 Enables you to interface with Azure in a consistent way, regardless of what you're trying to access.
 
+#+ATTR_HTML: :width 800
+[[file:./ARM.png]]
+
 *** Benefits
  - Deploy things as a group
  - Repeatedly deploy these things with templates
  - Access Control (role-based)
  - Tagging
 
-#+ATTR_HTML: :width 800
-[[file:./ARM.png]]
-
 ** Azure Subscription
 
-Billing unit
+An account can have one or many subscriptions, that have different billing models and to which you apply different access-management policies.
 
+2 Types of subscription boundaries that you can use:
+ - Billing boundary :: Determined how an azure account is being billed
+ - Access control boundary ::Azure applies access-management policies at the subscription level.
+
+Might want to create azure subscriptions to separate: Environments, org structures or billing.
+
+Subscriptions are bound to some hard limitations e.g. max number of ExpressRoute circuits per subscription is 10.
+
+From udemy:
  - Create an account for yourself
  - Other people in organisation have their own accounts, but it all bubbles up to one subscriptions
  - Users have access to one or more subscriptions, with different roles
@@ -254,10 +267,19 @@ Billing unit
 
 *** Management groups
 
-Many different subscriptions, and group them
+Many different subscriptions, and group them. Level of scope above subscriptions.
 
+All subscriptions in management group inherits conditions applied to group.
+
+Group tree (Azure supports max depth 6 excl root)
 # #+ATTR_HTML: :width 800 
 [[file:./managementgroup.png]]
+
+Some facts:
+ - 10 000 management groups can be supported in a single directory
+ - Each management group and subscription can support only one parent
+ - Can have many children 
+ - All subscriptions and management groups are within a single hierarchy in each directory
 
 ** Core Resources available in Azure
 
@@ -287,9 +309,38 @@ There are many different ways to compute on the cloud
 
 When you create a virtual machine you have to create a virtual network
  - Virtual Network :: Emulating a physical network. MS Global Network already exists, so a VN is just software config
- - Virtual Private Network (VPN) :: Connecting two networks as if they were on the same network
+   - Can link VNs together using network peering (allows resources in VNs to communicate with each other)
+ - Virtual Private Network (VPN) Gateway :: Connecting two networks as if they were on the same network
+   - Policy-based VPN - static routing (specify IPs)
+   - Route-based VPN - dynamic routing
  - ExpressRoute :: high-speed private connection to Azure (physical fibre connection to an actual Azure box)
+   - Connectivity from 
+     - any-to-any (integrate WAN with Azure) 
+     - point-to-point ethernet 
+     - virtual cross-connection via provider at colocation facility (e.g. CloudExchange colocation)
+   - Does not go over the public internet
+   - Not encrypted, just private
+   - L3 connectivity between on-prem and cloud
+   
+Connectivity between resources:
+ - Point-to-site :: Client computor connects via encrypted VPN connection to Azure VN
+ - Site-to-site :: Links on-prem VPN to AZure VPN in a virtual network. Looks like local network and is encrypted and works over the internet
+ - Network-to-network :: Connect one VN to another VN
+   
+Route network traffic:
+ - Route tables :: define rules about how traffic should be directed
+ - Border Gateway Protocol :: works with Azure VPN gateway or ExpressRoute to propagate on-prem BGP routes to Azure VN's
 
+OSI Model:
+ - Layer 2 (L2) :: Data Link Layer, provides node-to-node communication in the same network
+ - Layer 3 (L3) :: Network Layer, provides adressing and routin gbetween nodes on multi-node network
+
+Benefits of ExpressRoute
+ - Built-in redundancy
+ - Connectivity to MS Cloud Services
+ - ExpressRoute Global Reach - exchange data across on-prem sites by connecting ER circuits
+ - Dynamic routing
+ 
 **** Protection Service
      
 Firewall, privacy measures
@@ -318,13 +369,30 @@ Watch traffic that travels across your network
  - Azure Monitor
 
 *** Storage
-    
-4 types of storage services: Blob, File, Queue and Table. Services share common characteristics:
+
+**** Storage Services
+4 types of storage services: Blob, File, Queue and Table. 
+ - Blob. Ideal for: 
+   - storing images, documents; 
+   - storing files for distributed access; 
+   - streaming video and audio, storing data for backup/restore, DR and archiving; 
+   - storing data for analysis by an on-prem; 
+   - storing up to 8TB of data for VM
+ - Files
+   - Azure Files offers fully managed file shares in the cloud that are accessible via standard file sharing protocols
+
+Services share common characteristics:
  - Durable and highly available with redundancy and replication.
  - Secure through automatic encryption and role-based access control.
  - Scalable with virtually unlimited storage.
  - Managed, handling maintenance and any critical problems for you.
  - Accessible from anywhere in the world over HTTP or HTTPS.
+   
+**** Blob Access Tiers
+     
+ - Hot access tier :: Optimized for storing data that is accessed frequently (e.g. website images)
+ - Cool access tier :: Optimized for data that is infrequently accessed and stored for at least 30 days (e.g. invoices)
+ - Archive access tier :: Appropriate for data that is rarely accessed and stored for at least 180 days
     
 **** Unmanages Storage
 
@@ -384,8 +452,7 @@ Reserve capacity in advance
 
  - (not in exam) Azure Synapse Analytics (SQL DW) :: SQL Data warehouse - analytical not transactional
    
- - SQL Managed Instance :: Most compatible with existing SQL Server, fully managed by azure. Always up-to-date
-   
+ - SQL Managed Instance :: (PaaS) Most compatible with existing SQL Server, fully managed by azure. Always up-to-date
    
 *** Azure Marketplace:
 
@@ -395,6 +462,7 @@ providers. All solutions and services are certified to run on Azure.
 
 
 * Describe core solutions and management tools on Azure  (10 - 15%)
+
 ** Core Solutions
 *** Internet of Things
 
@@ -408,26 +476,29 @@ providers. All solutions and services are certified to run on Azure.
  - Azure Synapse Analytics (formely SQL Data Warehouses) :: Run analytics at scale (parallel processing)
  - HDInsights :: Process massive amounts of data with managed clusters of Hadoop clusters in the cloud
  - Azure Databricks :: Integrate this collaborative Apache Spark-based analytics service with other big data services in Azure
+ - Azure Data Lake Analytics :: on-demand analytics job service. Write queries to transform data and extract valuable insights. Only pay when it's running
 
 *** AI
 
  - Azure Machine Learning Service :: Develop, train, test, deploy, manage, and track machine learning models
  - Azure Machine Learning Studio :: Collaborative visual workspace - has prebuilt machine learning algorithms and data-handling modules. 
  - Azure Bot Service :: Natural language chatbot service with a database of FAQs
+ - Azure Cognitive Services :: Prebuilt machine learning models that enable apps to see, hear, speak, understand and begin to reason. Language/Speech/Vision/Decision
 
 *** Serverless
-
- - Azure Functions
- - Logic Apps
+ - Azure Functions :: Functions can execute code in almost any modern language. Stateless (durable functions provide state). Code first
+ - Logic Apps :: Designed in a web-based designer and can execute logic triggered by azure services without writing any code. Stateful. Designer-first (declarative) - executes workflows
  - Event Grid (used to be App Grid)
+   
+Azure Functions is intended for serverless computation and Logic apps for serverless orchestration
+
 *** DevOps
     
- - Azure DevOps :: Pipelines, Git, Kanban board, automated and cloud based testing
+ - Azure DevOps :: Azure Repos, - Boards, - Pipelines, - Artifacts, - Test Plans 
  - Azure DevTest Labs :: Quickly create on-demand Windows and Linux environments to test or demo apps directly from deployment pipelines
  - GitHub :: MS owns this
  - Github Actions :: Automate software workflows e.g. post-commit hook. Possibly run tests
 
-   
 ** Management Tools
 
 Ways to connect to and manage Azure
@@ -453,7 +524,24 @@ Web-based, unified console that provides an alternative to CLI tools. You can ma
 # #+ATTR_HTML: :width 800 
 [[file:./monitor.png]]
 
+*** Azure Advisor
 
+Recommendations divided into five categories:
+ - Reliability :: Improve continuity of business-critical applications
+ - Security :: Detect threats and vulnerabilitys
+ - Performance :: Improve speed of apps
+ - Cost :: Optimise and reduce Azure spending
+ - Operational Excellence :: Achieve process and workflow efficiency, resource manageability, and deployment best practices
+
+*** Azure Service Health
+Personalised view of health of Azure services, regions and resources you rely on.
+
+Event Types:
+ - Service issues
+ - Planned maintenance
+ - Health advisories (e.g. service retirements and breaking changes. Announced far in advance)
+
+   
 * Describe general security and network security features (10-15%)
 
 ** Choose an appropriate Azure security solution
@@ -477,7 +565,11 @@ Shared security model:
    
 *** Azure Security Center
 
-Dashboard for security. Unified infrastructure security management system that monitors and protects your systems inside and outside of Azure
+Dashboard for security. Unified infrastructure security management
+system that monitors and protects your systems inside and outside of
+Azure. Visibility of security posture - Azure and on-prem
+
+Security poster = cybersecurity policies and controls, as well as how well you can predict, prevent, and respond to security threats
 
 Free tier and paid tier available
 
@@ -497,6 +589,7 @@ Central, secure repository for your secrets, certificates and keys
  - Create signed keys and store them online
  - Generate or import SSL certificates
  - Authorised access only (can also have levels of access - admin can manage keys and logs vs developer who only gets dev keys)
+   
 *** Azure Sentinel
 Like splunk
     
@@ -516,10 +609,14 @@ You can reserve a machine and run multiple virtual machines on it (to the machin
 
 ** Describe Azure Network Security
 *** Defence in depth
-Kind of like security layers - have security in more than one place
-
-# #+ATTR_HTML: :width 800 
-[[file:./securitylayer.png]]
+Security in more than one place. Layers are in order - physcial comes first, data last
+ - Data :: Controlls access to data e.g. Virtual Network Endpoint
+ - Application :: Helps ensure apps are secure and free of vulnerabilities e.g. API Management
+ - Compute :: Secures access to VMs e.g. Limit remote desktop access, windows update
+ - Network :: Limits comms between resources e.g. NSG, use of subnets, deny by default
+ - Perimeter :: Uses DDoS protection to filter attacks e.g. DDoS, firewalls
+ - Identity & Access :: Controls access to infrastructure and change control e.g. Azure AD
+ - Physcial :: Protect hardware e.g. Door locks, key cards 
 
 
 # #+ATTR_HTML: :width 800 
@@ -529,7 +626,15 @@ Kind of like security layers - have security in more than one place
 
 Block invalid attacks, block ports, can apply whitelists etc
 
-WAF = Web Application Firewall
+Stateful firewall. Analyses complete context of a network connection
+
+Features high availability and unrestricted cloud scalability
+
+Inbound Destination Network Address Translation (DNAT) support
+
+Azure Application Gateway provides a firewall called Web Application Firewall (WAF) which provides centralized, inbound protection for web apps
+
+Azure Front Door and Azure Content Delivery Network also provide WAF services
 
 *** Azure DDoS Protection
 
@@ -537,7 +642,7 @@ Distributed Denial of Service attack
 
  - Always on monitoring
  - Automatic mitigation of L3/L4 attacks
- - L7 protection with Application Gateway Web application firewall
+ - L7 protection with Application Gateway Web application firewall (L7 = application)
  - Globally deployed
  - Protection policies tuned to your VNet
  - Logging, alerting, and telemetry
@@ -609,10 +714,14 @@ Require 2 or more pieces of evidence (factors) in order to log in
  3 - Something you are i.e. fingerprint
 
 ** Describe Azure governance features
+  
+Governance describes the general process of establishing rules and policies and ensuring that those rules and policies are enforced.
  
 *** Role-based Access Control (RBAC)
 
 Microsoft recommended solution for authorization
+
+RBAC is applied to a scope such as a management group, single subscription, resource group or single resource.
 
 Create roles that represent the common tasks of the job e.g.
  - Accountant 
@@ -648,6 +757,14 @@ Can add metadata to resources
 Benefits:
  - Can force certain data to be deployed alongside resources
  - Good for billing and support issues, like who to notify / owner
+
+Useful for: 
+ - Resource management
+ - Cost management and optimization
+ - Operations management (group resources according to availability criticality, can use this to create SLAs)
+ - Security (e.g. public / confidential)
+ - Governance and regulatory compliance (e.g. ISO xxx)
+ - Workload optimization and automation (e.g. use ADO to perform tasks on tag)
 
 *** Azure Policy
 
@@ -696,14 +813,15 @@ Azure: Trusted Cloud
 
 *** Purpose of documents
 
- - Microsoft Privacy statement :: States MS privacy guarantees @ privacy.microsoft.com
- - Online Service Terms (OST) :: Terms and conditions for use. To use their website you have to abide by this.
+ - Microsoft Privacy statement :: explains what personal data MS collections, how they use it and for what purposes@ privacy.microsoft.com
+ - Online Service Terms (OST) :: Terms and conditions for use. To use their website you have to abide by this. legal agreement between MS and customer
  - Data Protection Addendum (DPA) :: How they handle retention of data
-
 
 *** Trust Centre
 
-Portal that talks about MS's compliance and standards
+Portal that talks about MS's compliance and standards. Principles for
+maintaining data integrity in the cloud and how MS implements and
+supports security, privacy, compliance and transparancy.
 
 High level
 
